@@ -73,13 +73,13 @@ export default function Premium() {
   // Show success message if already premium
   if (user?.subscriptionTier === 'PREMIUM') {
     return (
-      <div className="min-h-screen flex bg-gray-50 font-sans">
+      <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 font-sans">
         <Sidebar />
         
         <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} transition-all duration-300`}>
           <DashboardHeader />
           
-          <div className="p-8">
+          <div className="p-4 md:p-8 pt-20 md:pt-8">
             <div className="max-w-2xl mx-auto text-center">
               <div className="bg-green-50 border border-green-200 rounded-lg p-8">
                 <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
@@ -104,13 +104,13 @@ export default function Premium() {
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-50 font-sans">
+    <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 font-sans">
       <Sidebar />
       
       <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} transition-all duration-300`}>
         <DashboardHeader />
         
-        <div className="p-8">
+        <div className="p-4 md:p-8 pt-20 md:pt-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Evolv Premium</h1>
             <p className="text-xl text-gray-600">Unlock the full potential of your wellness journey</p>

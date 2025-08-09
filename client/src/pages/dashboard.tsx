@@ -25,13 +25,13 @@ export default function Dashboard() {
   const recommendedBiohacks = biohacks?.slice(0, 3) || [];
 
   return (
-    <div className="min-h-screen flex bg-gray-50 font-sans">
+    <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 font-sans">
       <Sidebar />
       
       <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} transition-all duration-300`}>
         <DashboardHeader />
         
-        <div className="p-8 space-y-8">
+        <div className="p-4 md:p-8 space-y-6 md:space-y-8 pt-20 md:pt-8">
           <QuickStats stats={stats} />
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -132,10 +132,10 @@ export default function Profile() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
       
-      <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} p-4 md:p-8 pt-16 md:pt-8 transition-all duration-300`}>
+      <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} p-4 md:p-8 pt-20 md:pt-8 transition-all duration-300`}>
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
