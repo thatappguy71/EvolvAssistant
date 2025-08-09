@@ -177,20 +177,35 @@ export default function Habits() {
                           </span>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <button className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  console.log('Dropdown button clicked');
+                                }}
+                              >
                                 <MoreHorizontal className="h-4 w-4" />
-                              </button>
+                                <span className="sr-only">Open menu</span>
+                              </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48">
                               <DropdownMenuItem
-                                onClick={() => handleEditHabit(habit)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditHabit(habit);
+                                }}
                                 className="cursor-pointer"
                               >
                                 <Edit className="h-4 w-4 mr-2" />
                                 Edit habit
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleDeleteHabit(habit.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteHabit(habit.id);
+                                }}
                                 className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
