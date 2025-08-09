@@ -8,10 +8,13 @@ import { Separator } from "@/components/ui/separator";
 import Sidebar from "@/components/Sidebar";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Bell, Moon, Globe, Shield, Database, Trash2 } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Bell, Moon, Globe, Shield, Database, Trash2, Sun } from "lucide-react";
 
 export default function Settings() {
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
+  
   const [notifications, setNotifications] = useState({
     habitReminders: true,
     weeklyReports: true,
@@ -20,7 +23,6 @@ export default function Settings() {
   });
 
   const [preferences, setPreferences] = useState({
-    theme: 'light',
     timezone: 'America/New_York',
     language: 'en',
     dateFormat: 'MM/DD/YYYY',
@@ -41,14 +43,14 @@ export default function Settings() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
       
       <main className="flex-1 ml-64 p-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-            <p className="text-gray-600 mt-2">Customize your Evolv experience and manage your preferences</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">Customize your Evolv experience and manage your preferences</p>
           </div>
 
           <div className="space-y-8">
@@ -128,7 +130,7 @@ export default function Settings() {
             <Card>
               <CardHeader>
                 <div className="flex items-center space-x-2">
-                  <Moon className="h-5 w-5" />
+                  {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
                   <CardTitle>Appearance & Preferences</CardTitle>
                 </div>
                 <CardDescription>
@@ -139,9 +141,13 @@ export default function Settings() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label>Theme</Label>
-                    <Select value={preferences.theme} onValueChange={(value) => 
-                      setPreferences({ ...preferences, theme: value })
-                    }>
+                    <Select value={theme} onValueChange={(value) => {
+                      setTheme(value as 'light' | 'dark' | 'system');
+                      toast({
+                        title: "Theme updated",
+                        description: `Theme changed to ${value}`,
+                      });
+                    }}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>

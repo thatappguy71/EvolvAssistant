@@ -21,15 +21,15 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white shadow-lg border-r border-gray-200 fixed h-full z-30">
-      <div className="p-6 border-b border-gray-200">
+    <aside className="w-64 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 fixed h-full z-30">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
             <i className="fas fa-leaf text-white text-lg"></i>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Evolv</h1>
-            <p className="text-xs text-gray-500">Wellness Tracker</p>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Evolv</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Wellness Tracker</p>
           </div>
         </div>
       </div>
@@ -93,8 +93,8 @@ export default function Sidebar() {
           </Link>
         </div>
         
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Account</h3>
+        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Account</h3>
           <div className="space-y-2">
             <Link 
               href="/premium" 
@@ -119,7 +119,7 @@ export default function Sidebar() {
       </nav>
       
       {/* User Profile Section */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
+      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <div className="flex items-center space-x-3">
           <img 
             src={user?.profileImageUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100"} 
@@ -127,10 +127,10 @@ export default function Sidebar() {
             className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
           />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">
+            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
               {user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user?.email || 'User'}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {user?.subscriptionTier === 'PREMIUM' ? 'Premium Member' : 'Free Member'}
             </p>
           </div>
