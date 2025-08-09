@@ -40,7 +40,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
 export default function Sidebar() {
   const { user } = useAuth();
   const [location] = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { isCollapsed, setIsCollapsed } = useSidebar();
 
   const isActive = (path: string) => {
     if (path === "/" && location === "/") return true;

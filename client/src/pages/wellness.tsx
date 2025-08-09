@@ -1,13 +1,15 @@
-import Sidebar from "@/components/Sidebar";
+import Sidebar, { useSidebar } from "@/components/Sidebar";
 import DashboardHeader from "@/components/DashboardHeader";
 import WellnessMetrics from "@/components/WellnessMetrics";
 
 export default function Wellness() {
+  const { isCollapsed } = useSidebar();
+  
   return (
     <div className="min-h-screen flex bg-gray-50 font-sans">
       <Sidebar />
       
-      <main className="flex-1 ml-64">
+      <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} transition-all duration-300`}>
         <DashboardHeader />
         
         <div className="p-8">

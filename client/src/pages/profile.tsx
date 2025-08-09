@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import Sidebar from "@/components/Sidebar";
+import Sidebar, { useSidebar } from "@/components/Sidebar";
 import { useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ export default function Profile() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { isCollapsed } = useSidebar();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -134,7 +135,7 @@ export default function Profile() {
     <div className="flex h-screen bg-gray-50">
       <Sidebar />
       
-      <main className="flex-1 ml-64 p-8">
+      <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} p-4 md:p-8 pt-16 md:pt-8 transition-all duration-300`}>
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Profile</h1>

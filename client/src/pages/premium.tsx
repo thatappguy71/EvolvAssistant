@@ -1,4 +1,4 @@
-import Sidebar from "@/components/Sidebar";
+import Sidebar, { useSidebar } from "@/components/Sidebar";
 import DashboardHeader from "@/components/DashboardHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,7 @@ export default function Premium() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { isCollapsed } = useSidebar();
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly' | null>(null);
 
   const upgradeMutation = useMutation({
@@ -75,7 +76,7 @@ export default function Premium() {
       <div className="min-h-screen flex bg-gray-50 font-sans">
         <Sidebar />
         
-        <main className="flex-1 ml-64">
+        <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} transition-all duration-300`}>
           <DashboardHeader />
           
           <div className="p-8">
@@ -106,7 +107,7 @@ export default function Premium() {
     <div className="min-h-screen flex bg-gray-50 font-sans">
       <Sidebar />
       
-      <main className="flex-1 ml-64">
+      <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} transition-all duration-300`}>
         <DashboardHeader />
         
         <div className="p-8">

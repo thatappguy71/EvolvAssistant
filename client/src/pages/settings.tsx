@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import Sidebar from "@/components/Sidebar";
+import Sidebar, { useSidebar } from "@/components/Sidebar";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -14,6 +14,7 @@ import { Bell, Moon, Globe, Shield, Database, Trash2, Sun } from "lucide-react";
 export default function Settings() {
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
+  const { isCollapsed } = useSidebar();
   
   const [notifications, setNotifications] = useState({
     habitReminders: true,
@@ -46,7 +47,7 @@ export default function Settings() {
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
       
-      <main className="flex-1 ml-0 md:ml-64 p-4 md:p-8 pt-16 md:pt-8">
+      <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} p-4 md:p-8 pt-16 md:pt-8 transition-all duration-300`}>
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
