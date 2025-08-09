@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Upload, Camera } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -291,8 +292,10 @@ export default function Profile() {
                 </div>
                 <div className="flex gap-2">
                   {user.subscriptionTier === 'FREE' && (
-                    <Button>
-                      Upgrade to Premium
+                    <Button asChild>
+                      <Link href="/premium">
+                        Upgrade to Premium
+                      </Link>
                     </Button>
                   )}
                   {user.subscriptionTier === 'PREMIUM' && (

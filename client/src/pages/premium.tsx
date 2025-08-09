@@ -3,8 +3,59 @@ import DashboardHeader from "@/components/DashboardHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/hooks/useAuth";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { CheckCircle, CreditCard, Shield } from "lucide-react";
 
 export default function Premium() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly' | null>(null);
+
+  const upgradeMutation = useMutation({
+    mutationFn: async (planType: 'monthly' | 'yearly') => {
+      const response = await fetch('/api/subscription/upgrade', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ planType }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to upgrade subscription');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      if (data.checkoutUrl) {
+        // Redirect to payment processor
+        window.location.href = data.checkoutUrl;
+      } else {
+        // Mock upgrade success for demo
+        toast({
+          title: "Upgrade successful!",
+          description: "Welcome to Evolv Premium! Your account has been upgraded.",
+        });
+        queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      }
+    },
+    onError: () => {
+      toast({
+        title: "Upgrade failed",
+        description: "Unable to process upgrade. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleUpgrade = (planType: 'monthly' | 'yearly') => {
+    setSelectedPlan(planType);
+    upgradeMutation.mutate(planType);
+  };
+
   const premiumFeatures = [
     "Unlimited habits",
     "Advanced ML-powered AI insights",
@@ -17,6 +68,39 @@ export default function Premium() {
     "Custom habit categories",
     "Priority support"
   ];
+
+  // Show success message if already premium
+  if (user?.subscriptionTier === 'PREMIUM') {
+    return (
+      <div className="min-h-screen flex bg-gray-50 font-sans">
+        <Sidebar />
+        
+        <main className="flex-1 ml-64">
+          <DashboardHeader />
+          
+          <div className="p-8">
+            <div className="max-w-2xl mx-auto text-center">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-8">
+                <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">You're already Premium!</h1>
+                <p className="text-lg text-gray-600 mb-6">
+                  Thank you for being an Evolv Premium member. You have access to all our premium features.
+                </p>
+                <div className="grid grid-cols-2 gap-4 text-left">
+                  {premiumFeatures.map((feature, index) => (
+                    <div key={index} className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
+                      <span className="text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex bg-gray-50 font-sans">
@@ -42,8 +126,13 @@ export default function Premium() {
                   <p className="text-sm text-gray-500 mt-2">Perfect for serious biohackers</p>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full mb-6 bg-primary hover:bg-blue-700">
-                    Start Monthly Plan
+                  <Button 
+                    className="w-full mb-6 bg-primary hover:bg-blue-700"
+                    onClick={() => handleUpgrade('monthly')}
+                    disabled={upgradeMutation.isPending}
+                  >
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    {upgradeMutation.isPending && selectedPlan === 'monthly' ? 'Processing...' : 'Start Monthly Plan'}
                   </Button>
                   <ul className="space-y-3">
                     {premiumFeatures.map((feature, index) => (
@@ -73,8 +162,13 @@ export default function Premium() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full mb-6 bg-primary hover:bg-blue-700">
-                    Start Yearly Plan
+                  <Button 
+                    className="w-full mb-6 bg-primary hover:bg-blue-700"
+                    onClick={() => handleUpgrade('yearly')}
+                    disabled={upgradeMutation.isPending}
+                  >
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    {upgradeMutation.isPending && selectedPlan === 'yearly' ? 'Processing...' : 'Start Yearly Plan'}
                   </Button>
                   <ul className="space-y-3">
                     {premiumFeatures.map((feature, index) => (

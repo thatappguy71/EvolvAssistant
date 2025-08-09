@@ -110,6 +110,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Subscription upgrade
+  app.post('/api/subscription/upgrade', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { planType } = req.body;
+      
+      if (!planType || !['monthly', 'yearly'].includes(planType)) {
+        return res.status(400).json({ message: 'Valid plan type (monthly or yearly) is required' });
+      }
+      
+      // In a real app, you would integrate with Stripe, PayPal, or another payment processor
+      // For demo purposes, we'll simulate a successful upgrade
+      await storage.upgradeUserSubscription(userId, planType);
+      
+      res.json({ 
+        message: 'Subscription upgraded successfully',
+        planType,
+        // In production, you would return a checkout URL from your payment processor
+        // checkoutUrl: 'https://checkout.stripe.com/...'
+      });
+    } catch (error) {
+      console.error('Error upgrading subscription:', error);
+      res.status(500).json({ message: 'Failed to upgrade subscription' });
+    }
+  });
+
   // Dashboard routes
   app.get('/api/dashboard/stats', isAuthenticated, async (req: any, res) => {
     try {
