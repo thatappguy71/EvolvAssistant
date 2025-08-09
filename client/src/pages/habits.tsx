@@ -9,16 +9,11 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { Check, Clock, MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export default function Habits() {
   const [isHabitModalOpen, setIsHabitModalOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<any>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const { isCollapsed } = useSidebar();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -175,44 +170,57 @@ export default function Habits() {
                           <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
                             {habit.category}
                           </span>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  console.log('Dropdown button clicked');
-                                }}
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Open menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-48">
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEditHabit(habit);
-                                }}
-                                className="cursor-pointer"
-                              >
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit habit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteHabit(habit.id);
-                                }}
-                                className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete habit
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                          <div className="relative">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenDropdownId(openDropdownId === habit.id ? null : habit.id);
+                              }}
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                            
+                            {openDropdownId === habit.id && (
+                              <>
+                                {/* Backdrop to close dropdown */}
+                                <div 
+                                  className="fixed inset-0 z-10"
+                                  onClick={() => setOpenDropdownId(null)}
+                                />
+                                
+                                {/* Dropdown menu */}
+                                <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20">
+                                  <div className="py-1">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenDropdownId(null);
+                                        handleEditHabit(habit);
+                                      }}
+                                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                    >
+                                      <Edit className="h-4 w-4 mr-2" />
+                                      Edit habit
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenDropdownId(null);
+                                        handleDeleteHabit(habit.id);
+                                      }}
+                                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      Delete habit
+                                    </button>
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </CardTitle>
                     </CardHeader>
