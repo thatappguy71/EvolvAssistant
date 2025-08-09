@@ -20,7 +20,7 @@ export default function Habits() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: habits = [], isLoading } = useQuery({
+  const { data: habits = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/habits'],
   });
 

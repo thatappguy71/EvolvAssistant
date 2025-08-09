@@ -333,7 +333,7 @@ export default function TodaysHabits() {
       <HabitModal 
         isOpen={isHabitModalOpen} 
         onClose={handleCloseModal}
-        editingHabit={editingHabit}
+        habit={editingHabit}
       />
     </div>
   );

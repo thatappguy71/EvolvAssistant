@@ -26,20 +26,21 @@ type HabitFormData = z.infer<typeof habitSchema>;
 interface HabitModalProps {
   isOpen: boolean;
   onClose: () => void;
+  habit?: any;
 }
 
-export default function HabitModal({ isOpen, onClose }: HabitModalProps) {
+export default function HabitModal({ isOpen, onClose, habit }: HabitModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const form = useForm<HabitFormData>({
     resolver: zodResolver(habitSchema),
     defaultValues: {
-      name: "",
-      category: "",
-      timeRequired: "",
-      description: "",
-      difficulty: "Easy",
+      name: habit?.name || "",
+      category: habit?.category || "",
+      timeRequired: habit?.timeRequired || "",
+      description: habit?.description || "",
+      difficulty: habit?.difficulty || "Easy",
     },
   });
 
