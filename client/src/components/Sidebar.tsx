@@ -8,10 +8,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Settings, User, LogOut } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function Sidebar() {
   const { user } = useAuth();
+  const [location] = useLocation();
+
+  const isActive = (path: string) => {
+    if (path === "/" && location === "/") return true;
+    if (path !== "/" && location.startsWith(path)) return true;
+    return false;
+  };
 
   return (
     <aside className="w-64 bg-white shadow-lg border-r border-gray-200 fixed h-full z-30">
@@ -29,35 +36,77 @@ export default function Sidebar() {
       
       <nav className="mt-6 px-4">
         <div className="space-y-2">
-          <a href="/" className="flex items-center space-x-3 text-primary bg-blue-50 rounded-lg px-4 py-3 transition-all">
+          <Link 
+            href="/" 
+            className={`flex items-center space-x-3 rounded-lg px-4 py-3 transition-all ${
+              isActive("/") 
+                ? "text-primary bg-blue-50" 
+                : "text-gray-600 hover:text-primary hover:bg-blue-50"
+            }`}
+          >
             <i className="fas fa-home text-lg"></i>
             <span className="font-medium">Dashboard</span>
-          </a>
-          <a href="/habits" className="flex items-center space-x-3 text-gray-600 hover:text-primary hover:bg-blue-50 rounded-lg px-4 py-3 transition-all">
+          </Link>
+          <Link 
+            href="/habits" 
+            className={`flex items-center space-x-3 rounded-lg px-4 py-3 transition-all ${
+              isActive("/habits") 
+                ? "text-primary bg-blue-50" 
+                : "text-gray-600 hover:text-primary hover:bg-blue-50"
+            }`}
+          >
             <i className="fas fa-check-circle text-lg"></i>
             <span className="font-medium">Habits</span>
-          </a>
-          <a href="/analytics" className="flex items-center space-x-3 text-gray-600 hover:text-primary hover:bg-blue-50 rounded-lg px-4 py-3 transition-all">
+          </Link>
+          <Link 
+            href="/analytics" 
+            className={`flex items-center space-x-3 rounded-lg px-4 py-3 transition-all ${
+              isActive("/analytics") 
+                ? "text-primary bg-blue-50" 
+                : "text-gray-600 hover:text-primary hover:bg-blue-50"
+            }`}
+          >
             <i className="fas fa-chart-line text-lg"></i>
             <span className="font-medium">Analytics</span>
-          </a>
-          <a href="/biohacks" className="flex items-center space-x-3 text-gray-600 hover:text-primary hover:bg-blue-50 rounded-lg px-4 py-3 transition-all">
+          </Link>
+          <Link 
+            href="/biohacks" 
+            className={`flex items-center space-x-3 rounded-lg px-4 py-3 transition-all ${
+              isActive("/biohacks") 
+                ? "text-primary bg-blue-50" 
+                : "text-gray-600 hover:text-primary hover:bg-blue-50"
+            }`}
+          >
             <i className="fas fa-lightbulb text-lg"></i>
             <span className="font-medium">Biohacks</span>
-          </a>
-          <a href="/wellness" className="flex items-center space-x-3 text-gray-600 hover:text-primary hover:bg-blue-50 rounded-lg px-4 py-3 transition-all">
+          </Link>
+          <Link 
+            href="/wellness" 
+            className={`flex items-center space-x-3 rounded-lg px-4 py-3 transition-all ${
+              isActive("/wellness") 
+                ? "text-primary bg-blue-50" 
+                : "text-gray-600 hover:text-primary hover:bg-blue-50"
+            }`}
+          >
             <i className="fas fa-heart text-lg"></i>
             <span className="font-medium">Wellness</span>
-          </a>
+          </Link>
         </div>
         
         <div className="mt-8 pt-6 border-t border-gray-200">
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Account</h3>
           <div className="space-y-2">
-            <a href="/premium" className="flex items-center space-x-3 text-gray-600 hover:text-primary hover:bg-blue-50 rounded-lg px-4 py-3 transition-all">
+            <Link 
+              href="/premium" 
+              className={`flex items-center space-x-3 rounded-lg px-4 py-3 transition-all ${
+                isActive("/premium") 
+                  ? "text-primary bg-blue-50" 
+                  : "text-gray-600 hover:text-primary hover:bg-blue-50"
+              }`}
+            >
               <i className="fas fa-crown text-lg"></i>
               <span className="font-medium">Premium</span>
-            </a>
+            </Link>
             <button 
               onClick={() => window.location.href = '/api/logout'} 
               className="w-full flex items-center space-x-3 text-gray-600 hover:text-primary hover:bg-blue-50 rounded-lg px-4 py-3 transition-all text-left"
