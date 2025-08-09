@@ -101,10 +101,11 @@ export default function Profile() {
         return;
       }
       
-      if (!file.type.startsWith('image/')) {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
         toast({
           title: "Invalid file type",
-          description: "Please select an image file.",
+          description: "Please select a standard image file (JPEG, PNG, GIF, WebP). HEIF files are not supported.",
           variant: "destructive",
         });
         return;

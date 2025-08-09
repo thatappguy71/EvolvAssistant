@@ -35,10 +35,11 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (allowedTypes.includes(file.mimetype) || file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed'));
+      cb(new Error('Only standard image files are allowed (JPEG, PNG, GIF, WebP)'));
     }
   }
 });
@@ -73,7 +74,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user.claims.sub;
-      const imageUrl = `/uploads/${req.file.filename}`;
+      const imageUrl = `/uploads/profile-images/${req.file.filename}`;
       
       await storage.updateUserProfileImage(userId, imageUrl);
       
