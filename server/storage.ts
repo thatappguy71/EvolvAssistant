@@ -24,6 +24,8 @@ export interface IStorage {
   // User operations (mandatory for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  updateUserProfileImage(id: string, imageUrl: string): Promise<void>;
+  updateUserProfile(id: string, data: Partial<{ firstName: string; lastName: string }>): Promise<void>;
   
   // Habit operations
   getUserHabits(userId: string): Promise<Habit[]>;
@@ -80,6 +82,26 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return user;
+  }
+
+  async updateUserProfileImage(id: string, imageUrl: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        profileImageUrl: imageUrl,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id));
+  }
+
+  async updateUserProfile(id: string, data: Partial<{ firstName: string; lastName: string }>): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id));
   }
 
   // Habit operations
@@ -141,11 +163,11 @@ export class DatabaseStorage implements IStorage {
       .where(eq(habitCompletions.userId, userId));
 
     if (habitId) {
-      query = query.where(eq(habitCompletions.habitId, habitId));
+      query = query.where(and(eq(habitCompletions.userId, userId), eq(habitCompletions.habitId, habitId)));
     }
 
     if (date) {
-      query = query.where(sql`DATE(${habitCompletions.completedAt}) = ${date}`);
+      query = query.where(and(eq(habitCompletions.userId, userId), sql`DATE(${habitCompletions.completedAt}) = ${date}`));
     }
 
     return await query.orderBy(desc(habitCompletions.completedAt));
@@ -161,7 +183,7 @@ export class DatabaseStorage implements IStorage {
           sql`DATE(${habitCompletions.completedAt}) = ${date}`
         )
       );
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   async getHabitStreak(habitId: number, userId: string): Promise<number> {

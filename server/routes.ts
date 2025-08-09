@@ -1,7 +1,11 @@
 import type { Express } from "express";
+import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import multer from "multer";
+import path from "path";
+import fs from "fs/promises";
 import { 
   insertHabitSchema, 
   insertHabitCompletionSchema, 
@@ -9,9 +13,42 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 
+// Configure multer for file uploads
+const uploadDir = 'uploads/profile-images';
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: async (req, file, cb) => {
+      try {
+        await fs.mkdir(uploadDir, { recursive: true });
+        cb(null, uploadDir);
+      } catch (error) {
+        cb(error as Error, '');
+      }
+    },
+    filename: (req, file, cb) => {
+      const userId = (req as any).user?.claims?.sub;
+      const ext = path.extname(file.originalname);
+      cb(null, `${userId}-${Date.now()}${ext}`);
+    }
+  }),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
+    }
+  }
+});
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
+  
+  // Serve uploaded images
+  app.use('/uploads', express.static('uploads'));
 
   // Initialize biohacks data
   await storage.initializeBiohacks();
@@ -25,6 +62,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Profile picture upload
+  app.post('/api/user/profile-image', isAuthenticated, upload.single('profileImage'), async (req: any, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+
+      const userId = req.user.claims.sub;
+      const imageUrl = `/uploads/${req.file.filename}`;
+      
+      await storage.updateUserProfileImage(userId, imageUrl);
+      
+      res.json({ 
+        message: 'Profile image updated successfully',
+        imageUrl 
+      });
+    } catch (error) {
+      console.error('Error uploading profile image:', error);
+      res.status(500).json({ message: 'Failed to upload profile image' });
+    }
+  });
+
+  // Update user profile
+  app.patch('/api/user/profile', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { firstName, lastName } = req.body;
+      
+      if (!firstName && !lastName) {
+        return res.status(400).json({ message: 'At least one field must be provided' });
+      }
+      
+      const updateData: any = {};
+      if (firstName !== undefined) updateData.firstName = firstName;
+      if (lastName !== undefined) updateData.lastName = lastName;
+      
+      await storage.updateUserProfile(userId, updateData);
+      
+      res.json({ message: 'Profile updated successfully' });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      res.status(500).json({ message: 'Failed to update profile' });
     }
   });
 

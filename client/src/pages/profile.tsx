@@ -6,24 +6,114 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Sidebar from "@/components/Sidebar";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { Upload, Camera } from "lucide-react";
 
 export default function Profile() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [profileData, setProfileData] = useState({
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+  });
+
+  const profilePicMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('profileImage', file);
+      const response = await fetch('/api/user/profile-image', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error('Failed to upload profile image');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Profile picture updated",
+        description: "Your profile picture has been successfully updated.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+    },
+    onError: () => {
+      toast({
+        title: "Upload failed",
+        description: "Failed to update profile picture. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data: { firstName: string; lastName: string }) => {
+      const response = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been successfully updated.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      setIsEditing(false);
+    },
+    onError: () => {
+      toast({
+        title: "Update failed",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
   if (!user) {
     return <div>Loading...</div>;
   }
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: "File too large",
+          description: "Please select an image smaller than 5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid file type",
+          description: "Please select an image file.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      profilePicMutation.mutate(file);
+    }
+  };
+
   const handleSave = () => {
-    setIsEditing(false);
-    toast({
-      title: "Profile updated",
-      description: "Your profile has been successfully updated.",
-    });
+    updateProfileMutation.mutate(profileData);
   };
 
   const getInitials = (firstName?: string | null, lastName?: string | null, email?: string | null) => {
@@ -60,15 +150,38 @@ export default function Profile() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
-                <Avatar className="h-24 w-24 mx-auto mb-4">
-                  <AvatarImage src={user.profileImageUrl || undefined} />
-                  <AvatarFallback className="text-xl">
-                    {getInitials(user.firstName, user.lastName, user.email)}
-                  </AvatarFallback>
-                </Avatar>
-                <Button variant="outline" size="sm">
-                  Change Picture
+                <div className="relative inline-block">
+                  <Avatar className="h-24 w-24 mx-auto mb-4">
+                    <AvatarImage src={user.profileImageUrl || undefined} />
+                    <AvatarFallback className="text-xl">
+                      {getInitials(user.firstName, user.lastName, user.email)}
+                    </AvatarFallback>
+                  </Avatar>
+                  {profilePicMutation.isPending && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                      <Upload className="h-6 w-6 text-white animate-spin" />
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={profilePicMutation.isPending}
+                >
+                  <Camera className="h-4 w-4 mr-2" />
+                  {profilePicMutation.isPending ? "Uploading..." : "Change Picture"}
                 </Button>
+                <p className="text-xs text-gray-500 mt-2">
+                  JPG, PNG or GIF (max 5MB)
+                </p>
               </CardContent>
             </Card>
 
@@ -84,8 +197,9 @@ export default function Profile() {
                 <Button
                   variant={isEditing ? "default" : "outline"}
                   onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+                  disabled={updateProfileMutation.isPending}
                 >
-                  {isEditing ? "Save Changes" : "Edit Profile"}
+                  {updateProfileMutation.isPending ? "Saving..." : (isEditing ? "Save Changes" : "Edit Profile")}
                 </Button>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -94,18 +208,20 @@ export default function Profile() {
                     <Label htmlFor="firstName">First Name</Label>
                     <Input
                       id="firstName"
-                      value={user.firstName || ""}
+                      value={isEditing ? profileData.firstName : (user.firstName || "")}
                       disabled={!isEditing}
                       placeholder="Enter your first name"
+                      onChange={(e) => setProfileData({ ...profileData, firstName: e.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name</Label>
                     <Input
                       id="lastName"
-                      value={user.lastName || ""}
+                      value={isEditing ? profileData.lastName : (user.lastName || "")}
                       disabled={!isEditing}
                       placeholder="Enter your last name"
+                      onChange={(e) => setProfileData({ ...profileData, lastName: e.target.value })}
                     />
                   </div>
                 </div>
