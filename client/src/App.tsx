@@ -11,6 +11,8 @@ import Analytics from "@/pages/analytics";
 import Biohacks from "@/pages/biohacks";
 import Wellness from "@/pages/wellness";
 import Premium from "@/pages/premium";
+import Profile from "@/pages/profile";
+import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -28,6 +30,8 @@ function Router() {
           <Route path="/biohacks" component={Biohacks} />
           <Route path="/wellness" component={Wellness} />
           <Route path="/premium" component={Premium} />
+          <Route path="/profile" component={Profile} />
+          <Route path="/settings" component={Settings} />
         </>
       )}
       <Route component={NotFound} />
