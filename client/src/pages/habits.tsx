@@ -8,10 +8,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import { Check, Clock, MoreHorizontal } from "lucide-react";
+import { Check, Clock, MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Habits() {
   const [isHabitModalOpen, setIsHabitModalOpen] = useState(false);
+  const [editingHabit, setEditingHabit] = useState<any>(null);
   const { isCollapsed } = useSidebar();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -58,6 +65,55 @@ export default function Habits() {
 
   const isHabitCompleted = (habitId: number) => {
     return completions.some((completion: any) => completion.habitId === habitId);
+  };
+
+  const deleteHabitMutation = useMutation({
+    mutationFn: async (habitId: number) => {
+      await apiRequest('DELETE', `/api/habits/${habitId}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/habits'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/habits/completions'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/dashboard/stats'] });
+      toast({
+        title: "Habit deleted",
+        description: "Your habit has been successfully deleted.",
+      });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "Failed to delete habit",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleEditHabit = (habit: any) => {
+    setEditingHabit(habit);
+    setIsHabitModalOpen(true);
+  };
+
+  const handleDeleteHabit = (habitId: number) => {
+    if (confirm('Are you sure you want to delete this habit? This action cannot be undone.')) {
+      deleteHabitMutation.mutate(habitId);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsHabitModalOpen(false);
+    setEditingHabit(null);
   };
 
   return (
@@ -119,9 +175,29 @@ export default function Habits() {
                           <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
                             {habit.category}
                           </span>
-                          <button className="text-gray-400 hover:text-gray-600">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <button className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                              <DropdownMenuItem
+                                onClick={() => handleEditHabit(habit)}
+                                className="cursor-pointer"
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit habit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleDeleteHabit(habit.id)}
+                                className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete habit
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </CardTitle>
                     </CardHeader>
@@ -169,7 +245,8 @@ export default function Habits() {
 
       <HabitModal 
         isOpen={isHabitModalOpen} 
-        onClose={() => setIsHabitModalOpen(false)} 
+        onClose={handleCloseModal}
+        habit={editingHabit}
       />
     </div>
   );
