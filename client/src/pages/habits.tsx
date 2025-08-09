@@ -64,7 +64,7 @@ export default function Habits() {
   });
 
   const isHabitCompleted = (habitId: number) => {
-    return completions.some((completion: any) => completion.habitId === habitId);
+    return (completions as any[]).some((completion: any) => completion.habitId === habitId);
   };
 
   const deleteHabitMutation = useMutation({
@@ -164,7 +164,7 @@ export default function Habits() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {habits.map((habit: any) => {
+              {(habits as any[]).map((habit: any) => {
                 const isCompleted = isHabitCompleted(habit.id);
                 return (
                   <Card key={habit.id} className="hover:shadow-md transition-shadow">
@@ -246,7 +246,6 @@ export default function Habits() {
       <HabitModal 
         isOpen={isHabitModalOpen} 
         onClose={handleCloseModal}
-        habit={editingHabit}
       />
     </div>
   );
