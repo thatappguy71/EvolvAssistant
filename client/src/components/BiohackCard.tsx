@@ -1,0 +1,96 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { isUnauthorizedError } from "@/lib/authUtils";
+
+interface Biohack {
+  id: number;
+  name: string;
+  description: string;
+  timeRequired: string;
+  difficulty: string;
+  imageUrl?: string;
+  isBookmarked?: boolean;
+}
+
+interface BiohackCardProps {
+  biohack: Biohack;
+}
+
+export default function BiohackCard({ biohack }: BiohackCardProps) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const bookmarkMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest('POST', `/api/biohacks/${biohack.id}/bookmark`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/biohacks'] });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "Failed to update bookmark",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty.toLowerCase()) {
+      case 'beginner':
+        return 'bg-green-100 text-green-800';
+      case 'intermediate':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'advanced':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+      <img 
+        src={biohack.imageUrl || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"} 
+        alt={biohack.name}
+        className="w-full h-32 object-cover"
+      />
+      <div className="p-4">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-semibold text-gray-900">{biohack.name}</h3>
+          <button 
+            className={`transition-colors ${
+              biohack.isBookmarked 
+                ? 'text-primary' 
+                : 'text-gray-400 hover:text-primary'
+            }`}
+            onClick={() => bookmarkMutation.mutate()}
+            disabled={bookmarkMutation.isPending}
+          >
+            <i className={`${biohack.isBookmarked ? 'fas' : 'far'} fa-bookmark`}></i>
+          </button>
+        </div>
+        <p className="text-sm text-gray-600 mb-3">{biohack.description}</p>
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <span>{biohack.timeRequired}</span>
+          <span className={`px-2 py-1 rounded-full ${getDifficultyColor(biohack.difficulty)}`}>
+            {biohack.difficulty}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
