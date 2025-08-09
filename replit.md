@@ -6,6 +6,21 @@ Evolv is a comprehensive personal wellness and habit tracking application design
 
 The platform enables users to build lasting habits with streak tracking, monitor key wellness indicators (energy, focus, mood, productivity, sleep quality), and discover scientifically-backed techniques for health optimization. Users can track their progress through detailed analytics and charts, bookmark favorite biohacks, and access premium features for enhanced functionality.
 
+## Recent Updates (August 2025)
+
+### Responsive Sidebar Implementation
+- **Fully responsive collapsible sidebar** with smooth transitions and dynamic content width adjustment
+- **Mobile-first design** with hamburger menu, overlay, and proper touch interactions
+- **Desktop functionality** with toggle button and icon-only collapsed state with tooltips
+- **Consistent cross-page behavior** - all pages (Dashboard, Habits, Analytics, Biohacks, Wellness, Premium, Profile, Settings) respond to sidebar state changes
+- **Dark mode compatibility** throughout all responsive states
+
+### Profile Management Fixes
+- **Profile picture upload system** with proper file path handling and validation
+- **Image format validation** supporting JPEG, PNG, GIF, WebP with clear error messages for unsupported formats (HEIF)
+- **Database URL correction** ensuring uploaded images display correctly
+- **File size limits** (5MB) and proper error handling for upload failures
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -18,13 +33,15 @@ The client uses React with TypeScript in a Single Page Application (SPA) archite
 Key frontend design decisions:
 - Component-based architecture with reusable UI components
 - Custom hooks for authentication and API interactions
-- Responsive design with mobile-first approach
+- Responsive design with mobile-first approach and collapsible sidebar functionality
 - Chart.js integration for data visualization and analytics
+- Shared sidebar context provider for consistent state management across all pages
+- Dynamic content width adjustment based on sidebar state (64px collapsed, 256px expanded)
 
 ### Backend Architecture
 The server follows an Express.js REST API architecture with TypeScript. The application uses a modular structure separating concerns into routes, storage, authentication, and database layers. The storage layer provides an abstraction over database operations, making it easy to maintain and test.
 
-API design follows RESTful conventions with proper HTTP status codes and JSON responses. Error handling is centralized with custom middleware for consistent error responses.
+API design follows RESTful conventions with proper HTTP status codes and JSON responses. Error handling is centralized with custom middleware for consistent error responses. File upload handling is managed through Multer with proper validation, size limits, and organized storage in `/uploads/profile-images/` directory.
 
 ### Database Design
 The application uses PostgreSQL with Drizzle ORM for type-safe database operations. The schema includes core entities for users, habits, habit completions, daily metrics, biohacks, and user bookmarks. The database design supports:
