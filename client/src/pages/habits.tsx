@@ -8,12 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import { Check, Clock, MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { Check, Clock, Edit, Trash2, ArrowRight } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Habits() {
   const [isHabitModalOpen, setIsHabitModalOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<any>(null);
-  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+  const [selectedHabit, setSelectedHabit] = useState<any>(null);
+  const [isHabitDetailOpen, setIsHabitDetailOpen] = useState(false);
   const { isCollapsed } = useSidebar();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -111,6 +113,16 @@ export default function Habits() {
     setEditingHabit(null);
   };
 
+  const handleHabitClick = (habit: any) => {
+    setSelectedHabit(habit);
+    setIsHabitDetailOpen(true);
+  };
+
+  const handleCloseHabitDetail = () => {
+    setIsHabitDetailOpen(false);
+    setSelectedHabit(null);
+  };
+
   return (
     <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 font-sans">
       <Sidebar />
@@ -162,7 +174,11 @@ export default function Habits() {
               {(habits as any[]).map((habit: any) => {
                 const isCompleted = isHabitCompleted(habit.id);
                 return (
-                  <Card key={habit.id} className="hover:shadow-md transition-shadow">
+                  <Card 
+                    key={habit.id} 
+                    className="hover:shadow-md transition-all cursor-pointer hover:scale-[1.02] border-l-4 border-l-primary/20 hover:border-l-primary"
+                    onClick={() => handleHabitClick(habit)}
+                  >
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
                         <span className={isCompleted ? 'line-through text-gray-500' : ''}>{habit.name}</span>
@@ -170,57 +186,7 @@ export default function Habits() {
                           <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
                             {habit.category}
                           </span>
-                          <div className="relative">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenDropdownId(openDropdownId === habit.id ? null : habit.id);
-                              }}
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                            
-                            {openDropdownId === habit.id && (
-                              <>
-                                {/* Backdrop to close dropdown */}
-                                <div 
-                                  className="fixed inset-0 z-10"
-                                  onClick={() => setOpenDropdownId(null)}
-                                />
-                                
-                                {/* Dropdown menu */}
-                                <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20">
-                                  <div className="py-1">
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setOpenDropdownId(null);
-                                        handleEditHabit(habit);
-                                      }}
-                                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                                    >
-                                      <Edit className="h-4 w-4 mr-2" />
-                                      Edit habit
-                                    </button>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setOpenDropdownId(null);
-                                        handleDeleteHabit(habit.id);
-                                      }}
-                                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                                    >
-                                      <Trash2 className="h-4 w-4 mr-2" />
-                                      Delete habit
-                                    </button>
-                                  </div>
-                                </div>
-                              </>
-                            )}
-                          </div>
+                          <ArrowRight className="h-4 w-4 text-gray-400" />
                         </div>
                       </CardTitle>
                     </CardHeader>
@@ -243,7 +209,7 @@ export default function Habits() {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-500 dark:text-gray-400">
-                          {isCompleted ? 'Completed today' : 'Mark as complete'}
+                          {isCompleted ? 'Completed today' : 'Click to view details'}
                         </span>
                         <button
                           className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
@@ -251,7 +217,10 @@ export default function Habits() {
                               ? 'border-green-500 bg-green-500 text-white'
                               : 'border-gray-300 dark:border-gray-600 hover:border-green-500 dark:hover:border-green-400'
                           }`}
-                          onClick={() => toggleHabitMutation.mutate({ habitId: habit.id, isCompleted })}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleHabitMutation.mutate({ habitId: habit.id, isCompleted });
+                          }}
                           disabled={toggleHabitMutation.isPending}
                         >
                           {isCompleted && <Check className="h-4 w-4" />}
@@ -270,6 +239,105 @@ export default function Habits() {
         isOpen={isHabitModalOpen} 
         onClose={handleCloseModal}
       />
+
+      {/* Habit Detail Modal */}
+      <Dialog open={isHabitDetailOpen} onOpenChange={setIsHabitDetailOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>{selectedHabit?.name}</span>
+              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                {selectedHabit?.category}
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedHabit && (
+            <div className="space-y-6">
+              {/* Habit Info */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Description</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                    {selectedHabit.description || 'No description provided'}
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">Time Required</h4>
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                      <Clock className="h-4 w-4 mr-1" />
+                      {selectedHabit.timeRequired}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">Difficulty</h4>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      selectedHabit.difficulty === 'Easy' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
+                      selectedHabit.difficulty === 'Medium' ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200' :
+                      'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+                    }`}>
+                      {selectedHabit.difficulty}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Completion Status */}
+              <div className="border-t pt-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {isHabitCompleted(selectedHabit.id) ? 'Completed today' : 'Mark as complete'}
+                  </span>
+                  <button
+                    className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
+                      isHabitCompleted(selectedHabit.id)
+                        ? 'border-green-500 bg-green-500 text-white'
+                        : 'border-gray-300 dark:border-gray-600 hover:border-green-500 dark:hover:border-green-400'
+                    }`}
+                    onClick={() => {
+                      const isCompleted = isHabitCompleted(selectedHabit.id);
+                      toggleHabitMutation.mutate({ habitId: selectedHabit.id, isCompleted });
+                    }}
+                    disabled={toggleHabitMutation.isPending}
+                  >
+                    {isHabitCompleted(selectedHabit.id) && <Check className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-3 pt-4 border-t">
+                <Button
+                  onClick={() => {
+                    handleCloseHabitDetail();
+                    handleEditHabit(selectedHabit);
+                  }}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Habit
+                </Button>
+                
+                <Button
+                  onClick={() => {
+                    handleCloseHabitDetail();
+                    handleDeleteHabit(selectedHabit.id);
+                  }}
+                  variant="destructive"
+                  className="flex-1"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
