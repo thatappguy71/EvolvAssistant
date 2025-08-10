@@ -1,16 +1,21 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Sidebar, { useSidebar } from "@/components/Sidebar";
 import DashboardHeader from "@/components/DashboardHeader";
 import BiohackCard from "@/components/BiohackCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Clock, Bookmark, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { isUnauthorizedError } from "@/lib/authUtils";
 
 export default function Biohacks() {
   const [selectedBiohack, setSelectedBiohack] = useState<any>(null);
   const [isBiohackDetailOpen, setIsBiohackDetailOpen] = useState(false);
   const { isCollapsed } = useSidebar();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   const { data: biohacks = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/biohacks'],
   });
@@ -24,6 +29,70 @@ export default function Biohacks() {
     setIsBiohackDetailOpen(false);
     setSelectedBiohack(null);
   };
+
+  const bookmarkMutation = useMutation({
+    mutationFn: async (biohackId: number) => {
+      const response = await apiRequest('POST', `/api/biohacks/${biohackId}/bookmark`, {});
+      return response;
+    },
+    onMutate: async (biohackId: number) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/api/biohacks'] });
+
+      // Snapshot the previous value
+      const previousBiohacks = queryClient.getQueryData(['/api/biohacks']);
+
+      // Optimistically update the biohacks list
+      queryClient.setQueryData(['/api/biohacks'], (old: any[]) => {
+        if (!old) return old;
+        return old.map((b: any) => 
+          b.id === biohackId 
+            ? { ...b, isBookmarked: !b.isBookmarked }
+            : b
+        );
+      });
+
+      // Update the selected biohack in the modal
+      if (selectedBiohack?.id === biohackId) {
+        setSelectedBiohack((prev: any) => ({
+          ...prev,
+          isBookmarked: !prev.isBookmarked
+        }));
+      }
+
+      return { previousBiohacks, previousSelectedBiohack: selectedBiohack };
+    },
+    onError: (error, biohackId, context) => {
+      // Rollback to the previous value
+      if (context?.previousBiohacks) {
+        queryClient.setQueryData(['/api/biohacks'], context.previousBiohacks);
+      }
+      if (context?.previousSelectedBiohack) {
+        setSelectedBiohack(context.previousSelectedBiohack);
+      }
+
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "Failed to update bookmark",
+        variant: "destructive",
+      });
+    },
+    onSettled: () => {
+      // Always refetch after error or success
+      queryClient.invalidateQueries({ queryKey: ['/api/biohacks'] });
+    },
+  });
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
@@ -160,13 +229,15 @@ export default function Biohacks() {
                 
                 <Button
                   onClick={() => {
-                    // Add bookmark functionality here if needed
-                    handleCloseBiohackDetail();
+                    if (selectedBiohack?.id) {
+                      bookmarkMutation.mutate(selectedBiohack.id);
+                    }
                   }}
                   variant="default"
-                  className="flex-1"
+                  className={`flex-1 ${selectedBiohack.isBookmarked ? 'bg-primary' : ''}`}
+                  disabled={bookmarkMutation.isPending}
                 >
-                  <Bookmark className="h-4 w-4 mr-2" />
+                  <Bookmark className={`h-4 w-4 mr-2 ${selectedBiohack.isBookmarked ? 'fill-current' : ''}`} />
                   {selectedBiohack.isBookmarked ? 'Remove Bookmark' : 'Bookmark This'}
                 </Button>
               </div>
