@@ -77,7 +77,7 @@ export default function AIRecommendations() {
   });
 
   const generateFreshMutation = useMutation({
-    mutationFn: () => apiRequest('/api/recommendations/generate', 'POST'),
+    mutationFn: () => apiRequest('POST', '/api/recommendations/generate'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/recommendations'] });
       toast({
@@ -108,7 +108,7 @@ export default function AIRecommendations() {
 
   const bookmarkMutation = useMutation({
     mutationFn: ({ id }: { id: number; isBookmarked: boolean }) =>
-      apiRequest(`/api/recommendations/${id}/bookmark`, 'POST'),
+      apiRequest('POST', `/api/recommendations/${id}/bookmark`),
     onMutate: async ({ id, isBookmarked }) => {
       await queryClient.cancelQueries({ queryKey: ['/api/recommendations'] });
       const previousRecommendations = queryClient.getQueryData(['/api/recommendations']);
@@ -146,7 +146,7 @@ export default function AIRecommendations() {
 
   const markAsReadMutation = useMutation({
     mutationFn: (id: number) => 
-      apiRequest(`/api/recommendations/${id}/read`, 'POST'),
+      apiRequest('POST', `/api/recommendations/${id}/read`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/recommendations'] });
     }
