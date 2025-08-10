@@ -81,17 +81,17 @@ export default function Premium() {
           
           <div className="p-4 md:p-8 pt-20 md:pt-8">
             <div className="max-w-2xl mx-auto text-center">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-8">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg p-8">
                 <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">You're already Premium!</h1>
-                <p className="text-lg text-gray-600 mb-6">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">You're already Premium!</h1>
+                <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
                   Thank you for being an Evolv Premium member. You have access to all our premium features.
                 </p>
                 <div className="grid grid-cols-2 gap-4 text-left">
                   {premiumFeatures.map((feature, index) => (
                     <div key={index} className="flex items-center">
                       <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                      <span className="text-sm">{feature}</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -112,19 +112,19 @@ export default function Premium() {
         
         <div className="p-4 md:p-8 pt-20 md:pt-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Evolv Premium</h1>
-            <p className="text-xl text-gray-600">Unlock the full potential of your wellness journey</p>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Evolv Premium</h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300">Unlock the full potential of your wellness journey</p>
           </div>
 
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
               {/* Monthly Plan */}
-              <Card className="border-2 border-gray-200">
+              <Card className="border-2 border-gray-200 dark:border-gray-700">
                 <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">Evolv Pro Monthly</CardTitle>
+                  <CardTitle className="text-2xl text-gray-900 dark:text-white">Evolv Pro Monthly</CardTitle>
                   <div className="text-4xl font-bold text-primary mt-4">$9.99</div>
-                  <p className="text-gray-600">per month</p>
-                  <p className="text-sm text-gray-500 mt-2">Perfect for serious biohackers</p>
+                  <p className="text-gray-600 dark:text-gray-300">per month</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Perfect for serious biohackers</p>
                 </CardHeader>
                 <CardContent>
                   <Button 
@@ -137,7 +137,7 @@ export default function Premium() {
                   </Button>
                   <ul className="space-y-3">
                     {premiumFeatures.map((feature, index) => (
-                      <li key={index} className="flex items-center text-sm">
+                      <li key={index} className="flex items-center text-sm text-gray-700 dark:text-gray-300">
                         <i className="fas fa-check text-secondary mr-3"></i>
                         {feature}
                       </li>
@@ -147,16 +147,16 @@ export default function Premium() {
               </Card>
 
               {/* Yearly Plan */}
-              <Card className="border-2 border-primary relative">
+              <Card className="border-2 border-primary dark:border-primary relative">
                 <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary">
                   Most Popular
                 </Badge>
                 <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">Evolv Pro Yearly</CardTitle>
+                  <CardTitle className="text-2xl text-gray-900 dark:text-white">Evolv Pro Yearly</CardTitle>
                   <div className="text-4xl font-bold text-primary mt-4">$79.99</div>
-                  <p className="text-gray-600">per year</p>
+                  <p className="text-gray-600 dark:text-gray-300">per year</p>
                   <div className="flex items-center justify-center mt-2">
-                    <p className="text-sm text-gray-500 mr-2">Best value for committed optimizers</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mr-2">Best value for committed optimizers</p>
                     <Badge variant="secondary" className="bg-secondary/10 text-secondary">
                       Save 33%
                     </Badge>
@@ -173,7 +173,7 @@ export default function Premium() {
                   </Button>
                   <ul className="space-y-3">
                     {premiumFeatures.map((feature, index) => (
-                      <li key={index} className="flex items-center text-sm">
+                      <li key={index} className="flex items-center text-sm text-gray-700 dark:text-gray-300">
                         <i className="fas fa-check text-secondary mr-3"></i>
                         {feature}
                       </li>
@@ -186,7 +186,7 @@ export default function Premium() {
             {/* Feature Comparison */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-center">Why Choose Premium?</CardTitle>
+                <CardTitle className="text-center text-gray-900 dark:text-white">Why Choose Premium?</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -194,22 +194,22 @@ export default function Premium() {
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                       <i className="fas fa-brain text-primary text-2xl"></i>
                     </div>
-                    <h3 className="font-semibold mb-2">AI-Powered Insights</h3>
-                    <p className="text-sm text-gray-600">Get personalized recommendations based on your habits and wellness data</p>
+                    <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">AI-Powered Insights</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Get personalized recommendations based on your habits and wellness data</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                       <i className="fas fa-infinity text-secondary text-2xl"></i>
                     </div>
-                    <h3 className="font-semibold mb-2">Unlimited Everything</h3>
-                    <p className="text-sm text-gray-600">No limits on habits, biohacks, or data storage</p>
+                    <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Unlimited Everything</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">No limits on habits, biohacks, or data storage</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
                       <i className="fas fa-chart-line text-accent text-2xl"></i>
                     </div>
-                    <h3 className="font-semibold mb-2">Advanced Analytics</h3>
-                    <p className="text-sm text-gray-600">Deep insights with 90-day trends and predictive analysis</p>
+                    <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Advanced Analytics</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Deep insights with 90-day trends and predictive analysis</p>
                   </div>
                 </div>
               </CardContent>
