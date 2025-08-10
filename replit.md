@@ -89,6 +89,14 @@ The platform enables users to build lasting habits with streak tracking, monitor
 
 Preferred communication style: Simple, everyday language.
 
+## Competitive Strategy (August 2025)
+
+### Target: Surpass Ultiself as Premium Wellness App
+- **Focus**: Superior freemium model with transparent pricing
+- **Key differentiator**: Trust-first approach vs Ultiself's billing issues
+- **Pricing strategy**: $4.99/month premium vs Ultiself's hidden costs
+- **Free tier expansion**: Up to 15 habits vs Ultiself's severe limitations
+
 ## System Architecture
 
 ### Frontend Architecture
