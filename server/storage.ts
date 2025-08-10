@@ -175,20 +175,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getHabitCompletions(userId: string, habitId?: number, date?: string): Promise<HabitCompletion[]> {
-    let query = db
-      .select()
-      .from(habitCompletions)
-      .where(eq(habitCompletions.userId, userId));
+    const conditions = [eq(habitCompletions.userId, userId)];
 
     if (habitId) {
-      query = query.where(and(eq(habitCompletions.userId, userId), eq(habitCompletions.habitId, habitId)));
+      conditions.push(eq(habitCompletions.habitId, habitId));
     }
 
     if (date) {
-      query = query.where(and(eq(habitCompletions.userId, userId), sql`DATE(${habitCompletions.completedAt}) = ${date}`));
+      conditions.push(sql`DATE(${habitCompletions.completedAt}) = ${date}`);
     }
 
-    return await query.orderBy(desc(habitCompletions.completedAt));
+    return await db
+      .select()
+      .from(habitCompletions)
+      .where(and(...conditions))
+      .orderBy(desc(habitCompletions.completedAt));
   }
 
   async deleteHabitCompletion(habitId: number, userId: string, date: string): Promise<boolean> {
