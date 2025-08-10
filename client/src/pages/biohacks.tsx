@@ -373,12 +373,8 @@ export default function Biohacks() {
       loadVoices();
       window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
       
-      // Test ResponsiveVoice availability
-      if ((window as any).responsiveVoice) {
-        console.log('ResponsiveVoice is available');
-      } else {
-        console.log('ResponsiveVoice not available, will use Web Speech API');
-      }
+      // Test voice service
+      console.log('Voice service initialized, will use Web Speech API');
       
       return () => {
         window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);

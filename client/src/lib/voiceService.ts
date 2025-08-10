@@ -30,45 +30,11 @@ export class VoiceService {
 
     console.log('VoiceService.speak called with:', { text, rate, volume, pitch });
 
-    // Try ResponsiveVoice first (most consistent)
-    if (await this.tryResponsiveVoice(text, { rate, volume, pitch })) {
-      return;
-    }
-
-    // Fallback to enhanced Web Speech API
-    console.log('Falling back to Web Speech API');
+    // Use enhanced Web Speech API with female voice selection
     return this.useWebSpeechAPI(text, { rate, volume, pitch });
   }
 
-  private async tryResponsiveVoice(text: string, options: VoiceOptions): Promise<boolean> {
-    try {
-      if (typeof window !== 'undefined' && (window as any).responsiveVoice) {
-        // Check if ResponsiveVoice is ready
-        if (!(window as any).responsiveVoice.voiceSupport()) {
-          console.log('ResponsiveVoice not supported in this browser');
-          return false;
-        }
 
-        const voiceOptions = {
-          rate: options.rate,
-          pitch: options.pitch,
-          volume: options.volume,
-          onend: () => console.log('ResponsiveVoice playback complete'),
-          onerror: (error: any) => console.log('ResponsiveVoice error:', error)
-        };
-
-        // Use the most natural female voice available
-        (window as any).responsiveVoice.speak(text, "UK English Female", voiceOptions);
-        console.log('Using ResponsiveVoice UK English Female');
-        return true;
-      } else {
-        console.log('ResponsiveVoice not loaded');
-      }
-    } catch (error) {
-      console.log('ResponsiveVoice error:', error);
-    }
-    return false;
-  }
 
   private useWebSpeechAPI(text: string, options: VoiceOptions): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -92,9 +58,14 @@ export class VoiceService {
         
         if (femaleVoice) {
           utterance.voice = femaleVoice;
-          console.log('Selected female voice:', femaleVoice.name);
+          console.log('Selected voice:', femaleVoice.name);
+          // Adjust pitch based on voice type
+          if (femaleVoice.name.toLowerCase().includes('male') || 
+              ['david', 'alex', 'daniel'].some(male => femaleVoice.name.toLowerCase().includes(male))) {
+            utterance.pitch = 1.6; // High pitch for male voices to sound feminine
+          }
         } else {
-          console.log('No female voice found, using default with high pitch');
+          console.log('No suitable voice found, using default with high pitch');
           utterance.pitch = 1.6; // Extra high pitch as fallback
         }
 
@@ -131,45 +102,58 @@ export class VoiceService {
   }
 
   private selectBestFemaleVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
+    console.log('Selecting from voices:', voices.map(v => ({ name: v.name, lang: v.lang })));
+
     // Priority list of female voices (most natural first)
-    const preferredVoices = [
-      'Microsoft Zira', 'Samantha', 'Karen', 'Serena', 'Victoria',
-      'Allison', 'Ava', 'Susan', 'Joanna', 'Aria', 'Emma', 'Olivia'
+    const preferredFemaleVoices = [
+      'Microsoft Zira', 'Google UK English Female', 'Samantha', 'Karen', 'Serena', 'Victoria',
+      'Allison', 'Ava', 'Susan', 'Joanna', 'Aria', 'Emma', 'Olivia', 'Kimberly', 'Salli'
     ];
 
-    // Try to find preferred voices
-    for (const voiceName of preferredVoices) {
+    // Try to find preferred voices first
+    for (const voiceName of preferredFemaleVoices) {
       const voice = voices.find(v => 
         v.name.toLowerCase().includes(voiceName.toLowerCase())
       );
-      if (voice) return voice;
-    }
-
-    // Fallback: find any female-labeled voice
-    const femaleVoice = voices.find(v => 
-      v.name.toLowerCase().includes('female') ||
-      v.name.toLowerCase().includes('woman')
-    );
-    if (femaleVoice) return femaleVoice;
-
-    // Last resort: find non-male English voice
-    const maleIdentifiers = ['male', 'david', 'alex', 'daniel', 'mark', 'tom', 'john'];
-    return voices.find(v => 
-      v.lang.startsWith('en') &&
-      !maleIdentifiers.some(male => v.name.toLowerCase().includes(male))
-    ) || null;
-  }
-
-  public stop(): void {
-    // Stop ResponsiveVoice
-    if (typeof window !== 'undefined' && (window as any).responsiveVoice) {
-      try {
-        (window as any).responsiveVoice.cancel();
-      } catch (error) {
-        console.log('Error stopping ResponsiveVoice:', error);
+      if (voice) {
+        console.log('Found preferred female voice:', voice.name);
+        return voice;
       }
     }
 
+    // Look for any voice explicitly labeled as female
+    const explicitFemaleVoice = voices.find(v => 
+      v.name.toLowerCase().includes('female') ||
+      v.name.toLowerCase().includes('woman')
+    );
+    if (explicitFemaleVoice) {
+      console.log('Found explicit female voice:', explicitFemaleVoice.name);
+      return explicitFemaleVoice;
+    }
+
+    // Filter out known male voices and take an English voice
+    const maleIdentifiers = ['male', 'david', 'alex', 'daniel', 'mark', 'tom', 'john', 'microsoft david'];
+    const nonMaleVoices = voices.filter(v => 
+      v.lang.startsWith('en') &&
+      !maleIdentifiers.some(male => v.name.toLowerCase().includes(male.toLowerCase()))
+    );
+
+    if (nonMaleVoices.length > 0) {
+      // Prefer voices that sound more feminine (usually index 1 or 2)
+      const selectedVoice = nonMaleVoices[Math.min(1, nonMaleVoices.length - 1)] || nonMaleVoices[0];
+      console.log('Found non-male voice:', selectedVoice.name);
+      return selectedVoice;
+    }
+
+    // Last resort: return any English voice
+    const englishVoice = voices.find(v => v.lang.startsWith('en'));
+    if (englishVoice) {
+      console.log('Using fallback English voice:', englishVoice.name);
+    }
+    return englishVoice || null;
+  }
+
+  public stop(): void {
     // Stop Web Speech API
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
