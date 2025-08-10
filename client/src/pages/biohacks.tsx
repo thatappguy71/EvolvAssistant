@@ -51,79 +51,82 @@ export default function Biohacks() {
     stopVoiceGuidance();
   };
 
-  // Voice guidance functionality
+  // Voice guidance functionality with robust female voice selection
   const speakWithFemaleVoice = (text: string, options: { rate?: number; pitch?: number; volume?: number } = {}) => {
     if ('speechSynthesis' in window) {
       // Stop any current speech
       window.speechSynthesis.cancel();
       
-      const utterance = new SpeechSynthesisUtterance(text);
-      
-      // Configure voice settings for natural, calming female voice
-      utterance.rate = options.rate || 0.75; // Slower, more natural pace
-      utterance.pitch = options.pitch || 1.0; // Natural pitch for human-like tone
-      utterance.volume = options.volume || 0.8; // Clear but gentle volume
-      
-      // Enhanced female voice selection for more natural sound
-      const voices = window.speechSynthesis.getVoices();
-      
-      // Debug: log available voices to console
-      console.log('Available voices:', voices.map(v => ({ name: v.name, lang: v.lang })));
-      
-      let selectedVoice = null;
-      
-      // Strategy 1: Look for explicitly female voices
-      selectedVoice = voices.find(voice => 
-        voice.name.toLowerCase().includes('female') ||
-        voice.name.toLowerCase().includes('woman')
-      );
-      
-      // Strategy 2: Look for common female names (case insensitive)
-      if (!selectedVoice) {
-        const femaleNames = [
+      const speakWithVoice = () => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Configure voice settings for natural, calming female voice
+        utterance.rate = options.rate || 0.75;
+        utterance.pitch = options.pitch || 1.4; // Higher default pitch for feminine sound
+        utterance.volume = options.volume || 0.8;
+        
+        const voices = window.speechSynthesis.getVoices();
+        console.log('Available voices:', voices.map(v => ({ name: v.name, lang: v.lang })));
+        
+        let selectedVoice = null;
+        
+        // Aggressive female voice selection
+        const femaleIndicators = [
+          // Direct female identifiers
+          'female', 'woman', 'girl', 'lady',
+          // Common female names
           'samantha', 'karen', 'serena', 'victoria', 'allison', 'ava', 'susan', 'joanna',
           'kimberly', 'salli', 'kendra', 'ivy', 'amy', 'emma', 'olivia', 'aria', 'zoe',
-          'nicky', 'alice', 'anna', 'bella', 'claire', 'diana', 'ella', 'fiona', 'grace',
-          'helen', 'isabel', 'jane', 'kate', 'laura', 'maria', 'nina', 'penelope', 'ruby'
+          'alice', 'anna', 'bella', 'claire', 'diana', 'ella', 'fiona', 'grace', 'helen',
+          // Platform-specific female voices
+          'microsoft zira', 'google female', 'natural female', 'enhanced female'
         ];
         
-        for (const femaleName of femaleNames) {
+        // Find the best female voice
+        for (const indicator of femaleIndicators) {
           selectedVoice = voices.find(voice => 
-            voice.name.toLowerCase().includes(femaleName)
+            voice.name.toLowerCase().includes(indicator.toLowerCase())
           );
-          if (selectedVoice) break;
+          if (selectedVoice) {
+            console.log(`Found female voice with indicator "${indicator}":`, selectedVoice.name);
+            break;
+          }
         }
-      }
+        
+        // Fallback: Look for non-male voices (exclude explicit male voices)
+        if (!selectedVoice) {
+          const maleIndicators = ['male', 'man', 'boy', 'david', 'alex', 'daniel', 'mark', 'tom', 'john', 'microsoft david'];
+          selectedVoice = voices.find(voice => 
+            voice.lang.startsWith('en') && 
+            !maleIndicators.some(male => voice.name.toLowerCase().includes(male.toLowerCase()))
+          );
+          if (selectedVoice) {
+            console.log('Found non-male voice:', selectedVoice.name);
+            utterance.pitch = 1.5; // Extra high pitch to ensure feminine sound
+          }
+        }
+        
+        // Last resort: Use high pitch to feminize any voice
+        if (!selectedVoice && voices.length > 0) {
+          selectedVoice = voices[Math.min(1, voices.length - 1)]; // Often second voice is female
+          utterance.pitch = 1.6; // Very high pitch
+          console.log('Using fallback voice with high pitch:', selectedVoice?.name || 'default');
+        }
+        
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+        
+        speechSynthesisRef.current = utterance;
+        window.speechSynthesis.speak(utterance);
+      };
       
-      // Strategy 3: For Chrome/Edge, try to find voices that are typically female
-      if (!selectedVoice) {
-        selectedVoice = voices.find(voice => 
-          voice.lang.startsWith('en') && (
-            voice.name.includes('Female') ||
-            voice.name.includes('2') || // Often the second voice is female
-            voice.name.includes('Natural') ||
-            voice.name.includes('Enhanced')
-          )
-        );
-      }
-      
-      // Strategy 4: Use pitch adjustment to make any voice sound more feminine
-      if (!selectedVoice && voices.length > 0) {
-        // Select any English voice and adjust pitch higher
-        selectedVoice = voices.find(voice => voice.lang.startsWith('en')) || voices[0];
-        utterance.pitch = 1.3; // Higher pitch for more feminine sound
-      }
-      
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-        console.log('Selected voice:', selectedVoice.name);
+      // Ensure voices are loaded before selecting
+      if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.addEventListener('voiceschanged', speakWithVoice, { once: true });
       } else {
-        console.log('No voice selected, using default with higher pitch');
-        utterance.pitch = 1.3; // Make default voice more feminine
+        speakWithVoice();
       }
-      
-      speechSynthesisRef.current = utterance;
-      window.speechSynthesis.speak(utterance);
     }
   };
 
