@@ -412,10 +412,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const recommendationId = parseInt(req.params.id);
       
+      console.log(`Toggling bookmark for recommendation ${recommendationId} for user ${userId}`);
       const isBookmarked = await storage.toggleRecommendationBookmark(recommendationId, userId);
       res.json({ isBookmarked });
     } catch (error) {
       console.error("Error toggling recommendation bookmark:", error);
+      // Log the full error for debugging
+      console.error("Full error details:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
       res.status(500).json({ message: "Failed to bookmark recommendation" });
     }
   });
@@ -438,6 +441,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(freshRecommendations);
     } catch (error) {
       console.error("Error generating fresh AI recommendations:", error);
+      // Log the full error for debugging
+      console.error("Full error details:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
       res.status(500).json({ message: "Failed to generate new recommendations" });
     }
   });
