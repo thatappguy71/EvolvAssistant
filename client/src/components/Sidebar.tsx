@@ -221,6 +221,18 @@ export default function Sidebar() {
             <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Account</h3>
             <div className="space-y-2">
               <Link 
+                href="/pricing" 
+                className={`flex items-center space-x-3 rounded-lg px-4 py-3 transition-all ${
+                  isActive("/pricing") 
+                    ? "text-primary bg-blue-50 dark:bg-blue-900/50" 
+                    : "text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                }`}
+                onClick={() => handleNavigation("/pricing")}
+              >
+                <i className="fas fa-tag text-lg"></i>
+                <span className="font-medium">Pricing</span>
+              </Link>
+              <Link 
                 href="/premium" 
                 className={`flex items-center space-x-3 rounded-lg px-4 py-3 transition-all ${
                   isActive("/premium") 

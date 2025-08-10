@@ -3,6 +3,7 @@ import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { getSubscriptionLimits, canCreateHabit } from "./utils/subscriptionLimits";
 import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
@@ -161,9 +162,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user's subscription limits
+  app.get('/api/user/limits', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const habits = await storage.getUserHabits(userId);
+      const limits = getSubscriptionLimits(user);
+      
+      res.json({
+        ...limits,
+        currentHabitCount: habits.length,
+        canCreateHabit: canCreateHabit(user, habits.length)
+      });
+    } catch (error) {
+      console.error("Error fetching user limits:", error);
+      res.status(500).json({ message: "Failed to fetch user limits" });
+    }
+  });
+
   app.post('/api/habits', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Check subscription limits
+      const currentHabits = await storage.getUserHabits(userId);
+      if (!canCreateHabit(user, currentHabits.length)) {
+        const limits = getSubscriptionLimits(user);
+        return res.status(403).json({ 
+          message: `Habit limit reached (${limits.maxHabits}). Upgrade to Premium for unlimited habits.`,
+          upgradeRequired: true,
+          currentCount: currentHabits.length,
+          maxHabits: limits.maxHabits
+        });
+      }
+
       const habitData = insertHabitSchema.parse(req.body);
       const habit = await storage.createHabit(userId, habitData);
       res.status(201).json(habit);

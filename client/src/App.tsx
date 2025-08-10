@@ -17,6 +17,7 @@ import Wellness from "@/pages/wellness";
 import Premium from "@/pages/premium";
 import Profile from "@/pages/profile";
 import Settings from "@/pages/settings";
+import Pricing from "@/pages/pricing";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -46,6 +47,7 @@ function Router() {
           <Route path="/ai-recommendations" component={AIRecommendations} />
           <Route path="/wellness" component={Wellness} />
           <Route path="/premium" component={Premium} />
+          <Route path="/pricing" component={Pricing} />
           <Route path="/profile" component={Profile} />
           <Route path="/settings" component={Settings} />
         </>

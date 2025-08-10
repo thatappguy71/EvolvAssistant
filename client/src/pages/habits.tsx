@@ -3,12 +3,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Sidebar, { useSidebar } from "@/components/Sidebar";
 import DashboardHeader from "@/components/DashboardHeader";
 import HabitModal from "@/components/HabitModal";
+import UpgradePrompt from "@/components/UpgradePrompt";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import { Check, Clock, Edit, Trash2, ArrowRight } from "lucide-react";
+import { Check, Clock, Edit, Trash2, ArrowRight, Crown, Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Habits() {
@@ -26,6 +28,10 @@ export default function Habits() {
 
   const { data: completions = [] } = useQuery({
     queryKey: ['/api/habits/completions'],
+  });
+
+  const { data: userLimits } = useQuery({
+    queryKey: ['/api/user/limits'],
   });
 
   const toggleHabitMutation = useMutation({
@@ -133,17 +139,51 @@ export default function Habits() {
         <div className="p-4 md:p-8 pt-20 md:pt-8">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">My Habits</h1>
-              <p className="text-gray-600 mt-1">Manage and track your daily habits</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Habits</h1>
+              <div className="flex items-center gap-4 mt-1">
+                <p className="text-gray-600 dark:text-gray-400">Manage and track your daily habits</p>
+                {userLimits && (
+                  <Badge variant="outline" className="text-xs">
+                    {userLimits.currentHabitCount}/{userLimits.maxHabits === -1 ? '∞' : userLimits.maxHabits} habits
+                  </Badge>
+                )}
+              </div>
             </div>
             <Button 
-              onClick={() => setIsHabitModalOpen(true)}
+              onClick={() => {
+                if (userLimits && !userLimits.canCreateHabit) {
+                  toast({
+                    title: "Habit limit reached",
+                    description: `You've reached the limit of ${userLimits.maxHabits} habits. Upgrade to Premium for unlimited habits.`,
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                setIsHabitModalOpen(true);
+              }}
               className="bg-primary hover:bg-blue-700"
+              disabled={userLimits && !userLimits.canCreateHabit}
             >
-              <i className="fas fa-plus mr-2"></i>
+              <Plus className="w-4 h-4 mr-2" />
               Add New Habit
             </Button>
           </div>
+
+          {/* Upgrade prompt for users approaching or at limit */}
+          {userLimits && userLimits.maxHabits !== -1 && 
+           (userLimits.currentHabitCount >= userLimits.maxHabits - 2 || !userLimits.canCreateHabit) && (
+            <div className="mb-8">
+              <UpgradePrompt
+                title={userLimits.canCreateHabit ? "Almost at your habit limit" : "Habit limit reached"}
+                description={userLimits.canCreateHabit ? 
+                  "You're close to reaching your free habit limit. Upgrade to Premium for unlimited habits." :
+                  "You've reached your free habit limit. Upgrade to Premium to add unlimited habits."
+                }
+                currentCount={userLimits.currentHabitCount}
+                maxAllowed={userLimits.maxHabits}
+              />
+            </div>
+          )}
 
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -157,15 +197,15 @@ export default function Habits() {
             </div>
           ) : habits.length === 0 ? (
             <div className="text-center py-16">
-              <i className="fas fa-plus-circle text-6xl text-gray-300 mb-6"></i>
-              <h2 className="text-2xl font-semibold text-gray-700 mb-4">No habits yet</h2>
-              <p className="text-gray-500 mb-8">Create your first habit to start your wellness journey!</p>
+              <i className="fas fa-plus-circle text-6xl text-gray-300 dark:text-gray-600 mb-6"></i>
+              <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-4">No habits yet</h2>
+              <p className="text-gray-500 dark:text-gray-400 mb-8">Create your first habit to start your wellness journey!</p>
               <Button 
                 onClick={() => setIsHabitModalOpen(true)}
                 size="lg"
                 className="bg-primary hover:bg-blue-700"
               >
-                <i className="fas fa-plus mr-2"></i>
+                <Plus className="w-4 h-4 mr-2" />
                 Create Your First Habit
               </Button>
             </div>
