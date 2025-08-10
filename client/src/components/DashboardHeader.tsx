@@ -1,40 +1,22 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
+import { useNotifications } from "@/contexts/NotificationContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Bell, Check, X, Settings, Trash2, CheckCheck } from "lucide-react";
 
 export default function DashboardHeader() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "Habit Streak Milestone!",
-      message: "Congratulations! You've completed 7 days in a row.",
-      time: "2 hours ago",
-      type: "achievement",
-      read: false
-    },
-    {
-      id: 2,
-      title: "New Biohack Available",
-      message: "Check out the latest breathing technique for better focus.",
-      time: "1 day ago", 
-      type: "update",
-      read: false
-    },
-    {
-      id: 3,
-      title: "Weekly Report Ready",
-      message: "Your wellness analytics for this week are now available.",
-      time: "2 days ago",
-      type: "report",
-      read: true
-    }
-  ]);
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const { 
+    notifications, 
+    unreadCount, 
+    markAsRead, 
+    markAllAsRead, 
+    deleteNotification 
+  } = useNotifications();
   
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -51,8 +33,6 @@ export default function DashboardHeader() {
 
   const userName = user?.firstName || user?.email?.split('@')[0] || 'there';
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
   const handleNotificationClick = () => {
     setIsNotificationsOpen(true);
   };
@@ -60,28 +40,6 @@ export default function DashboardHeader() {
   const handleViewSettings = () => {
     setIsNotificationsOpen(false);
     setLocation('/settings');
-  };
-
-  const markAsRead = (notificationId: number) => {
-    setNotifications(prev => 
-      prev.map(notification => 
-        notification.id === notificationId 
-          ? { ...notification, read: true }
-          : notification
-      )
-    );
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(notification => ({ ...notification, read: true }))
-    );
-  };
-
-  const deleteNotification = (notificationId: number) => {
-    setNotifications(prev => 
-      prev.filter(notification => notification.id !== notificationId)
-    );
   };
 
   const handleNotificationCardClick = (notification: any) => {
