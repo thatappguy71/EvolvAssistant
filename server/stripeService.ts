@@ -1,12 +1,14 @@
 import Stripe from 'stripe';
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY environment variable is required');
+  console.warn('STRIPE_SECRET_KEY not provided - payment features will be disabled');
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-07-30.basil',
-});
+export const stripe = process.env.STRIPE_SECRET_KEY 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-07-30.basil',
+    })
+  : null;
 
 // Product and price IDs (will be created in Stripe dashboard)
 export const STRIPE_CONFIG = {
@@ -28,6 +30,10 @@ export interface CreateCheckoutSessionOptions {
 }
 
 export async function createCheckoutSession(options: CreateCheckoutSessionOptions) {
+  if (!stripe) {
+    throw new Error('Stripe not configured - please provide STRIPE_SECRET_KEY');
+  }
+  
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -56,6 +62,10 @@ export async function createCheckoutSession(options: CreateCheckoutSessionOption
 }
 
 export async function createCustomerPortalSession(customerId: string, returnUrl: string) {
+  if (!stripe) {
+    throw new Error('Stripe not configured - please provide STRIPE_SECRET_KEY');
+  }
+  
   try {
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
@@ -70,6 +80,10 @@ export async function createCustomerPortalSession(customerId: string, returnUrl:
 }
 
 export async function cancelSubscription(subscriptionId: string, prorated = true) {
+  if (!stripe) {
+    throw new Error('Stripe not configured - please provide STRIPE_SECRET_KEY');
+  }
+  
   try {
     const subscription = await stripe.subscriptions.cancel(subscriptionId, {
       prorate: prorated,
@@ -84,6 +98,10 @@ export async function cancelSubscription(subscriptionId: string, prorated = true
 }
 
 export async function getSubscriptionDetails(subscriptionId: string) {
+  if (!stripe) {
+    throw new Error('Stripe not configured - please provide STRIPE_SECRET_KEY');
+  }
+  
   try {
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
     return subscription;
@@ -94,6 +112,10 @@ export async function getSubscriptionDetails(subscriptionId: string) {
 }
 
 export async function handleWebhook(payload: Buffer, signature: string) {
+  if (!stripe) {
+    throw new Error('Stripe not configured - please provide STRIPE_SECRET_KEY');
+  }
+  
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   
   if (!webhookSecret) {
