@@ -57,15 +57,17 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile menu button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="fixed top-4 left-4 z-50 md:hidden bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
-        onClick={() => setIsCollapsed(!isCollapsed)}
-      >
-        <Menu className="h-5 w-5 text-gray-700 dark:text-gray-200" />
-      </Button>
+      {/* Mobile menu button - only show when sidebar is collapsed */}
+      {isCollapsed && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="fixed top-4 left-4 z-50 md:hidden bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        >
+          <Menu className="h-5 w-5 text-gray-700 dark:text-gray-200" />
+        </Button>
+      )}
 
       {/* Overlay for mobile */}
       {!isCollapsed && (
@@ -81,6 +83,18 @@ export default function Sidebar() {
         
         {/* Header */}
         <div className={`p-6 border-b border-gray-200 dark:border-gray-700 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
+          {/* Close button for mobile */}
+          {!isCollapsed && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden absolute top-4 right-4 text-gray-700 dark:text-gray-200"
+              onClick={() => setIsCollapsed(true)}
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          )}
+          
           <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
             <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
               <i className="fas fa-leaf text-white text-lg"></i>
