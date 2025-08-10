@@ -34,8 +34,6 @@ export class VoiceService {
     return this.useWebSpeechAPI(text, { rate, volume, pitch });
   }
 
-
-
   private useWebSpeechAPI(text: string, options: VoiceOptions): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!('speechSynthesis' in window)) {
