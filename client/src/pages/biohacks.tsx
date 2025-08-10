@@ -361,16 +361,24 @@ export default function Biohacks() {
     };
   }, []);
 
-  // Load voices when component mounts
+  // Load voices and test voice service when component mounts
   useEffect(() => {
     if ('speechSynthesis' in window) {
       // Load voices
       const loadVoices = () => {
-        window.speechSynthesis.getVoices();
+        const voices = window.speechSynthesis.getVoices();
+        console.log('Voices loaded:', voices.length);
       };
       
       loadVoices();
       window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+      
+      // Test ResponsiveVoice availability
+      if ((window as any).responsiveVoice) {
+        console.log('ResponsiveVoice is available');
+      } else {
+        console.log('ResponsiveVoice not available, will use Web Speech API');
+      }
       
       return () => {
         window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);

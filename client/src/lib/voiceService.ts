@@ -28,18 +28,27 @@ export class VoiceService {
     const volume = options.volume || 0.8;
     const pitch = options.pitch || 1.0;
 
+    console.log('VoiceService.speak called with:', { text, rate, volume, pitch });
+
     // Try ResponsiveVoice first (most consistent)
     if (await this.tryResponsiveVoice(text, { rate, volume, pitch })) {
       return;
     }
 
     // Fallback to enhanced Web Speech API
+    console.log('Falling back to Web Speech API');
     return this.useWebSpeechAPI(text, { rate, volume, pitch });
   }
 
   private async tryResponsiveVoice(text: string, options: VoiceOptions): Promise<boolean> {
     try {
       if (typeof window !== 'undefined' && (window as any).responsiveVoice) {
+        // Check if ResponsiveVoice is ready
+        if (!(window as any).responsiveVoice.voiceSupport()) {
+          console.log('ResponsiveVoice not supported in this browser');
+          return false;
+        }
+
         const voiceOptions = {
           rate: options.rate,
           pitch: options.pitch,
@@ -52,9 +61,11 @@ export class VoiceService {
         (window as any).responsiveVoice.speak(text, "UK English Female", voiceOptions);
         console.log('Using ResponsiveVoice UK English Female');
         return true;
+      } else {
+        console.log('ResponsiveVoice not loaded');
       }
     } catch (error) {
-      console.log('ResponsiveVoice not available:', error);
+      console.log('ResponsiveVoice error:', error);
     }
     return false;
   }
@@ -62,39 +73,60 @@ export class VoiceService {
   private useWebSpeechAPI(text: string, options: VoiceOptions): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!('speechSynthesis' in window)) {
+        console.log('Speech synthesis not supported');
         reject(new Error('Speech synthesis not supported'));
         return;
       }
 
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = options.rate || 0.75;
-      utterance.pitch = options.pitch || 1.4; // Higher for feminine sound
-      utterance.volume = options.volume || 0.8;
+      const speakWithVoices = () => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = options.rate || 0.75;
+        utterance.pitch = options.pitch || 1.4; // Higher for feminine sound
+        utterance.volume = options.volume || 0.8;
 
-      // Enhanced female voice selection
+        // Enhanced female voice selection
+        const voices = window.speechSynthesis.getVoices();
+        console.log('Available voices:', voices.length, voices.map(v => v.name));
+        
+        const femaleVoice = this.selectBestFemaleVoice(voices);
+        
+        if (femaleVoice) {
+          utterance.voice = femaleVoice;
+          console.log('Selected female voice:', femaleVoice.name);
+        } else {
+          console.log('No female voice found, using default with high pitch');
+          utterance.pitch = 1.6; // Extra high pitch as fallback
+        }
+
+        utterance.onstart = () => {
+          console.log('Speech started');
+        };
+
+        utterance.onend = () => {
+          console.log('Speech ended');
+          this.currentUtterance = null;
+          resolve();
+        };
+
+        utterance.onerror = (error) => {
+          console.log('Speech error:', error);
+          this.currentUtterance = null;
+          reject(error);
+        };
+
+        this.currentUtterance = utterance;
+        window.speechSynthesis.speak(utterance);
+        console.log('Speech utterance started');
+      };
+
+      // Wait for voices to be loaded if they aren't already
       const voices = window.speechSynthesis.getVoices();
-      const femaleVoice = this.selectBestFemaleVoice(voices);
-      
-      if (femaleVoice) {
-        utterance.voice = femaleVoice;
-        console.log('Selected female voice:', femaleVoice.name);
+      if (voices.length === 0) {
+        console.log('Waiting for voices to load...');
+        window.speechSynthesis.addEventListener('voiceschanged', speakWithVoices, { once: true });
       } else {
-        console.log('No female voice found, using default with high pitch');
-        utterance.pitch = 1.6; // Extra high pitch as fallback
+        speakWithVoices();
       }
-
-      utterance.onend = () => {
-        this.currentUtterance = null;
-        resolve();
-      };
-
-      utterance.onerror = (error) => {
-        this.currentUtterance = null;
-        reject(error);
-      };
-
-      this.currentUtterance = utterance;
-      window.speechSynthesis.speak(utterance);
     });
   }
 
