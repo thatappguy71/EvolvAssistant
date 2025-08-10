@@ -67,45 +67,59 @@ export default function Biohacks() {
       // Enhanced female voice selection for more natural sound
       const voices = window.speechSynthesis.getVoices();
       
-      // Priority order for natural-sounding female voices
-      const preferredVoices = [
-        'Samantha', 'Karen', 'Serena', 'Victoria', 'Allison', 'Ava', 'Susan', 'Joanna',
-        'Kimberly', 'Salli', 'Kendra', 'Ivy', 'Amy', 'Emma', 'Olivia', 'Aria'
-      ];
+      // Debug: log available voices to console
+      console.log('Available voices:', voices.map(v => ({ name: v.name, lang: v.lang })));
       
       let selectedVoice = null;
       
-      // First, try to find preferred natural voices
-      for (const voiceName of preferredVoices) {
-        selectedVoice = voices.find(voice => 
-          voice.name.toLowerCase().includes(voiceName.toLowerCase())
-        );
-        if (selectedVoice) break;
+      // Strategy 1: Look for explicitly female voices
+      selectedVoice = voices.find(voice => 
+        voice.name.toLowerCase().includes('female') ||
+        voice.name.toLowerCase().includes('woman')
+      );
+      
+      // Strategy 2: Look for common female names (case insensitive)
+      if (!selectedVoice) {
+        const femaleNames = [
+          'samantha', 'karen', 'serena', 'victoria', 'allison', 'ava', 'susan', 'joanna',
+          'kimberly', 'salli', 'kendra', 'ivy', 'amy', 'emma', 'olivia', 'aria', 'zoe',
+          'nicky', 'alice', 'anna', 'bella', 'claire', 'diana', 'ella', 'fiona', 'grace',
+          'helen', 'isabel', 'jane', 'kate', 'laura', 'maria', 'nina', 'penelope', 'ruby'
+        ];
+        
+        for (const femaleName of femaleNames) {
+          selectedVoice = voices.find(voice => 
+            voice.name.toLowerCase().includes(femaleName)
+          );
+          if (selectedVoice) break;
+        }
       }
       
-      // Fallback to any female voice
+      // Strategy 3: For Chrome/Edge, try to find voices that are typically female
       if (!selectedVoice) {
         selectedVoice = voices.find(voice => 
-          voice.name.toLowerCase().includes('female') || 
-          voice.name.toLowerCase().includes('woman') ||
-          // Common female voice identifiers
-          voice.name.toLowerCase().includes('aria') ||
-          voice.name.toLowerCase().includes('zoe') ||
-          voice.name.toLowerCase().includes('nicky') ||
-          voice.lang.startsWith('en') && voice.name.toLowerCase().includes('f')
+          voice.lang.startsWith('en') && (
+            voice.name.includes('Female') ||
+            voice.name.includes('2') || // Often the second voice is female
+            voice.name.includes('Natural') ||
+            voice.name.includes('Enhanced')
+          )
         );
       }
       
-      // Further fallback to English voices that typically sound more natural
-      if (!selectedVoice) {
-        selectedVoice = voices.find(voice => 
-          voice.lang.startsWith('en') && 
-          (voice.name.includes('Enhanced') || voice.name.includes('Premium') || voice.name.includes('Neural'))
-        );
+      // Strategy 4: Use pitch adjustment to make any voice sound more feminine
+      if (!selectedVoice && voices.length > 0) {
+        // Select any English voice and adjust pitch higher
+        selectedVoice = voices.find(voice => voice.lang.startsWith('en')) || voices[0];
+        utterance.pitch = 1.3; // Higher pitch for more feminine sound
       }
       
       if (selectedVoice) {
         utterance.voice = selectedVoice;
+        console.log('Selected voice:', selectedVoice.name);
+      } else {
+        console.log('No voice selected, using default with higher pitch');
+        utterance.pitch = 1.3; // Make default voice more feminine
       }
       
       speechSynthesisRef.current = utterance;
