@@ -421,9 +421,13 @@ export default function Biohacks() {
               {/* Biohack Image */}
               <div className="w-full h-48 rounded-lg overflow-hidden">
                 <img 
-                  src={selectedBiohack.imageUrl || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"} 
+                  src={selectedBiohack.imageUrl || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"} 
                   alt={selectedBiohack.name}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.log('Image failed to load:', selectedBiohack.imageUrl);
+                    e.currentTarget.src = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300";
+                  }}
                 />
               </div>
 

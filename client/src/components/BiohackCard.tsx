@@ -96,9 +96,13 @@ export default function BiohackCard({ biohack, onClick }: BiohackCardProps) {
       onClick={() => onClick?.(biohack)}
     >
       <img 
-        src={biohack.imageUrl || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"} 
+        src={biohack.imageUrl || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"} 
         alt={biohack.name}
         className="w-full h-32 object-cover"
+        onError={(e) => {
+          console.log('BiohackCard image failed to load:', biohack.imageUrl);
+          e.currentTarget.src = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300";
+        }}
       />
       <div className="p-4">
         <div className="flex items-center justify-between mb-2">
