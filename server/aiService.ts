@@ -115,7 +115,7 @@ export class AIWellnessService {
     } catch (error) {
       console.error("Error generating AI recommendations:", error);
       console.error("Full error details:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
-      if (error.message?.includes('API key')) {
+      if ((error as any).message?.includes('API key')) {
         console.error("OpenAI API Key issue detected");
         throw new Error("OpenAI API configuration error");
       }

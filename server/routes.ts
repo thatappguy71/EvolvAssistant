@@ -452,7 +452,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Full error details:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
       
       // Check if it's an OpenAI API error
-      if (error.message?.includes('API key') || error.message?.includes('OpenAI')) {
+      if ((error as any).message?.includes('API key') || (error as any).message?.includes('OpenAI')) {
         res.status(500).json({ message: "OpenAI API configuration error. Please check your API key." });
       } else {
         res.status(500).json({ message: "Failed to generate new recommendations" });
