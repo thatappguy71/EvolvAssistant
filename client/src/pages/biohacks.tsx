@@ -299,7 +299,7 @@ export default function Biohacks() {
       <Dialog open={isBiohackDetailOpen} onOpenChange={setIsBiohackDetailOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center justify-between">
+            <DialogTitle className="flex items-center justify-between pr-8">
               <span>{selectedBiohack?.name}</span>
               <span className={`text-xs px-2 py-1 rounded-full ${getDifficultyColor(selectedBiohack?.difficulty || '')}`}>
                 {selectedBiohack?.difficulty}
