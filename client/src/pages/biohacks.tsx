@@ -30,6 +30,7 @@ export default function Biohacks() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   
   const { data: biohacks = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/biohacks'],
@@ -47,22 +48,78 @@ export default function Biohacks() {
     stopTimer();
     stopBreathingExercise();
     stopBinauralBeats();
+    stopVoiceGuidance();
+  };
+
+  // Voice guidance functionality
+  const speakWithFemaleVoice = (text: string, options: { rate?: number; pitch?: number; volume?: number } = {}) => {
+    if ('speechSynthesis' in window) {
+      // Stop any current speech
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Configure voice settings for soothing female voice
+      utterance.rate = options.rate || 0.8; // Slower, more calming pace
+      utterance.pitch = options.pitch || 1.2; // Slightly higher pitch for female voice
+      utterance.volume = options.volume || 0.7; // Moderate volume
+      
+      // Try to find a female voice
+      const voices = window.speechSynthesis.getVoices();
+      const femaleVoice = voices.find(voice => 
+        voice.name.toLowerCase().includes('female') || 
+        voice.name.toLowerCase().includes('woman') ||
+        voice.name.toLowerCase().includes('samantha') ||
+        voice.name.toLowerCase().includes('karen') ||
+        voice.name.toLowerCase().includes('serena') ||
+        voice.gender === 'female'
+      );
+      
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+      }
+      
+      speechSynthesisRef.current = utterance;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const stopVoiceGuidance = () => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
   };
 
   // Timer functionality
   const startTimer = (minutes: number) => {
     setTimerSeconds(minutes * 60);
     setIsTimerRunning(true);
+    
+    // Voice guidance for starting session
+    const sessionType = selectedBiohack?.name || 'session';
+    speakWithFemaleVoice(`Welcome to your ${sessionType}. Find a comfortable position and let's begin your ${minutes} minute practice. Take a deep breath and relax.`);
+    
     timerRef.current = setInterval(() => {
       setTimerSeconds((prev) => {
         if (prev <= 1) {
           setIsTimerRunning(false);
+          speakWithFemaleVoice("Your session is complete. Take a moment to notice how you feel. Well done.");
           toast({
             title: "Timer Complete!",
             description: "Your biohack session is finished.",
           });
           return 0;
         }
+        
+        // Voice reminders at key intervals
+        if (prev === 60) { // 1 minute remaining
+          speakWithFemaleVoice("One minute remaining. Continue to breathe deeply and stay present.");
+        } else if (prev === 300) { // 5 minutes remaining
+          speakWithFemaleVoice("Five minutes remaining. You're doing wonderfully. Stay focused on your practice.");
+        } else if (prev === minutes * 60 / 2) { // Halfway point
+          speakWithFemaleVoice("You're halfway through your session. Keep going, you're doing great.");
+        }
+        
         return prev - 1;
       });
     }, 1000);
@@ -75,21 +132,30 @@ export default function Biohacks() {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
+    stopVoiceGuidance();
   };
 
   // Breathing exercise functionality
   const startBreathingExercise = () => {
     setBreathingCount(0);
     setBreathingPhase('inhale');
-    breathingCycle();
+    
+    // Initial voice guidance
+    const exerciseType = selectedBiohack?.name === "Wim Hof Breathing" ? "Wim Hof breathing" : "box breathing";
+    speakWithFemaleVoice(`Let's begin your ${exerciseType} practice. Find a comfortable seated position. We'll start with a gentle inhale. Follow my guidance.`);
+    
+    // Start after brief pause for setup
+    setTimeout(() => {
+      breathingCycle();
+    }, 4000);
   };
 
   const breathingCycle = () => {
     const phases = [
-      { phase: 'inhale' as const, duration: 4000, message: 'Breathe In' },
-      { phase: 'hold' as const, duration: 4000, message: 'Hold' },
-      { phase: 'exhale' as const, duration: 4000, message: 'Breathe Out' },
-      { phase: 'pause' as const, duration: 4000, message: 'Pause' }
+      { phase: 'inhale' as const, duration: 4000, message: 'Breathe In', voiceText: 'Breathe in slowly and deeply' },
+      { phase: 'hold' as const, duration: 4000, message: 'Hold', voiceText: 'Hold your breath gently' },
+      { phase: 'exhale' as const, duration: 4000, message: 'Breathe Out', voiceText: 'Exhale slowly and completely' },
+      { phase: 'pause' as const, duration: 4000, message: 'Pause', voiceText: 'Rest and pause naturally' }
     ];
 
     let currentPhaseIndex = 0;
@@ -98,10 +164,24 @@ export default function Biohacks() {
       const currentPhase = phases[currentPhaseIndex];
       setBreathingPhase(currentPhase.phase);
       
+      // Provide voice guidance for each phase
+      speakWithFemaleVoice(currentPhase.voiceText, { rate: 0.7, pitch: 1.1 });
+      
       breathingTimerRef.current = setTimeout(() => {
         currentPhaseIndex = (currentPhaseIndex + 1) % phases.length;
         if (currentPhaseIndex === 0) {
-          setBreathingCount(prev => prev + 1);
+          setBreathingCount(prev => {
+            const newCount = prev + 1;
+            // Encouragement every few cycles
+            if (newCount === 3) {
+              speakWithFemaleVoice("Excellent. You're finding your rhythm. Continue breathing with awareness.");
+            } else if (newCount === 6) {
+              speakWithFemaleVoice("Beautiful breathing. Feel your body relaxing with each cycle.");
+            } else if (newCount === 10) {
+              speakWithFemaleVoice("You're doing wonderfully. Notice the calm settling into your body and mind.");
+            }
+            return newCount;
+          });
         }
         runPhase();
       }, currentPhase.duration);
@@ -117,6 +197,7 @@ export default function Biohacks() {
     }
     setBreathingPhase('inhale');
     setBreathingCount(0);
+    stopVoiceGuidance();
   };
 
   // Binaural beats functionality
@@ -135,6 +216,14 @@ export default function Biohacks() {
     }
 
     const { left, right } = frequencies[currentFrequency];
+    
+    // Voice guidance for starting binaural beats
+    const frequencyName = frequencies[currentFrequency].name;
+    const purpose = currentFrequency === 'focus' ? 'enhanced concentration and alertness' : 
+                   currentFrequency === 'relaxation' ? 'deep relaxation and stress relief' :
+                   'restful sleep and recovery';
+    
+    speakWithFemaleVoice(`Starting ${frequencyName} for ${purpose}. Put on your headphones, close your eyes, and allow the frequencies to guide your mind into the desired state. Let yourself relax completely.`);
     
     // Create stereo oscillators
     const leftOscillator = audioContextRef.current.createOscillator();
@@ -180,7 +269,25 @@ export default function Biohacks() {
       stopTimer();
       stopBreathingExercise();
       stopBinauralBeats();
+      stopVoiceGuidance();
     };
+  }, []);
+
+  // Load voices when component mounts
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      // Load voices
+      const loadVoices = () => {
+        window.speechSynthesis.getVoices();
+      };
+      
+      loadVoices();
+      window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+      
+      return () => {
+        window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+      };
+    }
   }, []);
 
   const bookmarkMutation = useMutation({
