@@ -12,6 +12,7 @@ import Dashboard from "@/pages/dashboard";
 import Habits from "@/pages/habits";
 import Analytics from "@/pages/analytics";
 import Biohacks from "@/pages/biohacks";
+import AIRecommendations from "@/pages/ai-recommendations";
 import Wellness from "@/pages/wellness";
 import Premium from "@/pages/premium";
 import Profile from "@/pages/profile";
@@ -42,6 +43,7 @@ function Router() {
           <Route path="/habits" component={Habits} />
           <Route path="/analytics" component={Analytics} />
           <Route path="/biohacks" component={Biohacks} />
+          <Route path="/ai-recommendations" component={AIRecommendations} />
           <Route path="/wellness" component={Wellness} />
           <Route path="/premium" component={Premium} />
           <Route path="/profile" component={Profile} />

@@ -5,6 +5,7 @@ import {
   dailyMetrics,
   biohacks,
   userBiohackBookmarks,
+  aiRecommendations,
   type User,
   type UpsertUser,
   type InsertHabit,
@@ -16,6 +17,8 @@ import {
   type InsertBiohack,
   type Biohack,
   type UserBiohackBookmark,
+  type AIRecommendation,
+  type InsertAIRecommendation,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, sql, count } from "drizzle-orm";
@@ -61,6 +64,13 @@ export interface IStorage {
     wellnessScore: number;
     weeklyProgress: number;
   }>;
+
+  // AI Recommendations operations
+  getAIRecommendations(userId: string): Promise<AIRecommendation[]>;
+  createAIRecommendation(userId: string, recommendation: Omit<InsertAIRecommendation, 'userId'>): Promise<AIRecommendation>;
+  clearAIRecommendations(userId: string): Promise<void>;
+  markRecommendationAsRead(recommendationId: number, userId: string): Promise<void>;
+  toggleRecommendationBookmark(recommendationId: number, userId: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -608,6 +618,75 @@ export class DatabaseStorage implements IStorage {
       wellnessScore: Math.round(wellnessScore * 10) / 10,
       weeklyProgress
     };
+  }
+
+  // AI Recommendations operations
+  async getAIRecommendations(userId: string): Promise<AIRecommendation[]> {
+    return await db
+      .select()
+      .from(aiRecommendations)
+      .where(eq(aiRecommendations.userId, userId))
+      .orderBy(desc(aiRecommendations.createdAt));
+  }
+
+  async createAIRecommendation(userId: string, recommendation: Omit<InsertAIRecommendation, 'userId'>): Promise<AIRecommendation> {
+    const [created] = await db
+      .insert(aiRecommendations)
+      .values({
+        ...recommendation,
+        userId
+      })
+      .returning();
+    return created;
+  }
+
+  async clearAIRecommendations(userId: string): Promise<void> {
+    await db
+      .delete(aiRecommendations)
+      .where(eq(aiRecommendations.userId, userId));
+  }
+
+  async markRecommendationAsRead(recommendationId: number, userId: string): Promise<void> {
+    await db
+      .update(aiRecommendations)
+      .set({ isRead: true })
+      .where(
+        and(
+          eq(aiRecommendations.id, recommendationId),
+          eq(aiRecommendations.userId, userId)
+        )
+      );
+  }
+
+  async toggleRecommendationBookmark(recommendationId: number, userId: string): Promise<boolean> {
+    // First get the current bookmark state
+    const [current] = await db
+      .select({ isBookmarked: aiRecommendations.isBookmarked })
+      .from(aiRecommendations)
+      .where(
+        and(
+          eq(aiRecommendations.id, recommendationId),
+          eq(aiRecommendations.userId, userId)
+        )
+      );
+
+    if (!current) {
+      throw new Error("Recommendation not found");
+    }
+
+    const newBookmarkState = !current.isBookmarked;
+
+    await db
+      .update(aiRecommendations)
+      .set({ isBookmarked: newBookmarkState })
+      .where(
+        and(
+          eq(aiRecommendations.id, recommendationId),
+          eq(aiRecommendations.userId, userId)
+        )
+      );
+
+    return newBookmarkState;
   }
 }
 

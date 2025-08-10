@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Settings, User, LogOut, Menu, X } from "lucide-react";
+import { MoreHorizontal, Settings, User, LogOut, Menu, X, Sparkles } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useState, createContext, useContext } from "react";
 
@@ -187,6 +187,19 @@ export default function Sidebar() {
           >
             <i className="fas fa-lightbulb text-lg"></i>
             {!isCollapsed && <span className="font-medium">Biohacks</span>}
+          </Link>
+          <Link 
+            href="/ai-recommendations" 
+            className={`flex items-center ${isCollapsed ? 'justify-center px-3' : 'space-x-3 px-4'} rounded-lg py-3 transition-all ${
+              isActive("/ai-recommendations") 
+                ? "text-primary bg-blue-50 dark:bg-blue-900/50" 
+                : "text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30"
+            }`}
+            title={isCollapsed ? "AI Recommendations" : ""}
+            onClick={() => handleNavigation("/ai-recommendations")}
+          >
+            <Sparkles className="h-5 w-5" />
+            {!isCollapsed && <span className="font-medium">AI Recommendations</span>}
           </Link>
           <Link 
             href="/wellness" 

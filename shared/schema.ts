@@ -178,6 +178,27 @@ export const insertBiohackSchema = createInsertSchema(biohacks).omit({
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+
+// AI Recommendations table
+export const aiRecommendations = pgTable("ai_recommendations", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull(),
+  type: varchar("type").notNull(), // 'habit', 'biohack', 'insight', 'goal'
+  title: varchar("title").notNull(),
+  description: text("description").notNull(),
+  reasoning: text("reasoning").notNull(),
+  priority: varchar("priority").notNull(), // 'high', 'medium', 'low'
+  actionable: boolean("actionable").default(true),
+  estimatedBenefit: varchar("estimated_benefit"),
+  timeCommitment: varchar("time_commitment"),
+  difficulty: varchar("difficulty"), // 'beginner', 'intermediate', 'advanced'
+  isRead: boolean("is_read").default(false),
+  isBookmarked: boolean("is_bookmarked").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type AIRecommendation = typeof aiRecommendations.$inferSelect;
+export type InsertAIRecommendation = typeof aiRecommendations.$inferInsert;
 export type InsertHabit = z.infer<typeof insertHabitSchema>;
 export type Habit = typeof habits.$inferSelect;
 export type InsertHabitCompletion = z.infer<typeof insertHabitCompletionSchema>;

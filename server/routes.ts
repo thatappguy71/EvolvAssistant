@@ -358,5 +358,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  // AI Recommendations endpoints
+  app.get("/api/recommendations", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { aiWellnessService } = await import("./aiService");
+      
+      // Get stored recommendations first
+      const storedRecommendations = await storage.getAIRecommendations(userId);
+      
+      // If no recent recommendations (older than 24 hours), generate new ones
+      const shouldGenerateNew = storedRecommendations.length === 0 || 
+        (storedRecommendations[0] && 
+         new Date().getTime() - new Date(storedRecommendations[0].createdAt).getTime() > 24 * 60 * 60 * 1000);
+      
+      if (shouldGenerateNew) {
+        console.log(`Generating new AI recommendations for user ${userId}`);
+        const newRecommendations = await aiWellnessService.generatePersonalizedRecommendations(userId);
+        
+        // Clear old recommendations and save new ones
+        await storage.clearAIRecommendations(userId);
+        for (const rec of newRecommendations) {
+          await storage.createAIRecommendation(userId, rec);
+        }
+        
+        // Get the newly stored recommendations
+        const freshRecommendations = await storage.getAIRecommendations(userId);
+        res.json(freshRecommendations);
+      } else {
+        res.json(storedRecommendations);
+      }
+    } catch (error) {
+      console.error("Error fetching AI recommendations:", error);
+      res.status(500).json({ message: "Failed to fetch AI recommendations" });
+    }
+  });
+
+  app.post("/api/recommendations/:id/read", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const recommendationId = parseInt(req.params.id);
+      
+      await storage.markRecommendationAsRead(recommendationId, userId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error marking recommendation as read:", error);
+      res.status(500).json({ message: "Failed to mark recommendation as read" });
+    }
+  });
+
+  app.post("/api/recommendations/:id/bookmark", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const recommendationId = parseInt(req.params.id);
+      
+      const isBookmarked = await storage.toggleRecommendationBookmark(recommendationId, userId);
+      res.json({ isBookmarked });
+    } catch (error) {
+      console.error("Error toggling recommendation bookmark:", error);
+      res.status(500).json({ message: "Failed to bookmark recommendation" });
+    }
+  });
+
+  app.post("/api/recommendations/generate", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { aiWellnessService } = await import("./aiService");
+      
+      console.log(`Generating fresh AI recommendations for user ${userId}`);
+      const newRecommendations = await aiWellnessService.generatePersonalizedRecommendations(userId);
+      
+      // Clear old recommendations and save new ones
+      await storage.clearAIRecommendations(userId);
+      for (const rec of newRecommendations) {
+        await storage.createAIRecommendation(userId, rec);
+      }
+      
+      const freshRecommendations = await storage.getAIRecommendations(userId);
+      res.json(freshRecommendations);
+    } catch (error) {
+      console.error("Error generating fresh AI recommendations:", error);
+      res.status(500).json({ message: "Failed to generate new recommendations" });
+    }
+  });
+
   return httpServer;
 }
