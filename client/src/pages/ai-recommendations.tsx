@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import Sidebar, { useSidebar } from "@/components/Sidebar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -57,6 +58,7 @@ export default function AIRecommendations() {
   const [selectedRecommendation, setSelectedRecommendation] = useState<AIRecommendation | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { isCollapsed } = useSidebar();
 
   const { 
     data: recommendations = [] as AIRecommendation[], 
@@ -156,26 +158,36 @@ export default function AIRecommendations() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center gap-3">
-          <Sparkles className="h-8 w-8 text-blue-500" />
-          <div>
-            <h1 className="text-3xl font-bold">AI Wellness Recommendations</h1>
-            <p className="text-muted-foreground">Personalized suggestions based on your wellness data</p>
-          </div>
-        </div>
+      <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 font-sans">
+        <Sidebar />
+        
+        <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} transition-all duration-300`}>
+          <div className="container mx-auto p-6 space-y-6">
+            <div className="flex items-center gap-3">
+              <Sparkles className="h-8 w-8 text-blue-500" />
+              <div>
+                <h1 className="text-3xl font-bold">AI Wellness Recommendations</h1>
+                <p className="text-muted-foreground">Personalized suggestions based on your wellness data</p>
+              </div>
+            </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-48" />
-          ))}
-        </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-48" />
+              ))}
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 font-sans">
+      <Sidebar />
+      
+      <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} transition-all duration-300`}>
+        <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Sparkles className="h-8 w-8 text-blue-500" />
@@ -381,6 +393,8 @@ export default function AIRecommendations() {
           </Card>
         </div>
       )}
+        </div>
+      </main>
     </div>
   );
 }
