@@ -369,7 +369,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // If no recent recommendations (older than 24 hours), generate new ones
       const shouldGenerateNew = storedRecommendations.length === 0 || 
-        (storedRecommendations[0] && 
+        (storedRecommendations[0]?.createdAt && 
          new Date().getTime() - new Date(storedRecommendations[0].createdAt).getTime() > 24 * 60 * 60 * 1000);
       
       if (shouldGenerateNew) {

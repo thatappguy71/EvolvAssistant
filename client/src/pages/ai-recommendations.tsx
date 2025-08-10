@@ -133,6 +133,27 @@ export default function AIRecommendations() {
     });
   };
 
+  const handleTakeAction = (recommendation: AIRecommendation) => {
+    // Based on recommendation type, navigate to appropriate page or show relevant action
+    if (recommendation.type === 'habit') {
+      // Navigate to habits page
+      window.location.href = '/habits';
+    } else if (recommendation.type === 'biohack') {
+      // Navigate to biohacks page
+      window.location.href = '/biohacks';
+    } else if (recommendation.type === 'wellness') {
+      // Navigate to wellness metrics page
+      window.location.href = '/wellness';
+    } else {
+      // Default action - just close the modal and show toast
+      setSelectedRecommendation(null);
+      toast({
+        title: "Action Noted",
+        description: "Your wellness journey continues! Check your other pages for more tools and tracking.",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-6 space-y-6">
@@ -348,7 +369,10 @@ export default function AIRecommendations() {
                 </Button>
                 
                 {selectedRecommendation.actionable && (
-                  <Button variant="default">
+                  <Button 
+                    variant="default"
+                    onClick={() => handleTakeAction(selectedRecommendation)}
+                  >
                     Take Action
                   </Button>
                 )}
