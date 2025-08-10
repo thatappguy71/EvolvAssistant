@@ -66,7 +66,7 @@ export default function AIRecommendations() {
     error
   } = useQuery<AIRecommendation[]>({
     queryKey: ['/api/recommendations'],
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 0, // Always refetch for fresh data
     retry: (failureCount, error) => {
       // Don't retry on authentication errors
       if (error.message.includes('401') || error.message.includes('Unauthorized')) {
@@ -79,6 +79,8 @@ export default function AIRecommendations() {
   const generateFreshMutation = useMutation({
     mutationFn: () => apiRequest('POST', '/api/recommendations/generate'),
     onSuccess: () => {
+      // Force immediate refetch by removing cached data
+      queryClient.removeQueries({ queryKey: ['/api/recommendations'] });
       queryClient.invalidateQueries({ queryKey: ['/api/recommendations'] });
       toast({
         title: "Fresh Recommendations Generated",
