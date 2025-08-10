@@ -243,22 +243,34 @@ export default function Biohacks() {
 
   // Load voices and test voice service when component mounts
   useEffect(() => {
-    if ('speechSynthesis' in window) {
-      // Load voices
-      const loadVoices = () => {
-        const voices = window.speechSynthesis.getVoices();
-        console.log('Voices loaded:', voices.length);
-      };
-      
-      loadVoices();
-      window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
-      
-      // Test voice service
-      console.log('Voice service initialized, will use Web Speech API');
-      
-      return () => {
-        window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
-      };
+    try {
+      if ('speechSynthesis' in window) {
+        // Load voices
+        const loadVoices = () => {
+          try {
+            const voices = window.speechSynthesis.getVoices();
+            console.log('Voices loaded:', voices.length);
+          } catch (error) {
+            console.log('Error loading voices:', error);
+          }
+        };
+        
+        loadVoices();
+        window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+        
+        // Test voice service
+        console.log('Voice service initialized, will use Web Speech API');
+        
+        return () => {
+          try {
+            window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+          } catch (error) {
+            console.log('Error removing voice event listener:', error);
+          }
+        };
+      }
+    } catch (error) {
+      console.log('Error initializing voice service:', error);
     }
   }, []);
 

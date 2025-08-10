@@ -21,17 +21,22 @@ export class VoiceService {
   }
 
   public async speak(text: string, options: VoiceOptions = {}): Promise<void> {
-    // Stop any current speech
-    this.stop();
+    try {
+      // Stop any current speech
+      this.stop();
 
-    const rate = options.rate || 0.75;
-    const volume = options.volume || 0.8;
-    const pitch = options.pitch || 1.0;
+      const rate = options.rate || 0.75;
+      const volume = options.volume || 0.8;
+      const pitch = options.pitch || 1.0;
 
-    console.log('VoiceService.speak called with:', { text, rate, volume, pitch });
+      console.log('VoiceService.speak called with:', { text, rate, volume, pitch });
 
-    // Use enhanced Web Speech API with female voice selection
-    return this.useWebSpeechAPI(text, { rate, volume, pitch });
+      // Use enhanced Web Speech API with female voice selection
+      await this.useWebSpeechAPI(text, { rate, volume, pitch });
+    } catch (error) {
+      console.log('Voice service error:', error);
+      // Fail silently to prevent runtime errors
+    }
   }
 
   private useWebSpeechAPI(text: string, options: VoiceOptions): Promise<void> {
@@ -80,7 +85,8 @@ export class VoiceService {
         utterance.onerror = (error) => {
           console.log('Speech error:', error);
           this.currentUtterance = null;
-          reject(error);
+          // Resolve instead of reject to prevent unhandled promise rejection
+          resolve();
         };
 
         this.currentUtterance = utterance;
@@ -88,13 +94,27 @@ export class VoiceService {
         console.log('Speech utterance started');
       };
 
-      // Wait for voices to be loaded if they aren't already
-      const voices = window.speechSynthesis.getVoices();
-      if (voices.length === 0) {
-        console.log('Waiting for voices to load...');
-        window.speechSynthesis.addEventListener('voiceschanged', speakWithVoices, { once: true });
-      } else {
-        speakWithVoices();
+      try {
+        // Wait for voices to be loaded if they aren't already
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length === 0) {
+          console.log('Waiting for voices to load...');
+          // Set a timeout in case voiceschanged never fires
+          const timeout = setTimeout(() => {
+            console.log('Voice loading timeout, proceeding with available voices');
+            speakWithVoices();
+          }, 2000);
+          
+          window.speechSynthesis.addEventListener('voiceschanged', () => {
+            clearTimeout(timeout);
+            speakWithVoices();
+          }, { once: true });
+        } else {
+          speakWithVoices();
+        }
+      } catch (error) {
+        console.log('Error in voice loading:', error);
+        resolve();
       }
     });
   }
@@ -152,12 +172,16 @@ export class VoiceService {
   }
 
   public stop(): void {
-    // Stop Web Speech API
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    try {
+      // Stop Web Speech API
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
 
-    this.currentUtterance = null;
+      this.currentUtterance = null;
+    } catch (error) {
+      console.log('Error stopping voice service:', error);
+    }
   }
 
   public isPlaying(): boolean {
