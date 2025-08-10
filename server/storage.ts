@@ -371,7 +371,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Reduces stress, increases energy, improves immune function, enhances focus",
         equipmentNeeded: "None",
         scientificBacking: "Studies show improved immune response and stress resilience",
-        imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Cold Exposure Therapy",
@@ -383,7 +383,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Improved circulation, enhanced mood, increased metabolism, stress resilience",
         equipmentNeeded: "Cold shower or ice bath",
         scientificBacking: "Research shows activation of brown fat and norepinephrine release",
-        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Red Light Therapy",
@@ -395,7 +395,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Improved cellular function, faster recovery, enhanced skin health, reduced inflammation",
         equipmentNeeded: "Red light therapy device",
         scientificBacking: "Proven to stimulate mitochondrial function and ATP production",
-        imageUrl: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Intermittent Fasting",
@@ -407,7 +407,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Weight management, improved insulin sensitivity, cellular autophagy, mental clarity",
         equipmentNeeded: "None",
         scientificBacking: "Extensive research on metabolic benefits and longevity",
-        imageUrl: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Grounding (Earthing)",
@@ -419,7 +419,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Reduced inflammation, better sleep, stress reduction, improved circulation",
         equipmentNeeded: "Natural outdoor surface",
         scientificBacking: "Studies show reduced cortisol and improved heart rate variability",
-        imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Box Breathing",
@@ -431,7 +431,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Reduced anxiety, improved focus, better emotional regulation, lowered blood pressure",
         equipmentNeeded: "None",
         scientificBacking: "Navy SEAL technique proven to activate parasympathetic nervous system",
-        imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Sauna Therapy",
@@ -443,7 +443,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Improved cardiovascular health, better sleep, increased growth hormone, stress resilience",
         equipmentNeeded: "Sauna access",
         scientificBacking: "Finnish studies show 20% reduction in cardiovascular mortality",
-        imageUrl: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Blue Light Blocking",
@@ -455,7 +455,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Better sleep quality, improved melatonin production, reduced eye strain",
         equipmentNeeded: "Blue light blocking glasses",
         scientificBacking: "Research shows 23% improvement in sleep quality",
-        imageUrl: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Morning Sunlight Exposure",
@@ -467,7 +467,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Better sleep cycle, increased vitamin D, improved mood, enhanced alertness",
         equipmentNeeded: "Access to sunlight",
         scientificBacking: "Proven to regulate circadian clock and improve sleep onset",
-        imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Contrast Showers",
@@ -479,7 +479,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Enhanced circulation, improved immune function, increased mental toughness",
         equipmentNeeded: "Shower with temperature control",
         scientificBacking: "Hydrotherapy research shows improved circulation and recovery",
-        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1620916297067-e4e5e3c95e44?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Meditation",
@@ -491,7 +491,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Reduced stress, improved focus, better emotional regulation, increased self-awareness",
         equipmentNeeded: "Quiet space",
         scientificBacking: "8-week programs show measurable brain changes in stress-related areas",
-        imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "High-Intensity Interval Training",
@@ -503,7 +503,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Improved cardiovascular health, increased metabolism, time-efficient fat burning",
         equipmentNeeded: "None",
         scientificBacking: "Studies show HIIT produces similar benefits to longer cardio sessions",
-        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Gratitude Journaling",
@@ -515,7 +515,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Improved mood, better relationships, increased life satisfaction, better sleep",
         equipmentNeeded: "Journal and pen",
         scientificBacking: "Positive psychology research shows 25% increase in happiness",
-        imageUrl: "https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Forest Bathing",
@@ -527,7 +527,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Reduced stress hormones, boosted immune function, improved mood, better sleep",
         equipmentNeeded: "Access to forest or wooded area",
         scientificBacking: "Japanese shinrin-yoku research shows increased NK cell activity",
-        imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Dry Brushing",
@@ -539,7 +539,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Improved lymphatic drainage, better skin texture, increased circulation",
         equipmentNeeded: "Natural bristle body brush",
         scientificBacking: "Supports lymphatic system function and circulation",
-        imageUrl: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
         name: "Binaural Beats",
@@ -551,7 +551,7 @@ export class DatabaseStorage implements IStorage {
         benefits: "Enhanced focus, deeper meditation, improved sleep, reduced anxiety",
         equipmentNeeded: "Headphones and audio device",
         scientificBacking: "EEG studies show brainwave entrainment effects",
-        imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=200"
+        imageUrl: "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       }
     ];
 
