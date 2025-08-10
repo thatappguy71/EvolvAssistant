@@ -32,6 +32,7 @@ The platform enables users to build lasting habits with streak tracking, monitor
 - **Auto-collapse navigation** - Sidebar automatically closes when navigation items are clicked on mobile devices
 - **Dark mode compatibility** throughout all responsive states
 - **Logo Protection Fix** - Menu button conditionally displays to prevent covering Evolv logo, with dedicated X close button for mobile
+- **Default closed state** - Sidebar initializes as closed on page refresh for cleaner mobile experience
 
 ### Bookmark System Implementation
 - **Optimistic UI updates** - Bookmark state changes immediately when clicked for instant feedback
