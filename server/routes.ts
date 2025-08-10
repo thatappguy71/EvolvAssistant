@@ -426,24 +426,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/recommendations/generate", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      console.log(`Starting AI recommendations generation for user ${userId}`);
+      
       const { aiWellnessService } = await import("./aiService");
       
-      console.log(`Generating fresh AI recommendations for user ${userId}`);
+      console.log(`Calling aiWellnessService.generatePersonalizedRecommendations...`);
       const newRecommendations = await aiWellnessService.generatePersonalizedRecommendations(userId);
+      console.log(`Generated ${newRecommendations.length} recommendations`);
       
       // Clear old recommendations and save new ones
+      console.log(`Clearing old recommendations for user ${userId}`);
       await storage.clearAIRecommendations(userId);
+      
+      console.log(`Saving ${newRecommendations.length} new recommendations`);
       for (const rec of newRecommendations) {
         await storage.createAIRecommendation(userId, rec);
       }
       
       const freshRecommendations = await storage.getAIRecommendations(userId);
+      console.log(`Returning ${freshRecommendations.length} fresh recommendations`);
       res.json(freshRecommendations);
     } catch (error) {
       console.error("Error generating fresh AI recommendations:", error);
       // Log the full error for debugging
       console.error("Full error details:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
-      res.status(500).json({ message: "Failed to generate new recommendations" });
+      
+      // Check if it's an OpenAI API error
+      if (error.message?.includes('API key') || error.message?.includes('OpenAI')) {
+        res.status(500).json({ message: "OpenAI API configuration error. Please check your API key." });
+      } else {
+        res.status(500).json({ message: "Failed to generate new recommendations" });
+      }
     }
   });
 
