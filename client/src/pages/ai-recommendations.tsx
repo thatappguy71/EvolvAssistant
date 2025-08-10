@@ -62,10 +62,18 @@ export default function AIRecommendations() {
 
   const { 
     data: recommendations = [] as AIRecommendation[], 
-    isLoading 
+    isLoading,
+    error
   } = useQuery<AIRecommendation[]>({
     queryKey: ['/api/recommendations'],
     staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: (failureCount, error) => {
+      // Don't retry on authentication errors
+      if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+        return false;
+      }
+      return failureCount < 3;
+    }
   });
 
   const generateFreshMutation = useMutation({
@@ -77,12 +85,24 @@ export default function AIRecommendations() {
         description: "Your AI wellness recommendations have been updated based on your latest data.",
       });
     },
-    onError: () => {
-      toast({
-        title: "Generation Failed",
-        description: "Failed to generate new recommendations. Please try again.",
-        variant: "destructive",
-      });
+    onError: (error) => {
+      console.error("Generate fresh error:", error);
+      if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in again to generate recommendations.",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 2000);
+      } else {
+        toast({
+          title: "Generation Failed",
+          description: "Failed to generate new recommendations. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   });
 
@@ -99,13 +119,25 @@ export default function AIRecommendations() {
       
       return { previousRecommendations };
     },
-    onError: (_, __, context) => {
+    onError: (error, _, context) => {
       queryClient.setQueryData(['/api/recommendations'], context?.previousRecommendations);
-      toast({
-        title: "Bookmark Failed",
-        description: "Failed to bookmark recommendation. Please try again.",
-        variant: "destructive",
-      });
+      console.error("Bookmark error:", error);
+      if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in again to bookmark recommendations.",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 2000);
+      } else {
+        toast({
+          title: "Bookmark Failed",
+          description: "Failed to bookmark recommendation. Please try again.",
+          variant: "destructive",
+        });
+      }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/recommendations'] });
@@ -155,6 +187,40 @@ export default function AIRecommendations() {
       });
     }
   };
+
+  // Check for authentication error
+  if (error && (error.message.includes('401') || error.message.includes('Unauthorized'))) {
+    return (
+      <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 font-sans">
+        <Sidebar />
+        
+        <main className={`flex-1 ml-0 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'} transition-all duration-300`}>
+          <div className="container mx-auto p-6 space-y-6">
+            <div className="flex items-center gap-3">
+              <Sparkles className="h-8 w-8 text-blue-500" />
+              <div>
+                <h1 className="text-3xl font-bold">AI Wellness Recommendations</h1>
+                <p className="text-muted-foreground">Please log in to access personalized recommendations</p>
+              </div>
+            </div>
+
+            <Card className="text-center py-12">
+              <CardContent>
+                <Sparkles className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Authentication Required</h3>
+                <p className="text-muted-foreground mb-4">
+                  You need to log in to access your personalized AI wellness recommendations.
+                </p>
+                <Button onClick={() => window.location.href = "/api/login"}>
+                  Log In
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
