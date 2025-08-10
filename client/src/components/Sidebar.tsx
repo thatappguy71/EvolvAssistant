@@ -48,6 +48,13 @@ export default function Sidebar() {
     return false;
   };
 
+  const handleNavigation = (href: string) => {
+    // Auto-collapse sidebar on mobile after navigation
+    if (window.innerWidth < 768) { // md breakpoint
+      setIsCollapsed(true);
+    }
+  };
+
   return (
     <>
       {/* Mobile menu button */}
@@ -123,6 +130,7 @@ export default function Sidebar() {
                 : "text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30"
             }`}
             title={isCollapsed ? "Dashboard" : ""}
+            onClick={() => handleNavigation("/")}
           >
             <i className="fas fa-home text-lg"></i>
             {!isCollapsed && <span className="font-medium">Dashboard</span>}
@@ -135,6 +143,7 @@ export default function Sidebar() {
                 : "text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30"
             }`}
             title={isCollapsed ? "Habits" : ""}
+            onClick={() => handleNavigation("/habits")}
           >
             <i className="fas fa-check-circle text-lg"></i>
             {!isCollapsed && <span className="font-medium">Habits</span>}
@@ -147,6 +156,7 @@ export default function Sidebar() {
                 : "text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30"
             }`}
             title={isCollapsed ? "Analytics" : ""}
+            onClick={() => handleNavigation("/analytics")}
           >
             <i className="fas fa-chart-line text-lg"></i>
             {!isCollapsed && <span className="font-medium">Analytics</span>}
@@ -159,6 +169,7 @@ export default function Sidebar() {
                 : "text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30"
             }`}
             title={isCollapsed ? "Biohacks" : ""}
+            onClick={() => handleNavigation("/biohacks")}
           >
             <i className="fas fa-lightbulb text-lg"></i>
             {!isCollapsed && <span className="font-medium">Biohacks</span>}
@@ -171,6 +182,7 @@ export default function Sidebar() {
                 : "text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30"
             }`}
             title={isCollapsed ? "Wellness" : ""}
+            onClick={() => handleNavigation("/wellness")}
           >
             <i className="fas fa-heart text-lg"></i>
             {!isCollapsed && <span className="font-medium">Wellness</span>}
@@ -188,6 +200,7 @@ export default function Sidebar() {
                     ? "text-primary bg-blue-50 dark:bg-blue-900/50" 
                     : "text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30"
                 }`}
+                onClick={() => handleNavigation("/premium")}
               >
                 <i className="fas fa-crown text-lg"></i>
                 <span className="font-medium">Premium</span>
@@ -230,13 +243,13 @@ export default function Sidebar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem asChild>
-                  <Link href="/profile" className="flex items-center w-full">
+                  <Link href="/profile" className="flex items-center w-full" onClick={() => handleNavigation("/profile")}>
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/settings" className="flex items-center w-full">
+                  <Link href="/settings" className="flex items-center w-full" onClick={() => handleNavigation("/settings")}>
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                   </Link>
