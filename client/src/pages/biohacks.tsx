@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { voiceService } from "@/lib/voiceService";
 
 export default function Biohacks() {
   const [selectedBiohack, setSelectedBiohack] = useState<any>(null);
@@ -51,89 +52,130 @@ export default function Biohacks() {
     stopVoiceGuidance();
   };
 
-  // Voice guidance functionality with robust female voice selection
-  const speakWithFemaleVoice = (text: string, options: { rate?: number; pitch?: number; volume?: number } = {}) => {
+  // Custom female voice synthesis with multiple provider fallbacks
+  const speakWithFemaleVoice = async (text: string, options: { rate?: number; pitch?: number; volume?: number } = {}) => {
+    // Stop any current speech
+    stopVoiceGuidance();
+    
+    const rate = options.rate || 0.75;
+    const volume = options.volume || 0.8;
+    
+    // Method 1: ResponsiveVoice API (free, consistent female voice)
+    if (typeof window !== 'undefined' && (window as any).responsiveVoice) {
+      try {
+        const voiceOptions = {
+          rate: rate,
+          pitch: options.pitch || 1.0,
+          volume: volume,
+          onend: () => console.log('ResponsiveVoice playback complete')
+        };
+        
+        // Use a specific calming female voice
+        (window as any).responsiveVoice.speak(text, "UK English Female", voiceOptions);
+        console.log('Using ResponsiveVoice UK English Female');
+        return;
+      } catch (error) {
+        console.log('ResponsiveVoice failed, trying fallback:', error);
+      }
+    }
+    
+    // Method 2: Web Audio API with custom synthesis (experimental)
+    try {
+      await playCustomFemaleVoice(text, { rate, volume });
+      return;
+    } catch (error) {
+      console.log('Custom synthesis failed, using Web Speech API:', error);
+    }
+    
+    // Method 3: Web Speech API with enhanced female voice selection
     if ('speechSynthesis' in window) {
-      // Stop any current speech
       window.speechSynthesis.cancel();
       
-      const speakWithVoice = () => {
-        const utterance = new SpeechSynthesisUtterance(text);
-        
-        // Configure voice settings for natural, calming female voice
-        utterance.rate = options.rate || 0.75;
-        utterance.pitch = options.pitch || 1.4; // Higher default pitch for feminine sound
-        utterance.volume = options.volume || 0.8;
-        
-        const voices = window.speechSynthesis.getVoices();
-        console.log('Available voices:', voices.map(v => ({ name: v.name, lang: v.lang })));
-        
-        let selectedVoice = null;
-        
-        // Aggressive female voice selection
-        const femaleIndicators = [
-          // Direct female identifiers
-          'female', 'woman', 'girl', 'lady',
-          // Common female names
-          'samantha', 'karen', 'serena', 'victoria', 'allison', 'ava', 'susan', 'joanna',
-          'kimberly', 'salli', 'kendra', 'ivy', 'amy', 'emma', 'olivia', 'aria', 'zoe',
-          'alice', 'anna', 'bella', 'claire', 'diana', 'ella', 'fiona', 'grace', 'helen',
-          // Platform-specific female voices
-          'microsoft zira', 'google female', 'natural female', 'enhanced female'
-        ];
-        
-        // Find the best female voice
-        for (const indicator of femaleIndicators) {
-          selectedVoice = voices.find(voice => 
-            voice.name.toLowerCase().includes(indicator.toLowerCase())
-          );
-          if (selectedVoice) {
-            console.log(`Found female voice with indicator "${indicator}":`, selectedVoice.name);
-            break;
-          }
-        }
-        
-        // Fallback: Look for non-male voices (exclude explicit male voices)
-        if (!selectedVoice) {
-          const maleIndicators = ['male', 'man', 'boy', 'david', 'alex', 'daniel', 'mark', 'tom', 'john', 'microsoft david'];
-          selectedVoice = voices.find(voice => 
-            voice.lang.startsWith('en') && 
-            !maleIndicators.some(male => voice.name.toLowerCase().includes(male.toLowerCase()))
-          );
-          if (selectedVoice) {
-            console.log('Found non-male voice:', selectedVoice.name);
-            utterance.pitch = 1.5; // Extra high pitch to ensure feminine sound
-          }
-        }
-        
-        // Last resort: Use high pitch to feminize any voice
-        if (!selectedVoice && voices.length > 0) {
-          selectedVoice = voices[Math.min(1, voices.length - 1)]; // Often second voice is female
-          utterance.pitch = 1.6; // Very high pitch
-          console.log('Using fallback voice with high pitch:', selectedVoice?.name || 'default');
-        }
-        
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
-        }
-        
-        speechSynthesisRef.current = utterance;
-        window.speechSynthesis.speak(utterance);
-      };
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = rate;
+      utterance.pitch = 1.5; // Higher pitch for more feminine sound
+      utterance.volume = volume;
       
-      // Ensure voices are loaded before selecting
-      if (window.speechSynthesis.getVoices().length === 0) {
-        window.speechSynthesis.addEventListener('voiceschanged', speakWithVoice, { once: true });
-      } else {
-        speakWithVoice();
+      const voices = window.speechSynthesis.getVoices();
+      
+      // Enhanced female voice selection
+      const preferredFemaleVoices = [
+        'Microsoft Zira', 'Google UK English Female', 'Samantha', 'Karen', 'Serena',
+        'Victoria', 'Allison', 'Ava', 'Susan', 'Joanna', 'Aria'
+      ];
+      
+      let selectedVoice = null;
+      
+      // Find preferred female voice
+      for (const voiceName of preferredFemaleVoices) {
+        selectedVoice = voices.find(voice => 
+          voice.name.toLowerCase().includes(voiceName.toLowerCase())
+        );
+        if (selectedVoice) break;
       }
+      
+      // Fallback: avoid male voices
+      if (!selectedVoice) {
+        const maleVoices = ['david', 'alex', 'daniel', 'mark', 'male', 'man'];
+        selectedVoice = voices.find(voice => 
+          voice.lang.startsWith('en') && 
+          !maleVoices.some(male => voice.name.toLowerCase().includes(male))
+        );
+      }
+      
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        console.log('Using Web Speech API voice:', selectedVoice.name);
+      } else {
+        console.log('Using default voice with high pitch');
+      }
+      
+      speechSynthesisRef.current = utterance;
+      window.speechSynthesis.speak(utterance);
     }
   };
 
-  const stopVoiceGuidance = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+  // Custom female voice synthesis using Web Audio API
+  const playCustomFemaleVoice = async (text: string, options: { rate: number; volume: number }) => {
+    // This is a simplified version - in production, you'd use a proper TTS service
+    // For now, we'll create a more feminine version using audio processing
+    
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext();
     }
+    
+    // Create a simple tone pattern for each word (proof of concept)
+    const words = text.split(' ');
+    const baseFrequency = 220; // A3 note, female vocal range
+    
+    for (let i = 0; i < words.length; i++) {
+      const oscillator = audioContextRef.current.createOscillator();
+      const gainNode = audioContextRef.current.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContextRef.current.destination);
+      
+      // Feminine frequency range (higher than male)
+      oscillator.frequency.value = baseFrequency + (i % 4) * 50;
+      oscillator.type = 'sine'; // Softer tone
+      
+      gainNode.gain.setValueAtTime(0, audioContextRef.current.currentTime + i * 0.3);
+      gainNode.gain.linearRampToValueAtTime(options.volume * 0.1, audioContextRef.current.currentTime + i * 0.3 + 0.05);
+      gainNode.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + i * 0.3 + 0.2);
+      
+      oscillator.start(audioContextRef.current.currentTime + i * 0.3);
+      oscillator.stop(audioContextRef.current.currentTime + i * 0.3 + 0.2);
+      
+      // Brief pause between "words"
+      await new Promise(resolve => setTimeout(resolve, 300 / options.rate));
+    }
+    
+    // This is just a demo - throw error to fall back to speech synthesis
+    throw new Error('Custom synthesis is demo only');
+  };
+
+  const stopVoiceGuidance = () => {
+    voiceService.stop();
   };
 
   // Timer functionality
@@ -143,13 +185,13 @@ export default function Biohacks() {
     
     // Voice guidance for starting session with natural pauses
     const sessionType = selectedBiohack?.name || 'session';
-    speakWithFemaleVoice(`Welcome to your ${sessionType}... Find a comfortable position... and let's begin your ${minutes} minute practice... Take a deep breath... and relax.`);
+    voiceService.speak(`Welcome to your ${sessionType}... Find a comfortable position... and let's begin your ${minutes} minute practice... Take a deep breath... and relax.`);
     
     timerRef.current = setInterval(() => {
       setTimerSeconds((prev) => {
         if (prev <= 1) {
           setIsTimerRunning(false);
-          speakWithFemaleVoice("Your session is complete... Take a moment to notice how you feel... Well done.");
+          voiceService.speak("Your session is complete... Take a moment to notice how you feel... Well done.");
           toast({
             title: "Timer Complete!",
             description: "Your biohack session is finished.",
@@ -159,11 +201,11 @@ export default function Biohacks() {
         
         // Voice reminders at key intervals with natural pauses
         if (prev === 60) { // 1 minute remaining
-          speakWithFemaleVoice("One minute remaining... Continue to breathe deeply... and stay present.");
+          voiceService.speak("One minute remaining... Continue to breathe deeply... and stay present.");
         } else if (prev === 300) { // 5 minutes remaining
-          speakWithFemaleVoice("Five minutes remaining... You're doing wonderfully... Stay focused on your practice.");
+          voiceService.speak("Five minutes remaining... You're doing wonderfully... Stay focused on your practice.");
         } else if (prev === minutes * 60 / 2) { // Halfway point
-          speakWithFemaleVoice("You're halfway through your session... Keep going... you're doing great.");
+          voiceService.speak("You're halfway through your session... Keep going... you're doing great.");
         }
         
         return prev - 1;
@@ -188,7 +230,7 @@ export default function Biohacks() {
     
     // Initial voice guidance with natural cadence
     const exerciseType = selectedBiohack?.name === "Wim Hof Breathing" ? "Wim Hof breathing" : "box breathing";
-    speakWithFemaleVoice(`Let's begin your ${exerciseType} practice... Find a comfortable seated position... We'll start with a gentle inhale... Follow my guidance.`);
+    voiceService.speak(`Let's begin your ${exerciseType} practice... Find a comfortable seated position... We'll start with a gentle inhale... Follow my guidance.`);
     
     // Start after brief pause for setup
     setTimeout(() => {
@@ -211,7 +253,7 @@ export default function Biohacks() {
       setBreathingPhase(currentPhase.phase);
       
       // Provide voice guidance for each phase
-      speakWithFemaleVoice(currentPhase.voiceText, { rate: 0.7, pitch: 1.1 });
+      voiceService.speak(currentPhase.voiceText, { rate: 0.7, pitch: 1.1 });
       
       breathingTimerRef.current = setTimeout(() => {
         currentPhaseIndex = (currentPhaseIndex + 1) % phases.length;
@@ -220,11 +262,11 @@ export default function Biohacks() {
             const newCount = prev + 1;
             // Encouragement every few cycles with gentle pauses
             if (newCount === 3) {
-              speakWithFemaleVoice("Excellent... You're finding your rhythm... Continue breathing with awareness.");
+              voiceService.speak("Excellent... You're finding your rhythm... Continue breathing with awareness.");
             } else if (newCount === 6) {
-              speakWithFemaleVoice("Beautiful breathing... Feel your body relaxing... with each cycle.");
+              voiceService.speak("Beautiful breathing... Feel your body relaxing... with each cycle.");
             } else if (newCount === 10) {
-              speakWithFemaleVoice("You're doing wonderfully... Notice the calm settling... into your body and mind.");
+              voiceService.speak("You're doing wonderfully... Notice the calm settling... into your body and mind.");
             }
             return newCount;
           });
@@ -269,7 +311,7 @@ export default function Biohacks() {
                    currentFrequency === 'relaxation' ? 'deep relaxation and stress relief' :
                    'restful sleep and recovery';
     
-    speakWithFemaleVoice(`Starting ${frequencyName}... for ${purpose}... Put on your headphones... close your eyes... and allow the frequencies to guide your mind... into the desired state... Let yourself relax... completely.`);
+    voiceService.speak(`Starting ${frequencyName}... for ${purpose}... Put on your headphones... close your eyes... and allow the frequencies to guide your mind... into the desired state... Let yourself relax... completely.`);
     
     // Create stereo oscillators
     const leftOscillator = audioContextRef.current.createOscillator();
