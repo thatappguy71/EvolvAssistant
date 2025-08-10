@@ -4,7 +4,7 @@
 
 Evolv is a comprehensive personal wellness and habit tracking application designed to help users transform their lives through intelligent habit tracking, wellness monitoring, and personalized biohacking insights. The application provides a holistic approach to health optimization by combining habit management, daily wellness metrics tracking, and a curated library of biohacks.
 
-The platform enables users to build lasting habits with streak tracking, monitor key wellness indicators (energy, focus, mood, productivity, sleep quality), and discover scientifically-backed techniques for health optimization. Users can track their progress through detailed analytics and charts, bookmark favorite biohacks, and access premium features for enhanced functionality.
+The platform enables users to build lasting habits with streak tracking, monitor key wellness indicators (energy, focus, mood, productivity, sleep quality), and discover scientifically-backed techniques for health optimization. Users can track their progress through detailed analytics and charts, bookmark favorite biohacks from an extensive library of 16 wellness techniques, and access premium features for enhanced functionality.
 
 ## Recent Updates (August 2025)
 
@@ -38,6 +38,8 @@ The platform enables users to build lasting habits with streak tracking, monitor
 - **Complete CRUD operations** - Add/remove bookmarks with persistent database storage
 - **Enhanced API routing** - Backend properly returns all biohacks with user-specific bookmark status
 - **Visual state indicators** - Clear filled/unfilled bookmark icons with proper color states
+- **Modal bookmark functionality** - Consistent bookmark behavior between card view and detail modal
+- **Real-time state synchronization** - Modal and card bookmark states stay perfectly synchronized
 
 ### Profile Management Fixes
 - **Profile picture upload system** with proper file path handling and validation
