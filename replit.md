@@ -31,6 +31,7 @@ The platform enables users to build lasting habits with streak tracking, monitor
 - **Consistent cross-page behavior** - all pages (Dashboard, Habits, Analytics, Biohacks, Wellness, Premium, Profile, Settings) respond to sidebar state changes
 - **Auto-collapse navigation** - Sidebar automatically closes when navigation items are clicked on mobile devices
 - **Dark mode compatibility** throughout all responsive states
+- **Logo Protection Fix** - Menu button conditionally displays to prevent covering Evolv logo, with dedicated X close button for mobile
 
 ### Bookmark System Implementation
 - **Optimistic UI updates** - Bookmark state changes immediately when clicked for instant feedback
@@ -62,6 +63,13 @@ The platform enables users to build lasting habits with streak tracking, monitor
 - **Image format validation** supporting JPEG, PNG, GIF, WebP with clear error messages for unsupported formats (HEIF)
 - **Database URL correction** ensuring uploaded images display correctly
 - **File size limits** (5MB) and proper error handling for upload failures
+
+### Biohack Image Quality Enhancement
+- **Unique technique-specific images** - Each biohack displays relevant, high-quality photos representing the specific wellness technique
+- **300px height optimization** - All images standardized to 300px height for consistent display quality
+- **Comprehensive error handling** - Images include onError handlers with fallback system and debug logging
+- **Database refresh system** - Proper biohack data reset and reload functionality for image updates
+- **Relevant visual representation** - Images accurately reflect each biohack (ice baths for cold therapy, forest scenes for forest bathing, etc.)
 
 ## User Preferences
 
