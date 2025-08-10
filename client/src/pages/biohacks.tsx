@@ -59,24 +59,53 @@ export default function Biohacks() {
       
       const utterance = new SpeechSynthesisUtterance(text);
       
-      // Configure voice settings for soothing female voice
-      utterance.rate = options.rate || 0.8; // Slower, more calming pace
-      utterance.pitch = options.pitch || 1.2; // Slightly higher pitch for female voice
-      utterance.volume = options.volume || 0.7; // Moderate volume
+      // Configure voice settings for natural, calming female voice
+      utterance.rate = options.rate || 0.75; // Slower, more natural pace
+      utterance.pitch = options.pitch || 1.0; // Natural pitch for human-like tone
+      utterance.volume = options.volume || 0.8; // Clear but gentle volume
       
-      // Try to find a female voice
+      // Enhanced female voice selection for more natural sound
       const voices = window.speechSynthesis.getVoices();
-      const femaleVoice = voices.find(voice => 
-        voice.name.toLowerCase().includes('female') || 
-        voice.name.toLowerCase().includes('woman') ||
-        voice.name.toLowerCase().includes('samantha') ||
-        voice.name.toLowerCase().includes('karen') ||
-        voice.name.toLowerCase().includes('serena') ||
-        voice.gender === 'female'
-      );
       
-      if (femaleVoice) {
-        utterance.voice = femaleVoice;
+      // Priority order for natural-sounding female voices
+      const preferredVoices = [
+        'Samantha', 'Karen', 'Serena', 'Victoria', 'Allison', 'Ava', 'Susan', 'Joanna',
+        'Kimberly', 'Salli', 'Kendra', 'Ivy', 'Amy', 'Emma', 'Olivia', 'Aria'
+      ];
+      
+      let selectedVoice = null;
+      
+      // First, try to find preferred natural voices
+      for (const voiceName of preferredVoices) {
+        selectedVoice = voices.find(voice => 
+          voice.name.toLowerCase().includes(voiceName.toLowerCase())
+        );
+        if (selectedVoice) break;
+      }
+      
+      // Fallback to any female voice
+      if (!selectedVoice) {
+        selectedVoice = voices.find(voice => 
+          voice.name.toLowerCase().includes('female') || 
+          voice.name.toLowerCase().includes('woman') ||
+          // Common female voice identifiers
+          voice.name.toLowerCase().includes('aria') ||
+          voice.name.toLowerCase().includes('zoe') ||
+          voice.name.toLowerCase().includes('nicky') ||
+          voice.lang.startsWith('en') && voice.name.toLowerCase().includes('f')
+        );
+      }
+      
+      // Further fallback to English voices that typically sound more natural
+      if (!selectedVoice) {
+        selectedVoice = voices.find(voice => 
+          voice.lang.startsWith('en') && 
+          (voice.name.includes('Enhanced') || voice.name.includes('Premium') || voice.name.includes('Neural'))
+        );
+      }
+      
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
       }
       
       speechSynthesisRef.current = utterance;
@@ -95,15 +124,15 @@ export default function Biohacks() {
     setTimerSeconds(minutes * 60);
     setIsTimerRunning(true);
     
-    // Voice guidance for starting session
+    // Voice guidance for starting session with natural pauses
     const sessionType = selectedBiohack?.name || 'session';
-    speakWithFemaleVoice(`Welcome to your ${sessionType}. Find a comfortable position and let's begin your ${minutes} minute practice. Take a deep breath and relax.`);
+    speakWithFemaleVoice(`Welcome to your ${sessionType}... Find a comfortable position... and let's begin your ${minutes} minute practice... Take a deep breath... and relax.`);
     
     timerRef.current = setInterval(() => {
       setTimerSeconds((prev) => {
         if (prev <= 1) {
           setIsTimerRunning(false);
-          speakWithFemaleVoice("Your session is complete. Take a moment to notice how you feel. Well done.");
+          speakWithFemaleVoice("Your session is complete... Take a moment to notice how you feel... Well done.");
           toast({
             title: "Timer Complete!",
             description: "Your biohack session is finished.",
@@ -111,13 +140,13 @@ export default function Biohacks() {
           return 0;
         }
         
-        // Voice reminders at key intervals
+        // Voice reminders at key intervals with natural pauses
         if (prev === 60) { // 1 minute remaining
-          speakWithFemaleVoice("One minute remaining. Continue to breathe deeply and stay present.");
+          speakWithFemaleVoice("One minute remaining... Continue to breathe deeply... and stay present.");
         } else if (prev === 300) { // 5 minutes remaining
-          speakWithFemaleVoice("Five minutes remaining. You're doing wonderfully. Stay focused on your practice.");
+          speakWithFemaleVoice("Five minutes remaining... You're doing wonderfully... Stay focused on your practice.");
         } else if (prev === minutes * 60 / 2) { // Halfway point
-          speakWithFemaleVoice("You're halfway through your session. Keep going, you're doing great.");
+          speakWithFemaleVoice("You're halfway through your session... Keep going... you're doing great.");
         }
         
         return prev - 1;
@@ -140,9 +169,9 @@ export default function Biohacks() {
     setBreathingCount(0);
     setBreathingPhase('inhale');
     
-    // Initial voice guidance
+    // Initial voice guidance with natural cadence
     const exerciseType = selectedBiohack?.name === "Wim Hof Breathing" ? "Wim Hof breathing" : "box breathing";
-    speakWithFemaleVoice(`Let's begin your ${exerciseType} practice. Find a comfortable seated position. We'll start with a gentle inhale. Follow my guidance.`);
+    speakWithFemaleVoice(`Let's begin your ${exerciseType} practice... Find a comfortable seated position... We'll start with a gentle inhale... Follow my guidance.`);
     
     // Start after brief pause for setup
     setTimeout(() => {
@@ -152,10 +181,10 @@ export default function Biohacks() {
 
   const breathingCycle = () => {
     const phases = [
-      { phase: 'inhale' as const, duration: 4000, message: 'Breathe In', voiceText: 'Breathe in slowly and deeply' },
-      { phase: 'hold' as const, duration: 4000, message: 'Hold', voiceText: 'Hold your breath gently' },
-      { phase: 'exhale' as const, duration: 4000, message: 'Breathe Out', voiceText: 'Exhale slowly and completely' },
-      { phase: 'pause' as const, duration: 4000, message: 'Pause', voiceText: 'Rest and pause naturally' }
+      { phase: 'inhale' as const, duration: 4000, message: 'Breathe In', voiceText: 'Breathe in... slowly... and deeply' },
+      { phase: 'hold' as const, duration: 4000, message: 'Hold', voiceText: 'Hold... your breath... gently' },
+      { phase: 'exhale' as const, duration: 4000, message: 'Breathe Out', voiceText: 'Exhale... slowly... and completely' },
+      { phase: 'pause' as const, duration: 4000, message: 'Pause', voiceText: 'Rest... and pause... naturally' }
     ];
 
     let currentPhaseIndex = 0;
@@ -172,13 +201,13 @@ export default function Biohacks() {
         if (currentPhaseIndex === 0) {
           setBreathingCount(prev => {
             const newCount = prev + 1;
-            // Encouragement every few cycles
+            // Encouragement every few cycles with gentle pauses
             if (newCount === 3) {
-              speakWithFemaleVoice("Excellent. You're finding your rhythm. Continue breathing with awareness.");
+              speakWithFemaleVoice("Excellent... You're finding your rhythm... Continue breathing with awareness.");
             } else if (newCount === 6) {
-              speakWithFemaleVoice("Beautiful breathing. Feel your body relaxing with each cycle.");
+              speakWithFemaleVoice("Beautiful breathing... Feel your body relaxing... with each cycle.");
             } else if (newCount === 10) {
-              speakWithFemaleVoice("You're doing wonderfully. Notice the calm settling into your body and mind.");
+              speakWithFemaleVoice("You're doing wonderfully... Notice the calm settling... into your body and mind.");
             }
             return newCount;
           });
@@ -217,13 +246,13 @@ export default function Biohacks() {
 
     const { left, right } = frequencies[currentFrequency];
     
-    // Voice guidance for starting binaural beats
+    // Voice guidance for starting binaural beats with soothing cadence
     const frequencyName = frequencies[currentFrequency].name;
     const purpose = currentFrequency === 'focus' ? 'enhanced concentration and alertness' : 
                    currentFrequency === 'relaxation' ? 'deep relaxation and stress relief' :
                    'restful sleep and recovery';
     
-    speakWithFemaleVoice(`Starting ${frequencyName} for ${purpose}. Put on your headphones, close your eyes, and allow the frequencies to guide your mind into the desired state. Let yourself relax completely.`);
+    speakWithFemaleVoice(`Starting ${frequencyName}... for ${purpose}... Put on your headphones... close your eyes... and allow the frequencies to guide your mind... into the desired state... Let yourself relax... completely.`);
     
     // Create stereo oscillators
     const leftOscillator = audioContextRef.current.createOscillator();
