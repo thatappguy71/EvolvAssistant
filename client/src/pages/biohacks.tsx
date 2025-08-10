@@ -388,6 +388,29 @@ export default function Biohacks() {
                             </Badge>
                           ))}
                         </div>
+                        
+                        {/* Frequency Explanations */}
+                        <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg text-sm">
+                          {currentFrequency === 'focus' && (
+                            <div>
+                              <h5 className="font-medium mb-1">Alpha Waves (8-14Hz)</h5>
+                              <p className="text-gray-600 dark:text-gray-300">Associated with relaxed focus, creativity, and calm alertness. Ideal for work, study, or meditation.</p>
+                            </div>
+                          )}
+                          {currentFrequency === 'relaxation' && (
+                            <div>
+                              <h5 className="font-medium mb-1">Theta Waves (4-8Hz)</h5>
+                              <p className="text-gray-600 dark:text-gray-300">Linked to deep relaxation, meditation, and creative insight. Often experienced during REM sleep and deep meditation.</p>
+                            </div>
+                          )}
+                          {currentFrequency === 'sleep' && (
+                            <div>
+                              <h5 className="font-medium mb-1">Delta Waves (0.5-4Hz)</h5>
+                              <p className="text-gray-600 dark:text-gray-300">The slowest brainwaves associated with deep, restorative sleep and healing. Delta waves promote physical recovery, immune system strengthening, and memory consolidation. During delta sleep, the brain releases growth hormone and performs cellular repair processes essential for physical and mental restoration.</p>
+                            </div>
+                          )}
+                        </div>
+                        
                         <div className="flex gap-2">
                           <Button
                             onClick={isPlayingAudio ? stopBinauralBeats : startBinauralBeats}
