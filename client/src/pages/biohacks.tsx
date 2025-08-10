@@ -258,8 +258,26 @@ export default function Biohacks() {
         loadVoices();
         window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
         
-        // Test voice service
+        // Test voice service and log available quality voices
         console.log('Voice service initialized, will use Web Speech API');
+        
+        // Log high-quality voices for user reference
+        setTimeout(() => {
+          try {
+            const voices = window.speechSynthesis.getVoices();
+            const qualityVoices = voices.filter(v => 
+              v.lang.startsWith('en') && 
+              (v.name.includes('Samantha') || v.name.includes('Karen') || 
+               v.name.includes('Victoria') || v.name.includes('Zira') ||
+               v.name.includes('Google') || v.name.includes('Female'))
+            );
+            if (qualityVoices.length > 0) {
+              console.log('High-quality female voices available:', qualityVoices.map(v => v.name));
+            }
+          } catch (error) {
+            console.log('Error checking voice quality:', error);
+          }
+        }, 1000);
         
         return () => {
           try {

@@ -62,14 +62,36 @@ export class VoiceService {
         if (femaleVoice) {
           utterance.voice = femaleVoice;
           console.log('Selected voice:', femaleVoice.name);
-          // Adjust pitch based on voice type
-          if (femaleVoice.name.toLowerCase().includes('male') || 
-              ['david', 'alex', 'daniel'].some(male => femaleVoice.name.toLowerCase().includes(male))) {
-            utterance.pitch = 1.6; // High pitch for male voices to sound feminine
+          
+          // Optimize settings for natural female speech
+          const voiceName = femaleVoice.name.toLowerCase();
+          
+          if (voiceName.includes('samantha') || voiceName.includes('karen') || voiceName.includes('victoria')) {
+            // Premium voices - use natural settings
+            utterance.pitch = 1.0;
+            utterance.rate = 0.8;
+          } else if (voiceName.includes('zira') || voiceName.includes('hazel')) {
+            // Microsoft voices - slight adjustments for warmth
+            utterance.pitch = 1.1;
+            utterance.rate = 0.75;
+          } else if (voiceName.includes('google')) {
+            // Google voices - optimize for clarity
+            utterance.pitch = 1.0;
+            utterance.rate = 0.8;
+          } else if (voiceName.includes('male') || 
+                     ['david', 'alex', 'daniel'].some(male => voiceName.includes(male))) {
+            // Male voices - feminize with higher pitch
+            utterance.pitch = 1.6;
+            utterance.rate = 0.7;
+          } else {
+            // Default female voice optimization
+            utterance.pitch = 1.2;
+            utterance.rate = 0.75;
           }
         } else {
-          console.log('No suitable voice found, using default with high pitch');
-          utterance.pitch = 1.6; // Extra high pitch as fallback
+          console.log('No suitable voice found, using default with optimized settings');
+          utterance.pitch = 1.4;
+          utterance.rate = 0.75;
         }
 
         utterance.onstart = () => {
@@ -122,53 +144,126 @@ export class VoiceService {
   private selectBestFemaleVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
     console.log('Selecting from voices:', voices.map(v => ({ name: v.name, lang: v.lang })));
 
-    // Priority list of female voices (most natural first)
-    const preferredFemaleVoices = [
-      'Microsoft Zira', 'Google UK English Female', 'Samantha', 'Karen', 'Serena', 'Victoria',
-      'Allison', 'Ava', 'Susan', 'Joanna', 'Aria', 'Emma', 'Olivia', 'Kimberly', 'Salli'
+    // Tier 1: Premium natural female voices (most human-like)
+    const premiumFemaleVoices = [
+      'Samantha', 'Karen', 'Victoria', 'Allison', 'Ava', 'Susan', 'Serena',
+      'Microsoft Zira Desktop', 'Google UK English Female', 'Microsoft Hazel Desktop',
+      'Joanna', 'Aria', 'Emma', 'Olivia', 'Kimberly', 'Salli', 'Raveena'
     ];
 
-    // Try to find preferred voices first
-    for (const voiceName of preferredFemaleVoices) {
+    // Tier 2: Good quality female voices
+    const goodFemaleVoices = [
+      'Microsoft Zira', 'Google US English', 'Fiona', 'Moira', 'Tessa',
+      'Veena', 'Princess', 'Vicki', 'Kate', 'Catherine'
+    ];
+
+    // Tier 3: Basic female voices
+    const basicFemaleVoices = [
+      'Female', 'Woman', 'en-US Female', 'en-GB Female'
+    ];
+
+    // Try premium voices first
+    for (const voiceName of premiumFemaleVoices) {
       const voice = voices.find(v => 
         v.name.toLowerCase().includes(voiceName.toLowerCase())
       );
       if (voice) {
-        console.log('Found preferred female voice:', voice.name);
+        console.log('Found premium female voice:', voice.name);
         return voice;
       }
     }
 
-    // Look for any voice explicitly labeled as female
-    const explicitFemaleVoice = voices.find(v => 
-      v.name.toLowerCase().includes('female') ||
-      v.name.toLowerCase().includes('woman')
-    );
-    if (explicitFemaleVoice) {
-      console.log('Found explicit female voice:', explicitFemaleVoice.name);
-      return explicitFemaleVoice;
+    // Try good quality voices
+    for (const voiceName of goodFemaleVoices) {
+      const voice = voices.find(v => 
+        v.name.toLowerCase().includes(voiceName.toLowerCase())
+      );
+      if (voice) {
+        console.log('Found good female voice:', voice.name);
+        return voice;
+      }
     }
 
-    // Filter out known male voices and take an English voice
-    const maleIdentifiers = ['male', 'david', 'alex', 'daniel', 'mark', 'tom', 'john', 'microsoft david'];
-    const nonMaleVoices = voices.filter(v => 
+    // Try basic female voices
+    for (const voiceName of basicFemaleVoices) {
+      const voice = voices.find(v => 
+        v.name.toLowerCase().includes(voiceName.toLowerCase())
+      );
+      if (voice) {
+        console.log('Found basic female voice:', voice.name);
+        return voice;
+      }
+    }
+
+    // Advanced filtering: look for voices that are likely female
+    const maleIdentifiers = ['male', 'david', 'alex', 'daniel', 'mark', 'tom', 'john', 'microsoft david', 'google male'];
+    const likelyFemaleVoices = voices.filter(v => {
+      const name = v.name.toLowerCase();
+      const lang = v.lang.toLowerCase();
+      
+      return (
+        lang.startsWith('en') && // English voices only
+        !maleIdentifiers.some(male => name.includes(male)) && // Not explicitly male
+        (
+          // Common female name patterns
+          ['ina', 'ana', 'ella', 'ia', 'en', 'er'].some(suffix => name.endsWith(suffix)) ||
+          // Or contains female indicators
+          ['woman', 'girl', 'lady', 'she', 'her'].some(indicator => name.includes(indicator))
+        )
+      );
+    });
+
+    if (likelyFemaleVoices.length > 0) {
+      // Sort by quality indicators - prefer "desktop" versions and avoid "compact"
+      const sortedVoices = likelyFemaleVoices.sort((a, b) => {
+        const aScore = this.getVoiceQualityScore(a.name);
+        const bScore = this.getVoiceQualityScore(b.name);
+        return bScore - aScore;
+      });
+      
+      console.log('Found likely female voice:', sortedVoices[0].name);
+      return sortedVoices[0];
+    }
+
+    // Last resort: return the best available English voice (avoid obviously male ones)
+    const englishVoices = voices.filter(v => 
       v.lang.startsWith('en') &&
-      !maleIdentifiers.some(male => v.name.toLowerCase().includes(male.toLowerCase()))
+      !maleIdentifiers.some(male => v.name.toLowerCase().includes(male))
     );
-
-    if (nonMaleVoices.length > 0) {
-      // Prefer voices that sound more feminine (usually index 1 or 2)
-      const selectedVoice = nonMaleVoices[Math.min(1, nonMaleVoices.length - 1)] || nonMaleVoices[0];
-      console.log('Found non-male voice:', selectedVoice.name);
-      return selectedVoice;
+    
+    if (englishVoices.length > 0) {
+      const bestEnglish = englishVoices.sort((a, b) => 
+        this.getVoiceQualityScore(b.name) - this.getVoiceQualityScore(a.name)
+      )[0];
+      console.log('Using fallback English voice:', bestEnglish.name);
+      return bestEnglish;
     }
 
-    // Last resort: return any English voice
-    const englishVoice = voices.find(v => v.lang.startsWith('en'));
-    if (englishVoice) {
-      console.log('Using fallback English voice:', englishVoice.name);
-    }
-    return englishVoice || null;
+    return null;
+  }
+
+  private getVoiceQualityScore(voiceName: string): number {
+    const name = voiceName.toLowerCase();
+    let score = 0;
+    
+    // Prefer desktop/enhanced versions
+    if (name.includes('desktop')) score += 10;
+    if (name.includes('enhanced')) score += 8;
+    if (name.includes('premium')) score += 8;
+    
+    // Prefer Google and Microsoft voices (usually higher quality)
+    if (name.includes('google')) score += 5;
+    if (name.includes('microsoft')) score += 5;
+    
+    // Avoid compact/low-quality versions
+    if (name.includes('compact')) score -= 5;
+    if (name.includes('basic')) score -= 3;
+    
+    // Prefer common natural names
+    const naturalNames = ['samantha', 'karen', 'victoria', 'allison', 'ava', 'susan'];
+    if (naturalNames.some(naturalName => name.includes(naturalName))) score += 7;
+    
+    return score;
   }
 
   public stop(): void {
