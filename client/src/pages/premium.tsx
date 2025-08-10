@@ -18,7 +18,7 @@ export default function Premium() {
 
   const upgradeMutation = useMutation({
     mutationFn: async (planType: 'monthly' | 'yearly') => {
-      const response = await fetch('/api/subscription/upgrade', {
+      const response = await fetch('/api/subscription/create-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ export default function Premium() {
         body: JSON.stringify({ planType }),
       });
       if (!response.ok) {
-        throw new Error('Failed to upgrade subscription');
+        throw new Error('Failed to create checkout session');
       }
       return response.json();
     },
@@ -122,8 +122,8 @@ export default function Premium() {
               <Card className="border-2 border-gray-200 dark:border-gray-700">
                 <CardHeader className="text-center">
                   <CardTitle className="text-2xl text-gray-900 dark:text-white">Evolv Pro Monthly</CardTitle>
-                  <div className="text-4xl font-bold text-primary mt-4">$9.99</div>
-                  <p className="text-gray-600 dark:text-gray-300">per month</p>
+                  <div className="text-4xl font-bold text-primary mt-4">$4.99</div>
+                  <p className="text-gray-600 dark:text-gray-300">CAD per month</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Perfect for serious biohackers</p>
                 </CardHeader>
                 <CardContent>
@@ -153,12 +153,12 @@ export default function Premium() {
                 </Badge>
                 <CardHeader className="text-center">
                   <CardTitle className="text-2xl text-gray-900 dark:text-white">Evolv Pro Yearly</CardTitle>
-                  <div className="text-4xl font-bold text-primary mt-4">$79.99</div>
-                  <p className="text-gray-600 dark:text-gray-300">per year</p>
+                  <div className="text-4xl font-bold text-primary mt-4">$49.99</div>
+                  <p className="text-gray-600 dark:text-gray-300">CAD per year</p>
                   <div className="flex items-center justify-center mt-2">
                     <p className="text-sm text-gray-500 dark:text-gray-400 mr-2">Best value for committed optimizers</p>
                     <Badge variant="secondary" className="bg-secondary/10 text-secondary">
-                      Save 33%
+                      Save 16%
                     </Badge>
                   </div>
                 </CardHeader>

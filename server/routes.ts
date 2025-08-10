@@ -13,6 +13,13 @@ import {
   insertDailyMetricsSchema 
 } from "@shared/schema";
 import { z } from "zod";
+import { 
+  createCheckoutSession, 
+  createCustomerPortalSession, 
+  cancelSubscription,
+  handleWebhook,
+  STRIPE_CONFIG 
+} from "./stripeService";
 
 // Configure multer for file uploads
 const uploadDir = 'uploads/profile-images';
@@ -498,6 +505,139 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         res.status(500).json({ message: "Failed to generate new recommendations" });
       }
+    }
+  });
+
+  // Stripe payment routes
+  app.post('/api/subscription/create-checkout', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const userEmail = req.user.claims.email;
+      const { planType } = req.body;
+
+      if (!planType || !['monthly', 'yearly'].includes(planType)) {
+        return res.status(400).json({ message: 'Invalid plan type' });
+      }
+
+      const priceId = planType === 'yearly' ? STRIPE_CONFIG.prices.yearly : STRIPE_CONFIG.prices.monthly;
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+      const session = await createCheckoutSession({
+        userId,
+        userEmail,
+        priceId,
+        successUrl: `${baseUrl}/premium?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${baseUrl}/premium?canceled=true`,
+      });
+
+      res.json({ checkoutUrl: session.url });
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      res.status(500).json({ message: 'Failed to create checkout session' });
+    }
+  });
+
+  app.post('/api/subscription/portal', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.subscriptionId) {
+        return res.status(400).json({ message: 'No active subscription found' });
+      }
+
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      const session = await createCustomerPortalSession(
+        user.subscriptionId,
+        `${baseUrl}/settings`
+      );
+
+      res.json({ portalUrl: session.url });
+    } catch (error) {
+      console.error('Error creating customer portal session:', error);
+      res.status(500).json({ message: 'Failed to create customer portal session' });
+    }
+  });
+
+  app.post('/api/subscription/cancel', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.subscriptionId) {
+        return res.status(400).json({ message: 'No active subscription found' });
+      }
+
+      const subscription = await cancelSubscription(user.subscriptionId, true);
+      
+      // Update user subscription status
+      await storage.updateUserSubscription(userId, {
+        subscriptionTier: 'FREE',
+        subscriptionActive: false,
+        subscriptionId: null
+      });
+
+      res.json({ 
+        message: 'Subscription canceled successfully',
+        proratedRefund: true,
+        subscription 
+      });
+    } catch (error) {
+      console.error('Error canceling subscription:', error);
+      res.status(500).json({ message: 'Failed to cancel subscription' });
+    }
+  });
+
+  // Stripe webhook endpoint
+  app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
+    try {
+      const signature = req.headers['stripe-signature'] as string;
+      const event = await handleWebhook(req.body, signature);
+
+      console.log('Received Stripe webhook:', event.type);
+
+      switch (event.type) {
+        case 'checkout.session.completed':
+          const session = event.data.object;
+          const userId = session.metadata?.userId;
+          
+          if (userId && session.subscription) {
+            await storage.updateUserSubscription(userId, {
+              subscriptionTier: 'PREMIUM',
+              subscriptionActive: true,
+              subscriptionId: session.subscription as string
+            });
+            console.log(`Updated user ${userId} to premium subscription`);
+          }
+          break;
+
+        case 'customer.subscription.updated':
+        case 'customer.subscription.deleted':
+          const subscription = event.data.object;
+          const customerId = subscription.customer;
+          
+          // Find user by subscription ID and update status
+          const isActive = event.type === 'customer.subscription.updated' && 
+                          subscription.status === 'active';
+          
+          // Note: In production, you'd want to store customer ID on users table
+          // For now, we'll handle this in the customer portal
+          break;
+
+        case 'invoice.payment_failed':
+          const invoice = event.data.object;
+          console.log('Payment failed for subscription:', invoice.subscription);
+          // Handle failed payment - could pause subscription, send email, etc.
+          break;
+
+        default:
+          console.log(`Unhandled event type: ${event.type}`);
+      }
+
+      res.status(200).json({ received: true });
+    } catch (error) {
+      console.error('Webhook error:', error);
+      res.status(400).json({ message: 'Webhook signature verification failed' });
     }
   });
 
