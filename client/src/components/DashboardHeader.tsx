@@ -3,30 +3,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Bell, Check, X, Settings } from "lucide-react";
+import { Bell, Check, X, Settings, Trash2, CheckCheck } from "lucide-react";
 
 export default function DashboardHeader() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const { user } = useAuth();
-  const [, setLocation] = useLocation();
-  
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-
-  const greeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
-  };
-
-  const userName = user?.firstName || user?.email?.split('@')[0] || 'there';
-
-  // Mock notifications data - in a real app this would come from an API
-  const notifications = [
+  const [notifications, setNotifications] = useState([
     {
       id: 1,
       title: "Habit Streak Milestone!",
@@ -51,7 +32,24 @@ export default function DashboardHeader() {
       type: "report",
       read: true
     }
-  ];
+  ]);
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
+  
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const greeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  const userName = user?.firstName || user?.email?.split('@')[0] || 'there';
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -62,6 +60,52 @@ export default function DashboardHeader() {
   const handleViewSettings = () => {
     setIsNotificationsOpen(false);
     setLocation('/settings');
+  };
+
+  const markAsRead = (notificationId: number) => {
+    setNotifications(prev => 
+      prev.map(notification => 
+        notification.id === notificationId 
+          ? { ...notification, read: true }
+          : notification
+      )
+    );
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(prev => 
+      prev.map(notification => ({ ...notification, read: true }))
+    );
+  };
+
+  const deleteNotification = (notificationId: number) => {
+    setNotifications(prev => 
+      prev.filter(notification => notification.id !== notificationId)
+    );
+  };
+
+  const handleNotificationCardClick = (notification: any) => {
+    // Mark as read when clicked
+    if (!notification.read) {
+      markAsRead(notification.id);
+    }
+    
+    // Navigate based on notification type
+    switch (notification.type) {
+      case 'achievement':
+        setLocation('/analytics');
+        break;
+      case 'update':
+        setLocation('/biohacks');
+        break;
+      case 'report':
+        setLocation('/analytics');
+        break;
+      default:
+        break;
+    }
+    
+    setIsNotificationsOpen(false);
   };
 
   return (
@@ -99,14 +143,26 @@ export default function DashboardHeader() {
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span>Notifications</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleViewSettings}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center space-x-2">
+                {unreadCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={markAllAsRead}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <CheckCheck className="h-4 w-4" />
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleViewSettings}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </div>
             </DialogTitle>
           </DialogHeader>
           
@@ -120,11 +176,12 @@ export default function DashboardHeader() {
               notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 rounded-lg border transition-colors ${
+                  className={`p-4 rounded-lg border transition-all cursor-pointer hover:scale-[1.02] group ${
                     notification.read
-                      ? 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
-                      : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                      ? 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600'
+                      : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/30'
                   }`}
+                  onClick={() => handleNotificationCardClick(notification)}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -152,16 +209,43 @@ export default function DashboardHeader() {
                       </p>
                     </div>
                     
-                    <div className="flex items-center space-x-1 ml-2">
-                      {notification.type === 'achievement' && (
-                        <span className="text-yellow-500">🏆</span>
-                      )}
-                      {notification.type === 'update' && (
-                        <span className="text-blue-500">📢</span>
-                      )}
-                      {notification.type === 'report' && (
-                        <span className="text-green-500">📊</span>
-                      )}
+                    <div className="flex items-center space-x-2 ml-2">
+                      <div className="flex items-center space-x-1">
+                        {notification.type === 'achievement' && (
+                          <span className="text-yellow-500">🏆</span>
+                        )}
+                        {notification.type === 'update' && (
+                          <span className="text-blue-500">📢</span>
+                        )}
+                        {notification.type === 'report' && (
+                          <span className="text-green-500">📊</span>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {!notification.read && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              markAsRead(notification.id);
+                            }}
+                            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded text-gray-500 hover:text-gray-700"
+                            title="Mark as read"
+                          >
+                            <Check className="h-3 w-3" />
+                          </button>
+                        )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteNotification(notification.id);
+                          }}
+                          className="p-1 hover:bg-red-100 dark:hover:bg-red-900/20 rounded text-gray-500 hover:text-red-600"
+                          title="Delete notification"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
