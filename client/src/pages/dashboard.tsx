@@ -20,15 +20,21 @@ export default function Dashboard() {
   const [, setLocation] = useLocation();
   const { isCollapsed } = useSidebar();
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{
+    currentStreak: number;
+    habitsCompletedToday: number;
+    totalHabitsToday: number;
+    wellnessScore: number;
+    weeklyProgress: number;
+  }>({
     queryKey: ['/api/dashboard/stats'],
   });
 
-  const { data: biohacks } = useQuery({
+  const { data: biohacks = [] } = useQuery<any[]>({
     queryKey: ['/api/biohacks'],
   });
 
-  const recommendedBiohacks = biohacks?.slice(0, 3) || [];
+  const recommendedBiohacks = biohacks.slice(0, 3);
 
   const handleBiohackClick = (biohack: any) => {
     setSelectedBiohack(biohack);

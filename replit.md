@@ -8,6 +8,14 @@ The platform enables users to build lasting habits with streak tracking, monitor
 
 ## Recent Updates (August 2025)
 
+### Card Interaction System Overhaul
+- **Removed all dropdown menus** - Eliminated confusing 3-dots menus throughout the application
+- **Consistent clickable cards** - All habit and biohack cards now open detailed modal views
+- **Today's Habits section** - Fully interactive with click-to-edit functionality and completion tracking
+- **Biohack discovery** - Dashboard biohack cards and "Explore All" button now fully functional
+- **Visual feedback system** - Hover effects, cursor pointers, scale animations, and arrow indicators
+- **Modal detail views** - Comprehensive information display with edit/delete functionality for habits
+
 ### Responsive Sidebar Implementation
 - **Fully responsive collapsible sidebar** with smooth transitions and dynamic content width adjustment
 - **Mobile-first design** with hamburger menu, overlay, and proper touch interactions

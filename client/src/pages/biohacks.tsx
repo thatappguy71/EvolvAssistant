@@ -11,7 +11,7 @@ export default function Biohacks() {
   const [selectedBiohack, setSelectedBiohack] = useState<any>(null);
   const [isBiohackDetailOpen, setIsBiohackDetailOpen] = useState(false);
   const { isCollapsed } = useSidebar();
-  const { data: biohacks = [], isLoading } = useQuery({
+  const { data: biohacks = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/biohacks'],
   });
 
