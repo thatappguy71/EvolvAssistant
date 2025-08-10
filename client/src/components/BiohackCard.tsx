@@ -25,12 +25,35 @@ export default function BiohackCard({ biohack, onClick }: BiohackCardProps) {
 
   const bookmarkMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest('POST', `/api/biohacks/${biohack.id}/bookmark`, {});
+      const response = await apiRequest('POST', `/api/biohacks/${biohack.id}/bookmark`, {});
+      return response;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/biohacks'] });
+    onMutate: async () => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/api/biohacks'] });
+
+      // Snapshot the previous value
+      const previousBiohacks = queryClient.getQueryData(['/api/biohacks']);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(['/api/biohacks'], (old: any[]) => {
+        if (!old) return old;
+        return old.map((b: any) => 
+          b.id === biohack.id 
+            ? { ...b, isBookmarked: !b.isBookmarked }
+            : b
+        );
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousBiohacks };
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
+      // Rollback to the previous value
+      if (context?.previousBiohacks) {
+        queryClient.setQueryData(['/api/biohacks'], context.previousBiohacks);
+      }
+
       if (isUnauthorizedError(error)) {
         toast({
           title: "Unauthorized",
@@ -47,6 +70,10 @@ export default function BiohackCard({ biohack, onClick }: BiohackCardProps) {
         description: "Failed to update bookmark",
         variant: "destructive",
       });
+    },
+    onSettled: () => {
+      // Always refetch after error or success
+      queryClient.invalidateQueries({ queryKey: ['/api/biohacks'] });
     },
   });
 

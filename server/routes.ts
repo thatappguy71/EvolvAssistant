@@ -324,11 +324,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const category = req.query.category as string;
+      const bookmarkedOnly = req.query.bookmarked === 'true';
       
       let biohacks;
-      if (category) {
+      if (bookmarkedOnly) {
+        biohacks = await storage.getUserBookmarkedBiohacks(userId);
+        // Filter to only show bookmarked ones
+        biohacks = biohacks.filter(b => b.isBookmarked);
+      } else if (category) {
         biohacks = await storage.getBiohacksByCategory(category);
       } else {
+        // Get all biohacks with bookmark status for the user
         biohacks = await storage.getUserBookmarkedBiohacks(userId);
       }
       
