@@ -141,8 +141,8 @@ export default function AIRecommendations() {
     } else if (recommendation.type === 'biohack') {
       // Navigate to biohacks page
       window.location.href = '/biohacks';
-    } else if (recommendation.type === 'wellness') {
-      // Navigate to wellness metrics page
+    } else if (recommendation.type === 'insight' || recommendation.type === 'goal') {
+      // Navigate to wellness metrics page for insights and goals
       window.location.href = '/wellness';
     } else {
       // Default action - just close the modal and show toast

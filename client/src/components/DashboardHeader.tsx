@@ -68,9 +68,9 @@ export default function DashboardHeader() {
 
   return (
     <>
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-600 px-8 py-6">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-600 px-4 py-6 md:px-8">
         <div className="flex items-center justify-between">
-          <div>
+          <div className="ml-16 md:ml-0">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {greeting()}, {userName}!
             </h1>

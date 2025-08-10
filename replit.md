@@ -64,6 +64,11 @@ The platform enables users to build lasting habits with streak tracking, monitor
 - **Database URL correction** ensuring uploaded images display correctly
 - **File size limits** (5MB) and proper error handling for upload failures
 
+### Mobile Header Layout Fix
+- **Menu button overlap resolution** - Fixed mobile menu button overlapping with dashboard greeting text
+- **Responsive header spacing** - Added proper left margin (ml-16) on mobile to account for fixed menu button positioning
+- **Improved mobile navigation** - Preserved hamburger menu functionality while preventing text overlap
+
 ### Biohack Image Quality Enhancement
 - **Unique technique-specific images** - Each biohack displays relevant, high-quality photos representing the specific wellness technique
 - **300px height optimization** - All images standardized to 300px height for consistent display quality
