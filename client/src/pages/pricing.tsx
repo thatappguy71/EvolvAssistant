@@ -175,21 +175,6 @@ export default function Pricing() {
           </Card>
         </div>
 
-        {/* Student Discount */}
-        <div className="text-center mb-12">
-          <Card className="max-w-md mx-auto bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900 dark:to-indigo-900 border-blue-200">
-            <CardContent className="pt-6">
-              <h3 className="font-semibold text-lg mb-2">Student Discount</h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                50% off Premium with valid student email
-              </p>
-              <Button variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-600 dark:text-blue-300">
-                Verify Student Status
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Comparison with Competitors */}
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-8">Why Choose Evolv?</h2>

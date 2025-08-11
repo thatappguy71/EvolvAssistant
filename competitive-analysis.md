@@ -75,7 +75,6 @@ Premium Features ($4.99/month or $39.99/year):
 - **Free Forever**: No credit card required, no trial limitations
 - **Premium Monthly**: $4.99 (vs Ultiself's hidden pricing)
 - **Premium Yearly**: $39.99 (33% savings, ~$3.33/month)
-- **Student Discount**: 50% off with verification
 - **Family Plan**: $59.99/year for up to 6 users
 
 #### **Trust-Building Features**
@@ -148,7 +147,7 @@ Premium Features ($4.99/month or $39.99/year):
 1. **Health app integrations** - Major feature gap vs competitors
 2. **Customer support system** - 24-hour response guarantee
 3. **User data export** - Trust building feature
-4. **Student pricing** - Market expansion
+4. **Market expansion opportunities** - Focus on broader user base
 
 ### **Long-term Strategic**
 1. **Family sharing** - Revenue expansion
