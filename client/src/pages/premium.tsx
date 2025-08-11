@@ -43,16 +43,18 @@ export default function Premium() {
         queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       }
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Payment error:', error);
       toast({
         title: "Upgrade failed",
-        description: "Unable to process upgrade. Please try again.",
+        description: error.message || "Unable to process upgrade. Please try again.",
         variant: "destructive",
       });
     },
   });
 
   const handleUpgrade = (planType: 'monthly' | 'yearly') => {
+    console.log('Upgrade button clicked:', planType);
     setSelectedPlan(planType);
     upgradeMutation.mutate(planType);
   };

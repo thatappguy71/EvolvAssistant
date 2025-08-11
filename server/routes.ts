@@ -625,7 +625,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           break;
 
         case 'invoice.payment_failed':
-          const invoice = event.data.object;
+          const invoice = event.data.object as any;
           console.log('Payment failed for subscription:', invoice.subscription);
           // Handle failed payment - could pause subscription, send email, etc.
           break;
