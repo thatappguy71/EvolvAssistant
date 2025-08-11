@@ -3,12 +3,12 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-white to-secondary/10">
+    <div className="min-h-screen bg-gradient-to-br from-evolv-primary/10 via-white dark:via-gray-900 to-evolv-secondary/10">
       <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <header className="text-center mb-16">
           <div className="flex items-center justify-center space-x-3 mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-evolv-primary to-evolv-accent rounded-xl flex items-center justify-center shadow-lg">
               <i className="fas fa-leaf text-white text-2xl"></i>
             </div>
             <div>
@@ -20,6 +20,16 @@ export default function Landing() {
             Transform your life with intelligent habit tracking, wellness monitoring, and personalized biohacking insights.
           </p>
         </header>
+
+        {/* Color Demo Link */}
+        <div className="text-center mb-8">
+          <a 
+            href="/color-demo" 
+            className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+          >
+            🎨 See Scientific Color Psychology in Action
+          </a>
+        </div>
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
@@ -94,7 +104,7 @@ export default function Landing() {
               </p>
               <Button 
                 size="lg" 
-                className="w-full bg-evolv-accent hover:bg-evolv-accent/90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0"
                 onClick={() => window.location.href = '/api/login'}
               >
                 <i className="fas fa-rocket mr-2"></i>

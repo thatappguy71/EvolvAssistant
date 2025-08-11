@@ -21,6 +21,7 @@ import Pricing from "@/pages/pricing";
 import PaymentTest from "@/pages/payment-test";
 import DirectPayment from "@/pages/direct-payment";
 import NotFound from "@/pages/not-found";
+import ColorDemo from "@/components/ColorDemo";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -55,6 +56,7 @@ function Router() {
           <Route path="/pricing" component={Pricing} />
           <Route path="/payment-test" component={PaymentTest} />
           <Route path="/direct-payment" component={DirectPayment} />
+          <Route path="/color-demo" component={ColorDemo} />
           <Route path="/profile" component={Profile} />
           <Route path="/settings" component={Settings} />
         </>
