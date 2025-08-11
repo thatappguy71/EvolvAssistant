@@ -43,7 +43,7 @@ export function Sidebar({ className }: SidebarProps) {
     <aside className={cn("w-64 bg-white shadow-lg border-r border-gray-200 fixed h-full z-30", className)}>
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary to-green-500 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-evolv-secondary to-evolv-success rounded-xl flex items-center justify-center">
             <Leaf className="text-white text-lg h-5 w-5" />
           </div>
           <div>

@@ -8,8 +8,8 @@ export default function Landing() {
         {/* Header */}
         <header className="text-center mb-16">
           <div className="flex items-center justify-center space-x-3 mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-evolv-primary to-evolv-accent dark:from-white dark:to-gray-200 rounded-xl flex items-center justify-center shadow-lg">
-              <i className="fas fa-leaf text-white dark:text-evolv-primary text-2xl"></i>
+            <div className="w-16 h-16 bg-gradient-to-br from-evolv-secondary to-evolv-success rounded-xl flex items-center justify-center shadow-lg">
+              <i className="fas fa-leaf text-white text-2xl"></i>
             </div>
             <div>
               <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Evolv</h1>
