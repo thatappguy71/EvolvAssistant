@@ -104,11 +104,11 @@ export default function Landing() {
               </p>
               <Button 
                 size="lg" 
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 px-6 py-3"
                 onClick={() => window.location.href = '/api/login'}
               >
                 <i className="fas fa-rocket mr-2"></i>
-                Start Your Wellness Journey
+                Start Your Journey
               </Button>
               <p className="text-xs text-gray-500 mt-3">
                 <i className="fas fa-shield-alt mr-1 text-evolv-primary"></i>
