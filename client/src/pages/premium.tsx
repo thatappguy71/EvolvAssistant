@@ -47,7 +47,9 @@ export default function Premium() {
       }
     },
     onError: (error: any) => {
-      console.error('Payment error:', error);
+      console.error('Payment error details:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
       toast({
         title: "Upgrade failed",
         description: error.message || "Unable to process upgrade. Please try again.",
@@ -58,6 +60,8 @@ export default function Premium() {
 
   const handleUpgrade = (planType: 'monthly' | 'yearly') => {
     console.log('Upgrade button clicked:', planType);
+    console.log('User:', user);
+    console.log('Auth status:', !!user);
     setSelectedPlan(planType);
     upgradeMutation.mutate(planType);
   };
