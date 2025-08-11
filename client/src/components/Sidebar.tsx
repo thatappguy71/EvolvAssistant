@@ -96,8 +96,8 @@ export default function Sidebar() {
           )}
           
           <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
-              <i className="fas fa-leaf text-white text-lg"></i>
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent dark:from-white dark:to-gray-200 rounded-xl flex items-center justify-center">
+              <i className="fas fa-leaf text-white dark:text-primary text-lg"></i>
             </div>
             {!isCollapsed && (
               <div>
