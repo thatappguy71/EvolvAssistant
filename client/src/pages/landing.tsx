@@ -100,6 +100,9 @@ export default function Landing() {
                 <i className="fas fa-sign-in-alt mr-2"></i>
                 Get Started
               </Button>
+              <p className="text-xs text-gray-500 mt-2">
+                Secure authentication powered by Replit
+              </p>
             </CardContent>
           </Card>
         </div>
