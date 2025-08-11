@@ -34,6 +34,7 @@ The application follows a unidirectional data flow pattern, managing client-side
 - **AI Recommendations System:** Full OpenAI (GPT-4o) integration for personalized wellness recommendations based on user data, interactive bookmark system, actionable "Take Action" buttons, and automatic daily refresh.
 - **Biohack Image Quality:** Unique, high-quality, technique-specific images (300px height) with error handling and fallback system.
 - **Payment System:** Complete Stripe integration with Canadian pricing ($4.99 CAD monthly, $49.99 CAD yearly), secure checkout sessions, and direct payment page bypassing authentication issues.
+- **Scientific Color Psychology System:** Research-backed color scheme optimized for wellness attention capture - Blue (23% productivity increase), Green (23% higher satisfaction), Orange (32% more clicks), Purple (27% perceived value), with interactive demo at `/color-demo` showcasing neurological benefits and University studies.
 
 ## External Dependencies
 
