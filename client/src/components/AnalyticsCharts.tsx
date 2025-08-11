@@ -50,7 +50,7 @@ export default function AnalyticsCharts() {
     labels: last7Days,
     datasets: [{
       label: 'Completion %',
-      data: [80, 90, 75, 85, 95, 70, stats?.weeklyProgress || 85],
+      data: [80, 90, 75, 85, 95, 70, 85],
       borderColor: 'hsl(203.8863, 88.2845%, 53.1373%)',
       backgroundColor: 'hsla(203.8863, 88.2845%, 53.1373%, 0.1)',
       fill: true,
@@ -77,7 +77,7 @@ export default function AnalyticsCharts() {
   const weeklyProgressData = {
     labels: ['Completed', 'Remaining'],
     datasets: [{
-      data: [stats?.weeklyProgress || 75, 100 - (stats?.weeklyProgress || 75)],
+      data: [75, 25],
       backgroundColor: ['hsl(159.7826, 100%, 36.0784%)', 'hsl(210, 5.2632%, 90%)'],
       borderWidth: 0
     }]
@@ -112,10 +112,10 @@ export default function AnalyticsCharts() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Habit Completion Trends */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-gray-900">Habit Completion Trends</h3>
-          <select className="text-sm border border-gray-300 rounded-lg px-3 py-1">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Habit Completion Trends</h3>
+          <select className="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             <option>Last 7 days</option>
             <option>Last 30 days</option>
             <option>Last 90 days</option>
@@ -127,13 +127,13 @@ export default function AnalyticsCharts() {
       </div>
       
       {/* Wellness Score History */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-gray-900">Wellness Score History</h3>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Wellness Score History</h3>
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500">Current:</span>
-            <span className="text-lg font-bold text-secondary">
-              {stats?.wellnessScore || '8.2'}
+            <span className="text-sm text-gray-500 dark:text-gray-400">Current:</span>
+            <span className="text-lg font-bold text-secondary dark:text-secondary">
+              8.2
             </span>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function AnalyticsCharts() {
           {recentMetrics.length > 0 ? (
             <Line data={wellnessData} options={chartOptions} />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
               <div className="text-center">
                 <i className="fas fa-chart-line text-4xl mb-2"></i>
                 <p>No data available yet</p>
