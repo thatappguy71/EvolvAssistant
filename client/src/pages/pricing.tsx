@@ -92,7 +92,7 @@ export default function Pricing() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
           {/* Free Plan */}
           <Card className="border-2 hover:shadow-xl transition-shadow">
             <CardHeader>
@@ -173,6 +173,61 @@ export default function Pricing() {
               </ul>
             </CardContent>
           </Card>
+
+          {/* Family Plan */}
+          <Card className="border-2 border-purple-500 shadow-xl relative">
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+              <Badge className="bg-purple-500 text-white px-6 py-1">
+                Family Value
+              </Badge>
+            </div>
+            <CardHeader>
+              <CardTitle className="text-2xl">Family</CardTitle>
+              <CardDescription className="mt-2">
+                Perfect for families building habits together
+              </CardDescription>
+              <div className="mt-4">
+                <span className="text-4xl font-bold text-gray-900 dark:text-white">
+                  $69.99 CAD
+                </span>
+                <span className="text-gray-500 dark:text-gray-400">
+                  /year
+                </span>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Up to 6 family members (~$11.67/person)
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Button className="w-full mb-6 bg-purple-600 hover:bg-purple-700">
+                Start Family Plan
+              </Button>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700 dark:text-gray-300 font-medium">
+                    Everything in Premium, plus:
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700 dark:text-gray-300">Up to 6 family members</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700 dark:text-gray-300">Family accountability features</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700 dark:text-gray-300">Shared progress tracking</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700 dark:text-gray-300">Family challenges & rewards</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Comparison with Competitors */}
@@ -240,7 +295,7 @@ export default function Pricing() {
                         <div className="text-xs text-gray-600">Weeks/months</div>
                       </td>
                     </tr>
-                    <tr>
+                    <tr className="border-b">
                       <td className="py-3 px-2">Data export</td>
                       <td className="text-center py-3 px-2">
                         <Check className="w-5 h-5 text-emerald-500 mx-auto" />
@@ -249,6 +304,17 @@ export default function Pricing() {
                       <td className="text-center py-3 px-2">
                         <X className="w-5 h-5 text-red-500 mx-auto" />
                         <div className="text-xs text-gray-600">Often locked</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-2">Family plans</td>
+                      <td className="text-center py-3 px-2">
+                        <Check className="w-5 h-5 text-emerald-500 mx-auto" />
+                        <div className="text-xs text-gray-600">$69.99/year for 6</div>
+                      </td>
+                      <td className="text-center py-3 px-2">
+                        <X className="w-5 h-5 text-red-500 mx-auto" />
+                        <div className="text-xs text-gray-600">Not available</div>
                       </td>
                     </tr>
                   </tbody>
