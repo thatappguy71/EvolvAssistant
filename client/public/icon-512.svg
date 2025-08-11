@@ -12,8 +12,12 @@
   <!-- White leaf icon centered -->
   <g transform="translate(256, 256)">
     <!-- Leaf shape -->
-    <path d="M-64,-42 C-64,-85 -21,-106 21,-85 C64,-64 85,-21 64,21 C43,64 0,85 -43,64 C-85,43 -85,0 -64,-42 Z" fill="white"/>
+    <path d="M-40,-60 C-20,-80 20,-80 40,-60 C60,-20 60,20 40,60 C20,80 -20,80 -40,60 C-60,40 -60,-40 -40,-60 Z M-20,-40 C0,-50 20,-40 30,-20 C40,0 30,20 20,40 C0,50 -20,40 -30,20 C-40,0 -30,-20 -20,-40 Z" fill="white" fill-rule="evenodd"/>
+    <!-- Leaf stem -->
+    <rect x="-3" y="60" width="6" height="40" fill="white"/>
     <!-- Leaf vein -->
-    <path d="M-43,-21 Q0,0 43,21" stroke="#22c55e" stroke-width="4" fill="none" opacity="0.3"/>
+    <path d="M-30,-30 L30,30" stroke="#22c55e" stroke-width="3" fill="none" opacity="0.4"/>
+    <path d="M-15,-45 L15,15" stroke="#22c55e" stroke-width="2" fill="none" opacity="0.3"/>
+    <path d="M15,-15 L-15,45" stroke="#22c55e" stroke-width="2" fill="none" opacity="0.3"/>
   </g>
 </svg>
