@@ -11,7 +11,8 @@ import {
   boolean,
   serial,
   decimal,
-  pgEnum
+  pgEnum,
+  unique
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -78,7 +79,9 @@ export const dailyMetrics = pgTable("daily_metrics", {
   sleepHours: decimal("sleep_hours", { precision: 3, scale: 1 }),
   notes: text("notes").default(""),
   updatedAt: timestamp("updated_at").defaultNow(),
-});
+}, (table) => [
+  unique().on(table.userId, table.date)
+]);
 
 export const biohacks = pgTable("biohacks", {
   id: serial("id").primaryKey(),
