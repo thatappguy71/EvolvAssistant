@@ -86,7 +86,7 @@ export default function Pricing() {
               className="mx-1"
             >
               Yearly
-              <Badge className="ml-2 bg-emerald-500 text-white text-xs">33% OFF</Badge>
+              <Badge className="ml-2 bg-emerald-500 text-white text-xs">17% OFF</Badge>
             </Button>
           </div>
         </div>
@@ -141,14 +141,14 @@ export default function Pricing() {
               </CardDescription>
               <div className="mt-4">
                 <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                  ${billingPeriod === 'monthly' ? '4.99' : '3.33'}
+                  ${billingPeriod === 'monthly' ? '4.99' : '4.17'} CAD
                 </span>
                 <span className="text-gray-500 dark:text-gray-400">
                   /{billingPeriod === 'monthly' ? 'month' : 'month'}
                 </span>
                 {billingPeriod === 'yearly' && (
                   <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Billed yearly at $39.99 (save $20)
+                    Billed yearly at $49.99 CAD (save $10)
                   </div>
                 )}
               </div>

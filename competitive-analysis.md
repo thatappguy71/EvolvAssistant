@@ -57,7 +57,7 @@ Based on comprehensive research, Ultiself has significant vulnerabilities that E
 
 #### **Premium Tier - "Value Expansion" Strategy** 
 ```
-Premium Features ($4.99/month or $39.99/year):
+Premium Features ($4.99 CAD/month or $49.99 CAD/year):
 ✅ Unlimited habits
 ✅ Advanced AI recommendations (daily, personalized)
 ✅ Premium biohack tools (advanced timers, frequencies)
@@ -73,9 +73,9 @@ Premium Features ($4.99/month or $39.99/year):
 
 #### **Transparent Pricing Structure**
 - **Free Forever**: No credit card required, no trial limitations
-- **Premium Monthly**: $4.99 (vs Ultiself's hidden pricing)
-- **Premium Yearly**: $39.99 (33% savings, ~$3.33/month)
-- **Family Plan**: $59.99/year for up to 6 users
+- **Premium Monthly**: $4.99 CAD (vs Ultiself's hidden pricing)
+- **Premium Yearly**: $49.99 CAD (17% savings, ~$4.17/month)
+- **Family Plan**: $69.99 CAD/year for up to 6 users
 
 #### **Trust-Building Features**
 - **One-click cancellation** in app and web
