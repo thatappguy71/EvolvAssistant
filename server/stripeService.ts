@@ -16,8 +16,8 @@ export const STRIPE_CONFIG = {
     premium: process.env.STRIPE_PREMIUM_PRODUCT_ID || 'prod_premium', // Will be set after product creation
   },
   prices: {
-    monthly: process.env.STRIPE_MONTHLY_PRICE_ID || 'price_monthly', // $4.99 CAD monthly
-    yearly: process.env.STRIPE_YEARLY_PRICE_ID || 'price_yearly',   // $49.99 CAD yearly
+    monthly: process.env.STRIPE_MONTHLY_PRICE_ID || 'price_1Ruj63BKLw8db4kQBkH30CSj', // $4.99 CAD monthly
+    yearly: process.env.STRIPE_YEARLY_PRICE_ID || 'price_1Ruj7KBKLw8db4kQUCiQ1yEw',   // $49.99 CAD yearly
   }
 };
 
