@@ -1,16 +1,16 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-  <!-- Rounded square background with solid green -->
-  <rect x="32" y="32" width="448" height="448" rx="88" fill="#10b981" />
+  <!-- Rounded square background -->
+  <rect x="32" y="32" width="448" height="448" rx="88" fill="#10b981" stroke="none" />
   
-  <!-- Clean leaf design (scaled 2.67x from 192px version) -->
-  <g transform="translate(256, 256)">
-    <!-- Main leaf shape -->
-    <path d="M40,-67 Q93,-53 120,0 Q107,67 53,93 Q0,107 -40,80 Q-67,40 -53,0 Q-40,-40 0,-53 Q21,-59 40,-67 Z" fill="white"/>
+  <!-- Simple leaf shape (scaled 2.67x from 192px) -->
+  <g transform="translate(256, 256)" fill="white" stroke="none">
+    <!-- Main leaf body using simple ellipse -->
+    <ellipse cx="21" cy="-21" rx="75" ry="59" transform="rotate(15)" />
     
-    <!-- Curved stem -->
-    <path d="M-40,80 Q-53,93 -67,120 Q-75,133 -67,147" stroke="white" stroke-width="21" stroke-linecap="round" fill="none"/>
+    <!-- Leaf stem as simple rectangle -->
+    <rect x="-48" y="43" width="16" height="64" rx="8" />
     
-    <!-- Subtle leaf vein -->
-    <path d="M13,-40 Q40,-13 67,27 Q53,53 27,67" stroke="#10b981" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <!-- Simple leaf vein -->
+    <rect x="16" y="-32" width="5" height="53" rx="3" fill="#10b981" opacity="0.5" transform="rotate(15)" />
   </g>
 </svg>
