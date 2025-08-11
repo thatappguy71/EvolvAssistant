@@ -84,22 +84,37 @@ export async function setupAuth(app: Express) {
     verified(null, user);
   };
 
-  const domains = process.env.REPLIT_DOMAINS?.split(",") || ['localhost'];
+  const domains = process.env.REPLIT_DOMAINS?.split(",") || [];
   
-  for (const domain of domains) {
-    const strategy = new Strategy(
-      {
-        name: `replitauth:${domain}`,
-        config,
-        scope: "openid email profile offline_access",
-        callbackURL: domain === 'localhost' 
-          ? `http://${domain}:5000/api/callback`
-          : `https://${domain}/api/callback`,
-      },
-      verify,
-    );
-    passport.use(strategy);
+  // Always register the Replit domain strategy for production
+  if (domains.length > 0) {
+    for (const domain of domains) {
+      const strategy = new Strategy(
+        {
+          name: `replitauth:${domain}`,
+          config,
+          scope: "openid email profile offline_access",
+          callbackURL: `https://${domain}/api/callback`,
+        },
+        verify,
+      );
+      passport.use(strategy);
+      console.log(`Registered strategy: replitauth:${domain}`);
+    }
   }
+  
+  // Also register localhost strategy for development
+  const localhostStrategy = new Strategy(
+    {
+      name: `replitauth:localhost`,
+      config,
+      scope: "openid email profile offline_access", 
+      callbackURL: `http://localhost:5000/api/callback`,
+    },
+    verify,
+  );
+  passport.use(localhostStrategy);
+  console.log('Registered strategy: replitauth:localhost');
 
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
