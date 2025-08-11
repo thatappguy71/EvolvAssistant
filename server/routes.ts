@@ -67,6 +67,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ message: 'API is working', timestamp: new Date().toISOString() });
   });
 
+  // Health check route
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'OK', timestamp: new Date().toISOString(), service: 'Evolv API' });
+  });
+
   // Serve payment test page
   app.get('/test-payment', (req, res) => {
     res.sendFile(require('path').resolve(process.cwd(), 'test-payment.html'));
@@ -549,7 +554,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ checkoutUrl: session.url });
     } catch (error) {
       console.error('Error creating checkout session:', error);
-      res.status(500).json({ message: 'Failed to create checkout session', error: error.message });
+      res.status(500).json({ message: 'Failed to create checkout session', error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
 
@@ -580,7 +585,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.json({ checkoutUrl: session.url });
     } catch (error) {
       console.error('Error creating demo checkout session:', error);
-      return res.status(500).json({ message: 'Failed to create checkout session', error: error.message });
+      return res.status(500).json({ message: 'Failed to create checkout session', error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
 

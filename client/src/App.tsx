@@ -19,6 +19,7 @@ import Profile from "@/pages/profile";
 import Settings from "@/pages/settings";
 import Pricing from "@/pages/pricing";
 import PaymentTest from "@/pages/payment-test";
+import DirectPayment from "@/pages/direct-payment";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -38,7 +39,10 @@ function Router() {
   return (
     <Switch>
       {!isAuthenticated ? (
-        <Route path="/" component={Landing} />
+        <>
+          <Route path="/" component={Landing} />
+          <Route path="/direct-payment" component={DirectPayment} />
+        </>
       ) : (
         <>
           <Route path="/" component={Dashboard} />
@@ -50,6 +54,7 @@ function Router() {
           <Route path="/premium" component={Premium} />
           <Route path="/pricing" component={Pricing} />
           <Route path="/payment-test" component={PaymentTest} />
+          <Route path="/direct-payment" component={DirectPayment} />
           <Route path="/profile" component={Profile} />
           <Route path="/settings" component={Settings} />
         </>
