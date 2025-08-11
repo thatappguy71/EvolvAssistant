@@ -18,6 +18,7 @@ export const STRIPE_CONFIG = {
   prices: {
     monthly: process.env.STRIPE_MONTHLY_PRICE_ID || 'price_1Ruj63BKLw8db4kQBkH30CSj', // $4.99 CAD monthly
     yearly: process.env.STRIPE_YEARLY_PRICE_ID || 'price_1Ruj7KBKLw8db4kQUCiQ1yEw',   // $49.99 CAD yearly
+    family: process.env.STRIPE_FAMILY_PRICE_ID || 'price_family_yearly', // $69.99 CAD yearly for 6 users
   }
 };
 

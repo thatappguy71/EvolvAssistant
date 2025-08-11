@@ -533,11 +533,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('Plan type:', planType);
       
-      if (!planType || !['monthly', 'yearly'].includes(planType)) {
+      if (!planType || !['monthly', 'yearly', 'family'].includes(planType)) {
         return res.status(400).json({ message: 'Invalid plan type' });
       }
 
-      const priceId = planType === 'yearly' ? STRIPE_CONFIG.prices.yearly : STRIPE_CONFIG.prices.monthly;
+      let priceId;
+      if (planType === 'yearly') {
+        priceId = STRIPE_CONFIG.prices.yearly;
+      } else if (planType === 'family') {
+        priceId = STRIPE_CONFIG.prices.family;
+      } else {
+        priceId = STRIPE_CONFIG.prices.monthly;
+      }
       console.log('Using price ID:', priceId);
       
       const baseUrl = `${req.protocol}://${req.get('host')}`;
@@ -564,11 +571,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Demo checkout route hit with body:', req.body);
       const { planType } = req.body;
       
-      if (!planType || !['monthly', 'yearly'].includes(planType)) {
+      if (!planType || !['monthly', 'yearly', 'family'].includes(planType)) {
         return res.status(400).json({ message: 'Invalid plan type' });
       }
 
-      const priceId = planType === 'yearly' ? STRIPE_CONFIG.prices.yearly : STRIPE_CONFIG.prices.monthly;
+      let priceId;
+      if (planType === 'yearly') {
+        priceId = STRIPE_CONFIG.prices.yearly;
+      } else if (planType === 'family') {
+        priceId = STRIPE_CONFIG.prices.family;
+      } else {
+        priceId = STRIPE_CONFIG.prices.monthly;
+      }
       const baseUrl = `${req.protocol}://${req.get('host')}`;
 
       console.log('Creating Stripe session with price ID:', priceId);
