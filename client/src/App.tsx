@@ -43,6 +43,7 @@ function Router() {
         <>
           <Route path="/" component={Landing} />
           <Route path="/direct-payment" component={DirectPayment} />
+          <Route path="/color-demo" component={ColorDemo} />
         </>
       ) : (
         <>
