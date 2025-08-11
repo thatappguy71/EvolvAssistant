@@ -23,60 +23,60 @@ export default function Landing() {
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          <Card className="border-2 hover:border-primary/30 transition-colors">
+          <Card className="border-2 hover:border-evolv-primary/30 transition-colors hover-lift">
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-check-circle text-primary text-xl"></i>
+              <div className="w-12 h-12 bg-evolv-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <i className="fas fa-check-circle text-evolv-primary text-xl"></i>
               </div>
               <h3 className="text-lg font-semibold mb-2">Smart Habit Tracking</h3>
               <p className="text-gray-600">Build lasting habits with intelligent tracking, streaks, and personalized insights.</p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 hover:border-primary/30 transition-colors">
+          <Card className="border-2 hover:border-evolv-secondary/30 transition-colors hover-lift">
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-heart text-secondary text-xl"></i>
+              <div className="w-12 h-12 bg-evolv-secondary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <i className="fas fa-heart text-evolv-secondary text-xl"></i>
               </div>
               <h3 className="text-lg font-semibold mb-2">Wellness Metrics</h3>
               <p className="text-gray-600">Monitor energy, focus, mood, and sleep quality with comprehensive analytics.</p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 hover:border-primary/30 transition-colors">
+          <Card className="border-2 hover:border-evolv-accent/30 transition-colors hover-lift">
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-lightbulb text-accent text-xl"></i>
+              <div className="w-12 h-12 bg-evolv-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <i className="fas fa-lightbulb text-evolv-accent text-xl"></i>
               </div>
               <h3 className="text-lg font-semibold mb-2">Biohack Discovery</h3>
               <p className="text-gray-600">Explore scientifically-backed biohacks to optimize your health and performance.</p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 hover:border-primary/30 transition-colors">
+          <Card className="border-2 hover:border-evolv-accent/30 transition-colors hover-lift">
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-chart-line text-orange-500 text-xl"></i>
+              <div className="w-12 h-12 bg-evolv-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <i className="fas fa-chart-line text-evolv-accent text-xl"></i>
               </div>
               <h3 className="text-lg font-semibold mb-2">Advanced Analytics</h3>
               <p className="text-gray-600">Visualize your progress with detailed charts and trend analysis.</p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 hover:border-primary/30 transition-colors">
+          <Card className="border-2 hover:border-evolv-secondary/30 transition-colors hover-lift">
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-sync text-green-500 text-xl"></i>
+              <div className="w-12 h-12 bg-evolv-secondary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <i className="fas fa-sync text-evolv-secondary text-xl"></i>
               </div>
               <h3 className="text-lg font-semibold mb-2">Cloud Sync</h3>
               <p className="text-gray-600">Access your data anywhere with secure cloud synchronization.</p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 hover:border-primary/30 transition-colors">
+          <Card className="border-2 hover:border-evolv-premium/30 transition-colors hover-lift">
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-crown text-purple-500 text-xl"></i>
+              <div className="w-12 h-12 bg-evolv-premium/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <i className="fas fa-crown text-evolv-premium text-xl"></i>
               </div>
               <h3 className="text-lg font-semibold mb-2">Premium Features</h3>
               <p className="text-gray-600">Unlock advanced insights, unlimited habits, and priority support.</p>
@@ -94,14 +94,15 @@ export default function Landing() {
               </p>
               <Button 
                 size="lg" 
-                className="w-full"
+                className="w-full bg-evolv-accent hover:bg-evolv-accent/90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                 onClick={() => window.location.href = '/api/login'}
               >
-                <i className="fas fa-sign-in-alt mr-2"></i>
-                Get Started
+                <i className="fas fa-rocket mr-2"></i>
+                Start Your Wellness Journey
               </Button>
-              <p className="text-xs text-gray-500 mt-2">
-                Secure authentication powered by Replit
+              <p className="text-xs text-gray-500 mt-3">
+                <i className="fas fa-shield-alt mr-1 text-evolv-primary"></i>
+                Secure authentication • Join thousands improving their health
               </p>
             </CardContent>
           </Card>

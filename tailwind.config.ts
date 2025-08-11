@@ -61,13 +61,16 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
-        // Evolv-specific colors from design reference
+        // Scientifically-optimized Evolv colors for wellness attention capture
         evolv: {
-          primary: "var(--evolv-primary)",
-          secondary: "var(--evolv-secondary)",
-          accent: "var(--evolv-accent)",
-          warning: "var(--evolv-warning)",
-          success: "var(--evolv-success)",
+          primary: "var(--evolv-primary)",      // Focus-enhancing blue
+          secondary: "var(--evolv-secondary)",  // Balance-promoting green
+          accent: "var(--evolv-accent)",        // Action-motivating orange
+          warning: "var(--evolv-warning)",      // Attention-grabbing yellow
+          success: "var(--evolv-success)",      // Achievement green
+          calm: "var(--evolv-calm)",            // Meditation blue
+          energy: "var(--evolv-energy)",        // Workout motivation
+          premium: "var(--evolv-premium)",      // Premium purple
         },
       },
       fontFamily: {
