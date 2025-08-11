@@ -1,31 +1,16 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#22c55e" />
-      <stop offset="100%" style="stop-color:#16a34a" />
-    </linearGradient>
-  </defs>
+  <!-- Rounded square background with solid green -->
+  <rect x="32" y="32" width="448" height="448" rx="88" fill="#10b981" />
   
-  <!-- Rounded square background -->
-  <rect x="32" y="32" width="448" height="448" rx="88" fill="url(#bgGradient)" />
-  
-  <!-- Modern leaf design (scaled 2.67x from 192px version) -->
+  <!-- Clean leaf design (scaled 2.67x from 192px version) -->
   <g transform="translate(256, 256)">
-    <!-- Main leaf body -->
-    <path d="M0,-107 Q53,-93 80,-40 Q93,0 80,40 Q53,93 0,107 Q-53,93 -80,40 Q-93,0 -80,-40 Q-53,-93 0,-107 Z" fill="white"/>
+    <!-- Main leaf shape -->
+    <path d="M40,-67 Q93,-53 120,0 Q107,67 53,93 Q0,107 -40,80 Q-67,40 -53,0 Q-40,-40 0,-53 Q21,-59 40,-67 Z" fill="white"/>
     
-    <!-- Stem -->
-    <rect x="-5" y="107" width="11" height="53" rx="5" fill="white"/>
+    <!-- Curved stem -->
+    <path d="M-40,80 Q-53,93 -67,120 Q-75,133 -67,147" stroke="white" stroke-width="21" stroke-linecap="round" fill="none"/>
     
-    <!-- Central vein -->
-    <path d="M0,-93 Q0,0 0,101" stroke="#16a34a" stroke-width="5" fill="none" opacity="0.6"/>
-    
-    <!-- Left side veins -->
-    <path d="M0,-53 Q-40,-27 -59,13" stroke="#16a34a" stroke-width="4" fill="none" opacity="0.4"/>
-    <path d="M0,-13 Q-48,21 -67,67" stroke="#16a34a" stroke-width="4" fill="none" opacity="0.4"/>
-    
-    <!-- Right side veins -->
-    <path d="M0,-53 Q40,-27 59,13" stroke="#16a34a" stroke-width="4" fill="none" opacity="0.4"/>
-    <path d="M0,-13 Q48,21 67,67" stroke="#16a34a" stroke-width="4" fill="none" opacity="0.4"/>
+    <!-- Subtle leaf vein -->
+    <path d="M13,-40 Q40,-13 67,27 Q53,53 27,67" stroke="#10b981" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.4"/>
   </g>
 </svg>
