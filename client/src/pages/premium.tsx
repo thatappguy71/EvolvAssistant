@@ -18,14 +18,17 @@ export default function Premium() {
 
   const upgradeMutation = useMutation({
     mutationFn: async (planType: 'monthly' | 'yearly') => {
-      const response = await fetch('/api/subscription/create-checkout', {
+      const response = await fetch('/api/subscription/demo-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ planType }),
       });
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Checkout error:', errorText);
         throw new Error('Failed to create checkout session');
       }
       return response.json();

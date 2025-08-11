@@ -18,6 +18,7 @@ import Premium from "@/pages/premium";
 import Profile from "@/pages/profile";
 import Settings from "@/pages/settings";
 import Pricing from "@/pages/pricing";
+import PaymentTest from "@/pages/payment-test";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -48,6 +49,7 @@ function Router() {
           <Route path="/wellness" component={Wellness} />
           <Route path="/premium" component={Premium} />
           <Route path="/pricing" component={Pricing} />
+          <Route path="/payment-test" component={PaymentTest} />
           <Route path="/profile" component={Profile} />
           <Route path="/settings" component={Settings} />
         </>

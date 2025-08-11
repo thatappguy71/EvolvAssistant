@@ -62,6 +62,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize biohacks data
   await storage.initializeBiohacks();
 
+  // Test route to verify API routing
+  app.get('/api/test', (req, res) => {
+    res.json({ message: 'API is working', timestamp: new Date().toISOString() });
+  });
+
+  // Serve payment test page
+  app.get('/test-payment', (req, res) => {
+    res.sendFile(require('path').resolve(process.cwd(), 'test-payment.html'));
+  });
+
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
@@ -511,15 +521,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment routes
   app.post('/api/subscription/create-checkout', isAuthenticated, async (req: any, res) => {
     try {
+      console.log('Checkout request received for user:', req.user?.claims?.sub);
       const userId = req.user.claims.sub;
-      const userEmail = req.user.claims.email;
+      const userEmail = req.user.claims.email || 'demo@example.com';
       const { planType } = req.body;
 
+      console.log('Plan type:', planType);
+      
       if (!planType || !['monthly', 'yearly'].includes(planType)) {
         return res.status(400).json({ message: 'Invalid plan type' });
       }
 
       const priceId = planType === 'yearly' ? STRIPE_CONFIG.prices.yearly : STRIPE_CONFIG.prices.monthly;
+      console.log('Using price ID:', priceId);
+      
       const baseUrl = `${req.protocol}://${req.get('host')}`;
 
       const session = await createCheckoutSession({
@@ -530,10 +545,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cancelUrl: `${baseUrl}/premium?canceled=true`,
       });
 
+      console.log('Checkout session created:', session.id);
       res.json({ checkoutUrl: session.url });
     } catch (error) {
       console.error('Error creating checkout session:', error);
-      res.status(500).json({ message: 'Failed to create checkout session' });
+      res.status(500).json({ message: 'Failed to create checkout session', error: error.message });
+    }
+  });
+
+  // Temporary demo route for testing payment (remove in production)
+  app.post('/api/subscription/demo-checkout', async (req: any, res) => {
+    try {
+      console.log('Demo checkout route hit with body:', req.body);
+      const { planType } = req.body;
+      
+      if (!planType || !['monthly', 'yearly'].includes(planType)) {
+        return res.status(400).json({ message: 'Invalid plan type' });
+      }
+
+      const priceId = planType === 'yearly' ? STRIPE_CONFIG.prices.yearly : STRIPE_CONFIG.prices.monthly;
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+      console.log('Creating Stripe session with price ID:', priceId);
+      
+      const session = await createCheckoutSession({
+        userId: 'demo-user',
+        userEmail: 'demo@evolv.app',
+        priceId,
+        successUrl: `${baseUrl}/premium?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${baseUrl}/premium?canceled=true`,
+      });
+
+      console.log('Demo checkout session created:', session.id);
+      return res.json({ checkoutUrl: session.url });
+    } catch (error) {
+      console.error('Error creating demo checkout session:', error);
+      return res.status(500).json({ message: 'Failed to create checkout session', error: error.message });
     }
   });
 
