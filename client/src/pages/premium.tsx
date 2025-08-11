@@ -26,10 +26,13 @@ export default function Premium() {
         credentials: 'include',
         body: JSON.stringify({ planType }),
       });
+      
+      console.log('Premium page response status:', response.status);
+      
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Checkout error:', errorText);
-        throw new Error('Failed to create checkout session');
+        console.error('Checkout error:', response.status, errorText);
+        throw new Error(`Failed to create checkout session: ${response.status}`);
       }
       return response.json();
     },

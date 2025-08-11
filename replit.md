@@ -33,6 +33,7 @@ The application follows a unidirectional data flow pattern, managing client-side
 - **Profile Management:** Profile picture upload system with file path handling, image format validation (JPEG, PNG, GIF, WebP), database URL correction, and file size limits (5MB).
 - **AI Recommendations System:** Full OpenAI (GPT-4o) integration for personalized wellness recommendations based on user data, interactive bookmark system, actionable "Take Action" buttons, and automatic daily refresh.
 - **Biohack Image Quality:** Unique, high-quality, technique-specific images (300px height) with error handling and fallback system.
+- **Payment System:** Complete Stripe integration with Canadian pricing ($4.99 CAD monthly, $49.99 CAD yearly), secure checkout sessions, and direct payment page bypassing authentication issues.
 
 ## External Dependencies
 

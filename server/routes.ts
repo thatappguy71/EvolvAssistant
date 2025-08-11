@@ -523,7 +523,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Stripe payment routes
+  // Stripe payment routes (authenticated)
   app.post('/api/subscription/create-checkout', isAuthenticated, async (req: any, res) => {
     try {
       console.log('Checkout request received for user:', req.user?.claims?.sub);
