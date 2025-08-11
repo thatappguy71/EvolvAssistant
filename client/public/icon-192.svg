@@ -9,11 +9,18 @@
   <!-- Rounded background -->
   <rect x="16" y="16" width="160" height="160" rx="32" fill="url(#greenGradient)" />
   
-  <!-- White leaf icon centered (matching favicon design) -->
+  <!-- White leaf icon centered -->
   <g transform="translate(96, 96)">
-    <!-- Leaf shape -->
-    <path d="M-24,-16 C-24,-32 -8,-40 8,-32 C24,-24 32,-8 24,8 C16,24 0, 32 -16,24 C-32,16 -32,0 -24,-16 Z" fill="white"/>
-    <!-- Leaf vein -->
-    <path d="M16,-8 Q0,0 16,8" stroke="#22c55e" stroke-width="2" fill="none" opacity="0.3"/>
+    <!-- Leaf shape - classic leaf with pointed tip -->
+    <path d="M0,-35 C15,-30 25,-15 25,0 C25,15 15,25 0,30 C-15,25 -25,15 -25,0 C-25,-15 -15,-30 0,-35 Z" fill="white"/>
+    <!-- Leaf stem -->
+    <rect x="-1.5" y="30" width="3" height="15" fill="white"/>
+    <!-- Central vein -->
+    <line x1="0" y1="-32" x2="0" y2="28" stroke="#22c55e" stroke-width="1.5" opacity="0.4"/>
+    <!-- Side veins -->
+    <path d="M0,-15 Q-12,-8 -18,0" stroke="#22c55e" stroke-width="1" fill="none" opacity="0.3"/>
+    <path d="M0,-15 Q12,-8 18,0" stroke="#22c55e" stroke-width="1" fill="none" opacity="0.3"/>
+    <path d="M0,0 Q-10,8 -15,15" stroke="#22c55e" stroke-width="1" fill="none" opacity="0.3"/>
+    <path d="M0,0 Q10,8 15,15" stroke="#22c55e" stroke-width="1" fill="none" opacity="0.3"/>
   </g>
 </svg>
