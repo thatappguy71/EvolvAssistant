@@ -35,7 +35,7 @@ The application follows a unidirectional data flow pattern, managing client-side
 - **Biohack Image Quality:** Unique, high-quality, technique-specific images (300px height) with error handling and fallback system.
 - **Payment System:** Complete Stripe integration with Canadian pricing ($4.99 CAD monthly, $49.99 CAD yearly, $69.99 CAD family), secure checkout sessions, direct payment page bypassing authentication issues, and competitive family plan advantage.
 - **Scientific Color Psychology System:** Research-backed color scheme optimized for wellness attention capture - Blue (23% productivity increase), Green (23% higher satisfaction), Orange (32% more clicks), Purple (27% perceived value), with interactive demo at `/color-demo` showcasing neurological benefits and University studies.
-- **Professional App Icons:** SVG-based green gradient icons (192px, 512px) with white leaf design, PWA manifest for mobile installation, proper favicon and touch icons, theme color integration, and Stripe branding consistency.
+- **Custom Brand Icons:** User-designed SVG growth arrow with organic leaves on emerald green background, implemented across browser favicon, PWA manifest, landing page header, and sidebar logos. Complete brand consistency with cache-busting deployment strategy.
 
 ## External Dependencies
 
