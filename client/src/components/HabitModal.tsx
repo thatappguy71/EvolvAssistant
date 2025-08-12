@@ -180,38 +180,40 @@ export default function HabitModal({ isOpen, onClose, habit }: HabitModalProps) 
               </div>
 
               {!useCustom && (
-                <div>
-                  <Label htmlFor="predefined" className="text-sm font-medium text-gray-700">
-                    Select a Habit *
+                <div className="space-y-4 max-h-80 overflow-y-auto">
+                  <Label className="text-sm font-medium text-gray-700">
+                    Choose a Popular Habit *
                   </Label>
-                  <Select
-                    value={selectedHabit}
-                    onValueChange={handleHabitSelection}
-                    required
-                  >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Choose from popular habits" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-60">
-                      {categories.map((category) => (
-                        <div key={category}>
-                          <div className="px-2 py-1 text-sm font-semibold text-gray-500 bg-gray-50">
-                            {category}
-                          </div>
+                  <div className="space-y-3">
+                    {categories.map((category) => (
+                      <div key={category}>
+                        <h4 className="text-sm font-semibold text-gray-600 mb-2 px-2">
+                          {category}
+                        </h4>
+                        <div className="space-y-1">
                           {predefinedHabits
                             .filter(habit => habit.category === category)
                             .map((habit) => (
-                              <SelectItem key={habit.name} value={habit.name}>
-                                <div className="flex flex-col">
-                                  <span className="font-medium">{habit.name}</span>
-                                  <span className="text-xs text-gray-500">{habit.timeRequired} • {habit.difficulty}</span>
+                              <button
+                                key={habit.name}
+                                type="button"
+                                onClick={() => handleHabitSelection(habit.name)}
+                                className={`w-full text-left p-3 rounded-lg border transition-colors hover:bg-blue-50 hover:border-blue-300 ${
+                                  selectedHabit === habit.name
+                                    ? 'bg-blue-50 border-blue-300'
+                                    : 'bg-white border-gray-200'
+                                }`}
+                              >
+                                <div className="font-medium text-gray-900">{habit.name}</div>
+                                <div className="text-xs text-gray-500 mt-1">
+                                  {habit.timeRequired} • {habit.difficulty}
                                 </div>
-                              </SelectItem>
+                              </button>
                             ))}
                         </div>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </>
