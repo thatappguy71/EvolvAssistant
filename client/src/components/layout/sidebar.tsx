@@ -44,7 +44,15 @@ export function Sidebar({ className }: SidebarProps) {
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-br from-evolv-secondary to-evolv-success rounded-xl flex items-center justify-center">
-            <Leaf className="text-white text-lg h-5 w-5" />
+            <svg width="20" height="20" viewBox="0 0 192 192" className="text-white">
+              <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M96 144 C96 122, 96 114, 101 105 C107 95, 120 88, 135 88" strokeWidth="6"/>
+                <path d="M135 88 L125 79 M135 88 L128 97" strokeWidth="6"/>
+                <path d="M85 114 C67 112, 58 101, 56 88 C79 86, 91 97, 85 114 Z" fill="currentColor" stroke="none"/>
+                <path d="M105 114 C123 112, 132 101, 134 88 C111 86, 99 97, 105 114 Z" fill="currentColor" stroke="none"/>
+                <path d="M68 148 Q96 158 125 148" strokeWidth="4" opacity="0.9"/>
+              </g>
+            </svg>
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900">Evolv</h1>

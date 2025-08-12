@@ -9,7 +9,15 @@ export default function Landing() {
         <header className="text-center mb-16">
           <div className="flex items-center justify-center space-x-3 mb-6">
             <div className="w-16 h-16 bg-gradient-to-br from-evolv-secondary to-evolv-success rounded-xl flex items-center justify-center shadow-lg">
-              <i className="fas fa-leaf text-white text-2xl"></i>
+              <svg width="32" height="32" viewBox="0 0 192 192" className="text-white">
+                <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M96 144 C96 122, 96 114, 101 105 C107 95, 120 88, 135 88" strokeWidth="6"/>
+                  <path d="M135 88 L125 79 M135 88 L128 97" strokeWidth="6"/>
+                  <path d="M85 114 C67 112, 58 101, 56 88 C79 86, 91 97, 85 114 Z" fill="currentColor" stroke="none"/>
+                  <path d="M105 114 C123 112, 132 101, 134 88 C111 86, 99 97, 105 114 Z" fill="currentColor" stroke="none"/>
+                  <path d="M68 148 Q96 158 125 148" strokeWidth="4" opacity="0.9"/>
+                </g>
+              </svg>
             </div>
             <div>
               <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Evolv</h1>
