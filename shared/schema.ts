@@ -190,6 +190,26 @@ export const insertBiohackSchema = createInsertSchema(biohacks).omit({
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 
+// Beta feedback table
+export const betaFeedback = pgTable("beta_feedback", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  type: varchar("type", { enum: ["bug", "feature", "general", "usability"] }).notNull(),
+  priority: varchar("priority", { enum: ["low", "medium", "high", "critical"] }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  stepsToReproduce: text("steps_to_reproduce"),
+  expectedBehavior: text("expected_behavior"),
+  actualBehavior: text("actual_behavior"),
+  browserInfo: text("browser_info"),
+  status: varchar("status", { enum: ["open", "in_progress", "resolved", "closed"] }).default("open"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type BetaFeedback = typeof betaFeedback.$inferSelect;
+export type InsertBetaFeedback = typeof betaFeedback.$inferInsert;
+
 // AI Recommendations table
 export const aiRecommendations = pgTable("ai_recommendations", {
   id: serial("id").primaryKey(),

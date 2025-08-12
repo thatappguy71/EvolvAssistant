@@ -6,6 +6,7 @@ import {
   biohacks,
   userBiohackBookmarks,
   aiRecommendations,
+  betaFeedback,
   type User,
   type UpsertUser,
   type InsertHabit,
@@ -19,6 +20,8 @@ import {
   type UserBiohackBookmark,
   type AIRecommendation,
   type InsertAIRecommendation,
+  type BetaFeedback,
+  type InsertBetaFeedback,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, sql, count } from "drizzle-orm";
@@ -81,6 +84,12 @@ export interface IStorage {
   clearAIRecommendations(userId: string): Promise<void>;
   markRecommendationAsRead(recommendationId: number, userId: string): Promise<void>;
   toggleRecommendationBookmark(recommendationId: number, userId: string): Promise<boolean>;
+
+  // Beta Feedback operations
+  createBetaFeedback(feedback: InsertBetaFeedback): Promise<BetaFeedback>;
+  getBetaFeedbackByUser(userId: string): Promise<BetaFeedback[]>;
+  getAllBetaFeedback(): Promise<BetaFeedback[]>;
+  updateBetaFeedbackStatus(id: number, status: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -725,6 +734,40 @@ export class DatabaseStorage implements IStorage {
       );
 
     return newBookmarkState;
+  }
+
+  // Beta Feedback operations
+  async createBetaFeedback(feedback: InsertBetaFeedback): Promise<BetaFeedback> {
+    const [newFeedback] = await db
+      .insert(betaFeedback)
+      .values(feedback)
+      .returning();
+    return newFeedback;
+  }
+
+  async getBetaFeedbackByUser(userId: string): Promise<BetaFeedback[]> {
+    return await db
+      .select()
+      .from(betaFeedback)
+      .where(eq(betaFeedback.userId, userId))
+      .orderBy(desc(betaFeedback.createdAt));
+  }
+
+  async getAllBetaFeedback(): Promise<BetaFeedback[]> {
+    return await db
+      .select()
+      .from(betaFeedback)
+      .orderBy(desc(betaFeedback.createdAt));
+  }
+
+  async updateBetaFeedbackStatus(id: number, status: string): Promise<void> {
+    await db
+      .update(betaFeedback)
+      .set({ 
+        status: status as any,
+        updatedAt: new Date(),
+      })
+      .where(eq(betaFeedback.id, id));
   }
 }
 

@@ -730,5 +730,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Beta Feedback routes
+  app.post('/api/beta-feedback', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const feedbackData = {
+        ...req.body,
+        userId
+      };
+      
+      const feedback = await storage.createBetaFeedback(feedbackData);
+      res.json(feedback);
+    } catch (error) {
+      console.error("Error creating beta feedback:", error);
+      res.status(500).json({ message: "Failed to create feedback" });
+    }
+  });
+
+  app.get('/api/beta-feedback', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const feedback = await storage.getBetaFeedbackByUser(userId);
+      res.json(feedback);
+    } catch (error) {
+      console.error("Error fetching beta feedback:", error);
+      res.status(500).json({ message: "Failed to fetch feedback" });
+    }
+  });
+
   return httpServer;
 }
