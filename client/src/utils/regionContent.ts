@@ -1,5 +1,34 @@
 import type { LocationData } from '@/hooks/useLocation';
 
+// Function to get a deterministic but rotating index based on habit name and date
+function getDailyRotationIndex(habitName: string, totalLinks: number): number {
+  const today = new Date().toDateString(); // Gets date string like "Mon Jan 01 2024"
+  const seed = habitName + today;
+  
+  // Simple hash function to convert string to number
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    const char = seed.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  
+  return Math.abs(hash) % totalLinks;
+}
+
+// Function to rotate links daily for the same habit
+function getRotatedLinks(links: { title: string; url: string; type: string }[], habitName: string) {
+  if (links.length <= 1) return links;
+  
+  const rotationIndex = getDailyRotationIndex(habitName, links.length);
+  
+  // Rotate the array so different links appear first each day
+  return [
+    ...links.slice(rotationIndex),
+    ...links.slice(0, rotationIndex)
+  ];
+}
+
 export interface RegionalContent {
   videoLinks: {
     meditation: string[];
@@ -268,33 +297,98 @@ export function getRegionalContent(location: LocationData | null): RegionalConte
 export function getRegionalizedHabit(habitName: string, location: LocationData | null) {
   const content = getRegionalContent(location);
   
-  // Map habit names to appropriate regional content
-  switch (habitName.toLowerCase()) {
-    case 'morning meditation':
-      return {
-        helpfulLinks: [
-          { title: "Morning Meditation Guide", url: content.videoLinks.meditation[0], type: "video" },
-          { title: `${location?.country || 'Canada'} Meditation App`, url: content.appLinks.meditation[0], type: "app" },
-          { title: "Local Mental Health Resources", url: content.healthServices.mentalHealth[0], type: "guide" }
-        ]
-      };
-    case 'daily walk':
-      return {
-        helpfulLinks: [
-          { title: "Walking Exercise Guide", url: content.videoLinks.exercise[0], type: "video" },
-          { title: "Local Fitness Resources", url: content.healthServices.fitness[0], type: "guide" },
-          { title: "Regional Fitness App", url: content.appLinks.fitness[0], type: "app" }
-        ]
-      };
-    case 'drink 8 glasses of water':
-      return {
-        helpfulLinks: [
-          { title: `${location?.country || 'Canada'} Nutrition Guide`, url: content.healthServices.nutrition[0], type: "guide" },
-          { title: "Nutrition Tracking App", url: content.appLinks.nutrition[0], type: "app" },
-          { title: "Hydration Tips", url: content.healthServices.nutrition[1] || content.healthServices.nutrition[0], type: "resource" }
-        ]
-      };
-    default:
-      return null;
-  }
+  // Enhanced habit mappings with multiple links for daily rotation
+  const habitMappings: Record<string, { helpfulLinks: { title: string; url: string; type: string }[] }> = {
+    'Morning Meditation': {
+      helpfulLinks: [
+        { title: 'Guided Morning Meditation (10 min)', url: content.videoLinks.meditation[0] || 'https://youtube.com/watch?v=ZToicYcHIOU', type: 'video' },
+        { title: 'Mindfulness Meditation (15 min)', url: content.videoLinks.meditation[1] || 'https://youtube.com/watch?v=WPPPFqsECz0', type: 'video' },
+        { title: 'Body Scan Meditation', url: 'https://youtube.com/watch?v=15q-N-_kkrU', type: 'video' },
+        { title: 'Headspace Daily Sessions', url: content.appLinks.meditation[0] || 'https://headspace.com', type: 'app' },
+        { title: 'Calm Meditation App', url: content.appLinks.meditation[1] || 'https://calm.com', type: 'app' },
+        { title: 'Insight Timer Community', url: content.appLinks.meditation[2] || 'https://insighttimer.com', type: 'app' }
+      ]
+    },
+    'Daily Exercise': {
+      helpfulLinks: [
+        { title: 'HIIT Workout (20 min)', url: content.videoLinks.exercise[0] || 'https://youtube.com/watch?v=g_tea8ZNk5A', type: 'video' },
+        { title: 'Full Body Strength Training', url: content.videoLinks.exercise[1] || 'https://youtube.com/watch?v=ml6cT4AZdqI', type: 'video' },
+        { title: 'Cardio Dance Workout', url: 'https://youtube.com/watch?v=gC_L9qAHVJ8', type: 'video' },
+        { title: 'Nike Training Club', url: content.appLinks.fitness[0] || 'https://nike.com/ntc-app', type: 'app' },
+        { title: 'Adidas Training App', url: content.appLinks.fitness[1] || 'https://adidas.com/apps', type: 'app' },
+        { title: 'Seven Workout App', url: 'https://seven.app', type: 'app' }
+      ]
+    },
+    'Breathing Exercises': {
+      helpfulLinks: [
+        { title: 'Box Breathing Technique', url: content.videoLinks.breathing[0] || 'https://youtube.com/watch?v=YRPh_GaiL8s', type: 'video' },
+        { title: '4-7-8 Breathing Exercise', url: 'https://youtube.com/watch?v=gz4G31LGyog', type: 'video' },
+        { title: 'Wim Hof Breathing Method', url: 'https://youtube.com/watch?v=tybOi4hjZFQ', type: 'video' },
+        { title: 'Breathe App Techniques', url: 'https://apps.apple.com/app/breathe/id1438937415', type: 'app' },
+        { title: 'Calm Breathing Exercises', url: content.appLinks.meditation[1] || 'https://calm.com', type: 'app' },
+        { title: 'Pranayama Guide', url: 'https://youtube.com/watch?v=FUW2xPKJ3Tc', type: 'video' }
+      ]
+    },
+    'Yoga Practice': {
+      helpfulLinks: [
+        { title: 'Morning Yoga Flow (30 min)', url: content.videoLinks.yoga[0] || 'https://youtube.com/watch?v=v7AYKMP6rOE', type: 'video' },
+        { title: 'Beginner Yoga Sequence', url: 'https://youtube.com/watch?v=4vTJHUDB5ak', type: 'video' },
+        { title: 'Evening Restorative Yoga', url: 'https://youtube.com/watch?v=BiWDsfZ3zbo', type: 'video' },
+        { title: 'Power Yoga Flow', url: 'https://youtube.com/watch?v=GLy2rYHwUqY', type: 'video' },
+        { title: 'Down Dog Yoga App', url: content.appLinks.fitness[2] || 'https://downdogapp.com', type: 'app' },
+        { title: 'Daily Yoga App', url: 'https://dailyyoga.com', type: 'app' }
+      ]
+    },
+    'High-Intensity Workout': {
+      helpfulLinks: [
+        { title: 'HIIT Cardio Blast (25 min)', url: 'https://youtube.com/watch?v=cZnsLVArIt8', type: 'video' },
+        { title: 'Tabata Full Body Workout', url: 'https://youtube.com/watch?v=20Nw50nvobY', type: 'video' },
+        { title: 'CrossFit Home Workout', url: 'https://youtube.com/watch?v=R5KRZ6VTzmU', type: 'video' },
+        { title: 'Burpee Challenge', url: 'https://youtube.com/watch?v=qLBImHhCXSw', type: 'video' },
+        { title: 'Nike Training Club', url: content.appLinks.fitness[0] || 'https://nike.com/ntc-app', type: 'app' },
+        { title: 'Freeletics Bodyweight', url: 'https://freeletics.com', type: 'app' }
+      ]
+    },
+    'Read for 30 Minutes': {
+      helpfulLinks: [
+        { title: 'Audible Audiobooks', url: 'https://audible.com', type: 'app' },
+        { title: 'Kindle Unlimited', url: 'https://amazon.com/kindle-unlimited', type: 'app' },
+        { title: 'Blinkist Book Summaries', url: 'https://blinkist.com', type: 'app' },
+        { title: 'Goodreads Reading Lists', url: 'https://goodreads.com', type: 'resource' },
+        { title: 'Project Gutenberg Free Books', url: 'https://gutenberg.org', type: 'resource' },
+        { title: 'LibriVox Free Audiobooks', url: 'https://librivox.org', type: 'resource' }
+      ]
+    },
+    'Daily Walk': {
+      helpfulLinks: [
+        { title: 'Walking for Fitness Guide', url: content.videoLinks.exercise[0] || 'https://youtube.com/watch?v=kFIfFJdA8Sk', type: 'video' },
+        { title: 'Power Walking Techniques', url: 'https://youtube.com/watch?v=c4jJJhNMWDU', type: 'video' },
+        { title: 'Nature Walk Benefits', url: 'https://youtube.com/watch?v=W5WfWmz-Fnw', type: 'video' },
+        { title: 'Strava Activity Tracker', url: 'https://strava.com', type: 'app' },
+        { title: 'MapMyWalk App', url: 'https://mapmywalk.com', type: 'app' },
+        { title: 'Nike Run Club', url: 'https://nike.com/nrc-app', type: 'app' }
+      ]
+    },
+    'Drink 8 Glasses of Water': {
+      helpfulLinks: [
+        { title: `${location?.country || 'Canada'} Hydration Guide`, url: content.healthServices.nutrition[0] || 'https://healthycanadians.gc.ca', type: 'guide' },
+        { title: 'MyFitnessPal Water Tracker', url: 'https://myfitnesspal.com', type: 'app' },
+        { title: 'WaterLlama Reminder App', url: 'https://apps.apple.com/app/waterllama/id1454778585', type: 'app' },
+        { title: 'Hydro Coach Water Tracker', url: 'https://play.google.com/store/apps/details?id=com.tkapps.daily.water', type: 'app' },
+        { title: 'Plant Nanny Water Game', url: 'https://play.google.com/store/apps/details?id=com.fourdesire.plantnanny2', type: 'app' },
+        { title: 'Benefits of Proper Hydration', url: 'https://youtube.com/watch?v=9iMGFqMmUFs', type: 'video' }
+      ]
+    }
+  };
+  
+  const habit = habitMappings[habitName];
+  if (!habit) return null;
+  
+  // Apply daily rotation to the links
+  const rotatedLinks = getRotatedLinks(habit.helpfulLinks, habitName);
+  
+  return {
+    ...habit,
+    helpfulLinks: rotatedLinks
+  };
 }

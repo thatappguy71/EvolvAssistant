@@ -15,6 +15,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { useLocation } from "@/hooks/useLocation";
 import { getRegionalContent, getRegionalizedHabit } from "@/utils/regionContent";
 
+// Function to rotate links daily for consistent daily variation
+function getRotatedHabitLinks(habitName: string, links: { title: string; url: string; type: string }[]) {
+  if (links.length <= 1) return links;
+  
+  const today = new Date().toDateString();
+  const seed = habitName + today;
+  
+  // Simple hash function to get deterministic rotation
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    const char = seed.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  
+  const rotationIndex = Math.abs(hash) % links.length;
+  
+  return [
+    ...links.slice(rotationIndex),
+    ...links.slice(0, rotationIndex)
+  ];
+}
+
 const categories = [
   "Mindfulness", "Exercise", "Learning", "Recovery", "Nutrition", "Sleep", "Focus", "Social", "Creative"
 ];
@@ -380,9 +403,13 @@ const predefinedHabits = [
     difficulty: "Easy", 
     description: "Create art through drawing or sketching",
     helpfulLinks: [
-      { title: "Drawing Tutorials", url: "https://www.youtube.com/c/Proko", type: "video" },
+      { title: "Figure Drawing Fundamentals", url: "https://www.youtube.com/c/Proko", type: "video" },
+      { title: "Sketching Basics Tutorial", url: "https://www.youtube.com/watch?v=pMC0Cx3Uk84", type: "video" },
+      { title: "Portrait Drawing Guide", url: "https://www.youtube.com/watch?v=VGv5B6OQr-4", type: "video" },
       { title: "Daily Drawing Prompts", url: "https://www.sketchbook.com/blog/30-day-drawing-challenge/", type: "resource" },
-      { title: "Procreate App", url: "https://procreate.art", type: "app" }
+      { title: "Procreate Digital Art", url: "https://procreate.art", type: "app" },
+      { title: "Adobe Fresco Drawing", url: "https://www.adobe.com/products/fresco.html", type: "app" },
+      { title: "SketchBook by Autodesk", url: "https://sketchbook.com", type: "app" }
     ]
   },
 ];
@@ -582,16 +609,23 @@ export default function HabitModal({ isOpen, onClose, habit }: HabitModalProps) 
                       <span>📂 {predefinedHabits.find(h => h.name === selectedHabit)?.category}</span>
                     </div>
                     {(() => {
-                      // Get regionalized habit data if available
+                      // Get regionalized habit data first (has priority)
                       const regionalizedHabit = getRegionalizedHabit(selectedHabit, location);
-                      const links = regionalizedHabit?.helpfulLinks || predefinedHabits.find(h => h.name === selectedHabit)?.helpfulLinks;
+                      let links = regionalizedHabit?.helpfulLinks;
+                      
+                      // If no regional content, get from predefined habits and apply rotation
+                      if (!links) {
+                        const predefinedHabit = predefinedHabits.find(h => h.name === selectedHabit);
+                        links = predefinedHabit?.helpfulLinks ? getRotatedHabitLinks(selectedHabit, predefinedHabit.helpfulLinks) : null;
+                      }
                       
                       if (!links) return null;
                       
                       return (
                         <div className="mt-3 space-y-2">
                           <div className="text-sm font-medium text-gray-700">
-                            Helpful Resources {location ? `(${location.country})` : ''}:
+                            Daily Resources {location ? `(${location.country})` : ''}:
+                            <span className="text-xs text-gray-500 ml-2">Fresh content every day!</span>
                           </div>
                           <div className="space-y-1">
                             {links.map((link, index) => (

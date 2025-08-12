@@ -281,16 +281,38 @@ export function AddHabitModal({ open, onOpenChange }: AddHabitModalProps) {
                   <span>📂 {predefinedHabits.find(h => h.name === selectedHabit)?.category}</span>
                 </div>
                 {(() => {
-                  // Get regionalized habit data if available
+                  // Daily rotation function for consistent variation
+                  function getDailyRotatedLinks(habitName: string, links: { title: string; url: string; type: string }[]) {
+                    if (links.length <= 1) return links;
+                    const today = new Date().toDateString();
+                    const seed = habitName + today;
+                    let hash = 0;
+                    for (let i = 0; i < seed.length; i++) {
+                      const char = seed.charCodeAt(i);
+                      hash = ((hash << 5) - hash) + char;
+                      hash = hash & hash;
+                    }
+                    const rotationIndex = Math.abs(hash) % links.length;
+                    return [...links.slice(rotationIndex), ...links.slice(0, rotationIndex)];
+                  }
+
+                  // Get regionalized habit data first (has priority)
                   const regionalizedHabit = getRegionalizedHabit(selectedHabit, location);
-                  const links = regionalizedHabit?.helpfulLinks || predefinedHabits.find(h => h.name === selectedHabit)?.helpfulLinks;
+                  let links = regionalizedHabit?.helpfulLinks;
+                  
+                  // If no regional content, get from predefined habits and apply rotation
+                  if (!links) {
+                    const predefinedHabit = predefinedHabits.find(h => h.name === selectedHabit);
+                    links = predefinedHabit?.helpfulLinks ? getDailyRotatedLinks(selectedHabit, predefinedHabit.helpfulLinks) : null;
+                  }
                   
                   if (!links) return null;
                   
                   return (
                     <div className="mt-3 space-y-2">
                       <div className="text-sm font-medium text-gray-700">
-                        Helpful Resources {location ? `(${location.country})` : ''}:
+                        Daily Resources {location ? `(${location.country})` : ''}:
+                        <span className="text-xs text-gray-500 ml-2">Fresh content every day!</span>
                       </div>
                       <div className="space-y-1">
                         {links.map((link, index) => (
