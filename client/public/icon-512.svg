@@ -1,17 +1,15 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <!-- Rounded square background -->
-  <rect x="32" y="32" width="448" height="448" rx="88" fill="#10b981" />
-  
-  <!-- Zen Circle (Enso) - scaled 2.67x from 192px version -->
-  <g transform="translate(256, 256)">
-    <!-- Main circle with subtle gap representing the journey continues -->
-    <circle cx="0" cy="0" r="112" fill="none" stroke="white" stroke-width="32" 
-            stroke-dasharray="667 37" stroke-linecap="round" 
-            transform="rotate(-5)" opacity="0.95" />
-    
-    <!-- Inner subtle glow for depth -->
-    <circle cx="0" cy="0" r="112" fill="none" stroke="white" stroke-width="5" 
-            stroke-dasharray="667 37" stroke-linecap="round" 
-            transform="rotate(-5)" opacity="0.3" />
+  <rect x="16" y="16" width="480" height="480" rx="110" fill="#10b981"/>
+  <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Main upward arrow -->
+    <path d="M256 385 C256 325, 256 305, 270 280 C285 253, 320 235, 360 235" stroke-width="16"/>
+    <path d="M360 235 L334 210 M360 235 L340 260" stroke-width="16"/>
+    <!-- Left leaf -->
+    <path d="M226 305 C180 300, 156 270, 150 235 C210 230, 242 260, 226 305 Z" fill="#FFFFFF" stroke="none"/>
+    <!-- Right leaf -->
+    <path d="M279 305 C325 300, 349 270, 355 235 C295 230, 263 260, 279 305 Z" fill="#FFFFFF" stroke="none"/>
+    <!-- Growth curve -->
+    <path d="M180 395 Q256 420 332 395" stroke-width="10" opacity="0.9"/>
   </g>
 </svg>

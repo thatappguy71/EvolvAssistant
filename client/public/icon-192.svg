@@ -1,17 +1,15 @@
 <svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
   <!-- Rounded square background -->
-  <rect x="16" y="16" width="160" height="160" rx="32" fill="#10b981" />
-  
-  <!-- Zen Circle (Enso) - symbol of enlightenment and continuous growth -->
-  <g transform="translate(96, 96)">
-    <!-- Main circle with subtle gap representing the journey continues -->
-    <circle cx="0" cy="0" r="42" fill="none" stroke="white" stroke-width="12" 
-            stroke-dasharray="250 14" stroke-linecap="round" 
-            transform="rotate(-5)" opacity="0.95" />
-    
-    <!-- Inner subtle glow for depth -->
-    <circle cx="0" cy="0" r="42" fill="none" stroke="white" stroke-width="2" 
-            stroke-dasharray="250 14" stroke-linecap="round" 
-            transform="rotate(-5)" opacity="0.3" />
+  <rect x="6" y="6" width="180" height="180" rx="41" fill="#10b981"/>
+  <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Main upward arrow -->
+    <path d="M96 144 C96 122, 96 114, 101 105 C107 95, 120 88, 135 88" stroke-width="6"/>
+    <path d="M135 88 L125 79 M135 88 L128 97" stroke-width="6"/>
+    <!-- Left leaf -->
+    <path d="M85 114 C67 112, 58 101, 56 88 C79 86, 91 97, 85 114 Z" fill="#FFFFFF" stroke="none"/>
+    <!-- Right leaf -->
+    <path d="M105 114 C123 112, 132 101, 134 88 C111 86, 99 97, 105 114 Z" fill="#FFFFFF" stroke="none"/>
+    <!-- Growth curve -->
+    <path d="M68 148 Q96 158 125 148" stroke-width="4" opacity="0.9"/>
   </g>
 </svg>
