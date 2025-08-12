@@ -179,18 +179,21 @@ export default function HabitModal({ isOpen, onClose, habit }: HabitModalProps) 
                 </Button>
               </div>
 
-              {!useCustom && (
-                <div className="space-y-4 max-h-80 overflow-y-auto">
-                  <Label className="text-sm font-medium text-gray-700">
-                    Choose a Popular Habit *
-                  </Label>
+              {!useCustom && !selectedHabit && (
+                <div className="space-y-4 max-h-80 overflow-y-auto border rounded-lg p-4 bg-gray-50">
+                  <div className="text-center mb-4">
+                    <Label className="text-sm font-medium text-gray-700">
+                      Choose a Popular Habit
+                    </Label>
+                    <p className="text-xs text-gray-500 mt-1">Click on any habit below to select it</p>
+                  </div>
                   <div className="space-y-3">
                     {categories.map((category) => (
                       <div key={category}>
-                        <h4 className="text-sm font-semibold text-gray-600 mb-2 px-2">
+                        <h4 className="text-sm font-semibold text-gray-600 mb-2 px-2 bg-white rounded py-1">
                           {category}
                         </h4>
-                        <div className="space-y-1">
+                        <div className="grid gap-2">
                           {predefinedHabits
                             .filter(habit => habit.category === category)
                             .map((habit) => (
@@ -198,21 +201,53 @@ export default function HabitModal({ isOpen, onClose, habit }: HabitModalProps) 
                                 key={habit.name}
                                 type="button"
                                 onClick={() => handleHabitSelection(habit.name)}
-                                className={`w-full text-left p-3 rounded-lg border transition-colors hover:bg-blue-50 hover:border-blue-300 ${
-                                  selectedHabit === habit.name
-                                    ? 'bg-blue-50 border-blue-300'
-                                    : 'bg-white border-gray-200'
-                                }`}
+                                className="w-full text-left p-3 rounded-lg border transition-all hover:bg-blue-50 hover:border-blue-300 hover:shadow-sm bg-white border-gray-200"
                               >
                                 <div className="font-medium text-gray-900">{habit.name}</div>
                                 <div className="text-xs text-gray-500 mt-1">
                                   {habit.timeRequired} • {habit.difficulty}
+                                </div>
+                                <div className="text-xs text-gray-600 mt-1 line-clamp-2">
+                                  {habit.description}
                                 </div>
                               </button>
                             ))}
                         </div>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {!useCustom && selectedHabit && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium text-gray-700">
+                      Selected Habit
+                    </Label>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedHabit("")}
+                      className="text-sm text-blue-600 hover:text-blue-800"
+                    >
+                      Change Selection
+                    </button>
+                  </div>
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="font-medium text-gray-900 mb-2">
+                      {predefinedHabits.find(h => h.name === selectedHabit)?.name}
+                    </div>
+                    <div className="text-sm text-gray-600 mb-3">
+                      {predefinedHabits.find(h => h.name === selectedHabit)?.description}
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <span>⏱️ {predefinedHabits.find(h => h.name === selectedHabit)?.timeRequired}</span>
+                      <span>📊 {predefinedHabits.find(h => h.name === selectedHabit)?.difficulty}</span>
+                      <span>📂 {predefinedHabits.find(h => h.name === selectedHabit)?.category}</span>
+                    </div>
+                    <div className="mt-3 p-2 bg-blue-100 rounded text-xs text-blue-800">
+                      💡 <strong>Tip:</strong> This habit will be automatically configured with all the details above. You can still customize the fields below if needed.
+                    </div>
                   </div>
                 </div>
               )}
@@ -228,6 +263,7 @@ export default function HabitModal({ isOpen, onClose, habit }: HabitModalProps) 
                   placeholder="e.g., Morning Meditation"
                   {...form.register("name")}
                   disabled={!useCustom && selectedHabit !== "" && !habit}
+                  className={!useCustom && selectedHabit !== "" && !habit ? "bg-gray-100" : ""}
                 />
                 {form.formState.errors.name && (
                   <p className="text-sm text-destructive mt-1">
@@ -236,72 +272,74 @@ export default function HabitModal({ isOpen, onClose, habit }: HabitModalProps) 
                 )}
               </div>
 
-              <div>
-                <Label htmlFor="category">Category</Label>
-                <Select onValueChange={(value) => form.setValue("category", value)}
-                        disabled={!useCustom && selectedHabit !== "" && !habit}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Mindfulness">Mindfulness</SelectItem>
-                    <SelectItem value="Exercise">Exercise</SelectItem>
-                    <SelectItem value="Learning">Learning</SelectItem>
-                    <SelectItem value="Recovery">Recovery</SelectItem>
-                    <SelectItem value="Nutrition">Nutrition</SelectItem>
-                    <SelectItem value="Sleep">Sleep</SelectItem>
-                    <SelectItem value="Focus">Focus</SelectItem>
-                    <SelectItem value="Social">Social</SelectItem>
-                    <SelectItem value="Creative">Creative</SelectItem>
-                  </SelectContent>
-                </Select>
-                {form.formState.errors.category && (
-                  <p className="text-sm text-destructive mt-1">
-                    {form.formState.errors.category.message}
-                  </p>
-                )}
-              </div>
+              {useCustom && (
+                <div>
+                  <Label htmlFor="category">Category</Label>
+                  <Select onValueChange={(value) => form.setValue("category", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Mindfulness">Mindfulness</SelectItem>
+                      <SelectItem value="Exercise">Exercise</SelectItem>
+                      <SelectItem value="Learning">Learning</SelectItem>
+                      <SelectItem value="Recovery">Recovery</SelectItem>
+                      <SelectItem value="Nutrition">Nutrition</SelectItem>
+                      <SelectItem value="Sleep">Sleep</SelectItem>
+                      <SelectItem value="Focus">Focus</SelectItem>
+                      <SelectItem value="Social">Social</SelectItem>
+                      <SelectItem value="Creative">Creative</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {form.formState.errors.category && (
+                    <p className="text-sm text-destructive mt-1">
+                      {form.formState.errors.category.message}
+                    </p>
+                  )}
+                </div>
+              )}
 
-              <div>
-                <Label htmlFor="timeRequired">Time Required</Label>
-                <Input
-                  id="timeRequired"
-                  placeholder="e.g., 15 minutes"
-                  {...form.register("timeRequired")}
-                  disabled={!useCustom && selectedHabit !== "" && !habit}
-                />
-                {form.formState.errors.timeRequired && (
-                  <p className="text-sm text-destructive mt-1">
-                    {form.formState.errors.timeRequired.message}
-                  </p>
-                )}
-              </div>
+              {useCustom && (
+                <>
+                  <div>
+                    <Label htmlFor="timeRequired">Time Required</Label>
+                    <Input
+                      id="timeRequired"
+                      placeholder="e.g., 15 minutes"
+                      {...form.register("timeRequired")}
+                    />
+                    {form.formState.errors.timeRequired && (
+                      <p className="text-sm text-destructive mt-1">
+                        {form.formState.errors.timeRequired.message}
+                      </p>
+                    )}
+                  </div>
 
-              <div>
-                <Label htmlFor="difficulty">Difficulty</Label>
-                <Select onValueChange={(value) => form.setValue("difficulty", value)} 
-                        defaultValue="Easy"
-                        disabled={!useCustom && selectedHabit !== "" && !habit}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Easy">Easy</SelectItem>
-                    <SelectItem value="Medium">Medium</SelectItem>
-                    <SelectItem value="Hard">Hard</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                  <div>
+                    <Label htmlFor="difficulty">Difficulty</Label>
+                    <Select onValueChange={(value) => form.setValue("difficulty", value)} 
+                            defaultValue="Easy">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Easy">Easy</SelectItem>
+                        <SelectItem value="Medium">Medium</SelectItem>
+                        <SelectItem value="Hard">Hard</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <div>
-                <Label htmlFor="description">Description (Optional)</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Brief description of your habit..."
-                  {...form.register("description")}
-                  disabled={!useCustom && selectedHabit !== "" && !habit}
-                />
-              </div>
+                  <div>
+                    <Label htmlFor="description">Description (Optional)</Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Brief description of your habit..."
+                      {...form.register("description")}
+                    />
+                  </div>
+                </>
+              )}
             </>
           )}
 
