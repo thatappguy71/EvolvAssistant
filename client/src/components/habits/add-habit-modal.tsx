@@ -9,6 +9,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { useLocation } from "@/hooks/useLocation";
+import { getRegionalContent, getRegionalizedHabit } from "@/utils/regionContent";
 
 interface AddHabitModalProps {
   open: boolean;
@@ -78,6 +80,7 @@ const predefinedHabits = [
 export function AddHabitModal({ open, onOpenChange }: AddHabitModalProps) {
   const [useCustom, setUseCustom] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState<string>("");
+  const { location } = useLocation();
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -277,28 +280,38 @@ export function AddHabitModal({ open, onOpenChange }: AddHabitModalProps) {
                   <span>📊 {predefinedHabits.find(h => h.name === selectedHabit)?.difficulty}</span>
                   <span>📂 {predefinedHabits.find(h => h.name === selectedHabit)?.category}</span>
                 </div>
-                {predefinedHabits.find(h => h.name === selectedHabit)?.helpfulLinks && (
-                  <div className="mt-3 space-y-2">
-                    <div className="text-sm font-medium text-gray-700">Helpful Resources:</div>
-                    <div className="space-y-1">
-                      {predefinedHabits.find(h => h.name === selectedHabit)?.helpfulLinks?.map((link, index) => (
-                        <a
-                          key={index}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline p-2 rounded bg-blue-50 hover:bg-blue-100 transition-colors"
-                        >
-                          <span className="text-base">
-                            {link.type === 'video' ? '📹' : link.type === 'app' ? '📱' : link.type === 'guide' ? '📖' : '🔗'}
-                          </span>
-                          <span>{link.title}</span>
-                          <span className="text-xs text-gray-500 ml-auto capitalize">({link.type})</span>
-                        </a>
-                      ))}
+                {(() => {
+                  // Get regionalized habit data if available
+                  const regionalizedHabit = getRegionalizedHabit(selectedHabit, location);
+                  const links = regionalizedHabit?.helpfulLinks || predefinedHabits.find(h => h.name === selectedHabit)?.helpfulLinks;
+                  
+                  if (!links) return null;
+                  
+                  return (
+                    <div className="mt-3 space-y-2">
+                      <div className="text-sm font-medium text-gray-700">
+                        Helpful Resources {location ? `(${location.country})` : ''}:
+                      </div>
+                      <div className="space-y-1">
+                        {links.map((link, index) => (
+                          <a
+                            key={index}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline p-2 rounded bg-blue-50 hover:bg-blue-100 transition-colors"
+                          >
+                            <span className="text-base">
+                              {link.type === 'video' ? '📹' : link.type === 'app' ? '📱' : link.type === 'guide' ? '📖' : '🔗'}
+                            </span>
+                            <span>{link.title}</span>
+                            <span className="text-xs text-gray-500 ml-auto capitalize">({link.type})</span>
+                          </a>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
                 <div className="mt-3 p-2 bg-blue-100 rounded text-xs text-blue-800">
                   💡 <strong>Tip:</strong> This habit will be automatically configured with all the details above. You can still customize the fields below if needed.
                 </div>

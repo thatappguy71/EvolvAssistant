@@ -5,6 +5,7 @@ import { useNotifications } from "@/contexts/NotificationContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Bell, Check, X, Settings, Trash2, CheckCheck } from "lucide-react";
+import { LocationIndicator } from "@/components/LocationIndicator";
 
 export default function DashboardHeader() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -74,7 +75,10 @@ export default function DashboardHeader() {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {greeting()}, {userName}!
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Ready to continue your wellness journey?</p>
+            <div className="flex items-center gap-3 mt-1">
+              <p className="text-gray-600 dark:text-gray-400">Ready to continue your wellness journey?</p>
+              <LocationIndicator />
+            </div>
           </div>
           <div className="flex items-center space-x-4">
             <button 

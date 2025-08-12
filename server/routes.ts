@@ -89,6 +89,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update user location
+  app.patch('/api/user/location', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { country, region, city, timezone, currency, countryCode } = req.body;
+      
+      await storage.updateUserLocation(userId, {
+        country,
+        region,
+        city,
+        timezone,
+        currency,
+        countryCode,
+        locationUpdatedAt: new Date()
+      });
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error updating user location:", error);
+      res.status(500).json({ message: "Failed to update location" });
+    }
+  });
+
   // Profile picture upload
   app.post('/api/user/profile-image', isAuthenticated, upload.single('profileImage'), async (req: any, res) => {
     try {

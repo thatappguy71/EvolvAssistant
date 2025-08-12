@@ -39,6 +39,14 @@ export const users = pgTable("users", {
   subscriptionId: varchar("subscription_id"),
   subscriptionActive: boolean("subscription_active").default(false),
   trialEndDate: timestamp("trial_end_date"),
+  // Location fields for region-specific content
+  country: varchar("country"),
+  region: varchar("region"),
+  city: varchar("city"),
+  timezone: varchar("timezone"),
+  currency: varchar("currency", { length: 3 }),
+  countryCode: varchar("country_code", { length: 2 }),
+  locationUpdatedAt: timestamp("location_updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

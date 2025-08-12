@@ -31,6 +31,15 @@ export interface IStorage {
   updateUserProfile(id: string, data: Partial<{ firstName: string; lastName: string }>): Promise<void>;
   upgradeUserSubscription(id: string, planType: 'monthly' | 'yearly'): Promise<void>;
   updateUserSubscription(id: string, data: Partial<{ subscriptionTier: string; subscriptionActive: boolean; subscriptionId: string | null }>): Promise<void>;
+  updateUserLocation(userId: string, locationData: {
+    country?: string;
+    region?: string;
+    city?: string;
+    timezone?: string;
+    currency?: string;
+    countryCode?: string;
+    locationUpdatedAt?: Date;
+  }): Promise<void>;
   
   // Habit operations
   getUserHabits(userId: string): Promise<Habit[]>;
@@ -141,6 +150,24 @@ export class DatabaseStorage implements IStorage {
         updatedAt: new Date(),
       })
       .where(eq(users.id, id));
+  }
+
+  async updateUserLocation(userId: string, locationData: {
+    country?: string;
+    region?: string;
+    city?: string;
+    timezone?: string;
+    currency?: string;
+    countryCode?: string;
+    locationUpdatedAt?: Date;
+  }): Promise<void> {
+    await db
+      .update(users)
+      .set({
+        ...locationData,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId));
   }
 
   // Habit operations
