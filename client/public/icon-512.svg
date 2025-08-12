@@ -1,16 +1,16 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <!-- Rounded square background -->
-  <rect x="32" y="32" width="448" height="448" rx="88" fill="#10b981" stroke="none" />
+  <rect x="32" y="32" width="448" height="448" rx="88" fill="#10b981" />
   
-  <!-- Simple leaf shape (scaled 2.67x from 192px) -->
-  <g transform="translate(256, 256)" fill="white" stroke="none">
-    <!-- Main leaf body using simple ellipse -->
-    <ellipse cx="21" cy="-21" rx="75" ry="59" transform="rotate(15)" />
+  <!-- Leaf design matching original image (scaled 2.67x) -->
+  <g transform="translate(256, 256)">
+    <!-- Main leaf body - large teardrop shape -->
+    <path d="M 53,-53 C 93,-40 107,13 93,67 C 80,93 40,107 0,93 C -53,75 -67,27 -40,0 C -27,-27 13,-59 53,-53 Z" fill="white" />
     
-    <!-- Leaf stem as simple rectangle -->
-    <rect x="-48" y="43" width="16" height="64" rx="8" />
+    <!-- Curved stem -->
+    <path d="M -40,75 C -48,85 -59,101 -53,120 C -48,133 -40,128 -32,120" fill="none" stroke="white" stroke-width="21" stroke-linecap="round" />
     
-    <!-- Simple leaf vein -->
-    <rect x="16" y="-32" width="5" height="53" rx="3" fill="#10b981" opacity="0.5" transform="rotate(15)" />
+    <!-- Leaf vein -->
+    <path d="M 13,-13 C 40,0 53,27 40,53" fill="none" stroke="#10b981" stroke-width="8" stroke-linecap="round" opacity="0.7" />
   </g>
 </svg>
