@@ -17,7 +17,18 @@ interface AddHabitModalProps {
 
 const predefinedHabits = [
   // Mindfulness
-  { name: "Morning Meditation", category: "Mindfulness", timeRequired: "10 minutes", difficulty: "Easy", description: "Start your day with 10 minutes of mindfulness meditation" },
+  { 
+    name: "Morning Meditation", 
+    category: "Mindfulness", 
+    timeRequired: "10 minutes", 
+    difficulty: "Easy", 
+    description: "Start your day with 10 minutes of mindfulness meditation",
+    helpfulLinks: [
+      { title: "10-Minute Morning Meditation", url: "https://www.youtube.com/watch?v=ZToicYcHIOU", type: "video" },
+      { title: "Headspace Morning Meditation", url: "https://www.headspace.com/meditation/morning-meditation", type: "guide" },
+      { title: "Insight Timer Free Meditations", url: "https://insighttimer.com/meditation-topics/morning", type: "app" }
+    ]
+  },
   { name: "Gratitude Journaling", category: "Mindfulness", timeRequired: "5 minutes", difficulty: "Easy", description: "Write down 3 things you're grateful for each day" },
   { name: "Deep Breathing Exercise", category: "Mindfulness", timeRequired: "5 minutes", difficulty: "Easy", description: "Practice deep breathing to reduce stress and increase focus" },
   { name: "Evening Reflection", category: "Mindfulness", timeRequired: "10 minutes", difficulty: "Easy", description: "Reflect on the day's events and lessons learned" },
@@ -217,6 +228,20 @@ export function AddHabitModal({ open, onOpenChange }: AddHabitModalProps) {
                             <div className="text-xs text-gray-600 mt-1 line-clamp-2">
                               {habit.description}
                             </div>
+                            {habit.helpfulLinks && (
+                              <div className="mt-2 flex flex-wrap gap-1">
+                                {habit.helpfulLinks.slice(0, 2).map((link, index) => (
+                                  <span key={index} className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                                    {link.type === 'video' ? '📹' : link.type === 'app' ? '📱' : '📖'} {link.title.split(' ').slice(0, 2).join(' ')}
+                                  </span>
+                                ))}
+                                {habit.helpfulLinks.length > 2 && (
+                                  <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                                    +{habit.helpfulLinks.length - 2} more
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </button>
                         ))}
                     </div>
@@ -252,6 +277,28 @@ export function AddHabitModal({ open, onOpenChange }: AddHabitModalProps) {
                   <span>📊 {predefinedHabits.find(h => h.name === selectedHabit)?.difficulty}</span>
                   <span>📂 {predefinedHabits.find(h => h.name === selectedHabit)?.category}</span>
                 </div>
+                {predefinedHabits.find(h => h.name === selectedHabit)?.helpfulLinks && (
+                  <div className="mt-3 space-y-2">
+                    <div className="text-sm font-medium text-gray-700">Helpful Resources:</div>
+                    <div className="space-y-1">
+                      {predefinedHabits.find(h => h.name === selectedHabit)?.helpfulLinks?.map((link, index) => (
+                        <a
+                          key={index}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline p-2 rounded bg-blue-50 hover:bg-blue-100 transition-colors"
+                        >
+                          <span className="text-base">
+                            {link.type === 'video' ? '📹' : link.type === 'app' ? '📱' : link.type === 'guide' ? '📖' : '🔗'}
+                          </span>
+                          <span>{link.title}</span>
+                          <span className="text-xs text-gray-500 ml-auto capitalize">({link.type})</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div className="mt-3 p-2 bg-blue-100 rounded text-xs text-blue-800">
                   💡 <strong>Tip:</strong> This habit will be automatically configured with all the details above. You can still customize the fields below if needed.
                 </div>
