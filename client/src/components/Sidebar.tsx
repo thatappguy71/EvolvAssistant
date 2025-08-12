@@ -222,6 +222,28 @@ export default function Sidebar() {
             <i className="fas fa-heart text-lg"></i>
             {!isCollapsed && <span className="font-medium">Wellness</span>}
           </Link>
+          
+          {/* Beta Testing Section */}
+          <div className={`${isCollapsed ? 'px-2' : 'px-4'} pt-6 border-t border-gray-200 dark:border-gray-700 mt-6`}>
+            {!isCollapsed && (
+              <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
+                Beta Testing
+              </p>
+            )}
+            <Link 
+              href="/beta-feedback" 
+              className={`flex items-center ${isCollapsed ? 'justify-center px-3' : 'space-x-3 px-4'} rounded-lg py-3 transition-all ${
+                isActive("/beta-feedback") 
+                  ? "text-orange-600 bg-orange-50 dark:bg-orange-900/50" 
+                  : "text-gray-600 dark:text-gray-300 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/30"
+              }`}
+              title={isCollapsed ? "Beta Feedback" : ""}
+              onClick={() => handleNavigation("/beta-feedback")}
+            >
+              <i className="fas fa-comment-dots text-lg"></i>
+              {!isCollapsed && <span className="font-medium">Beta Feedback</span>}
+            </Link>
+          </div>
         </div>
         
         {!isCollapsed && (
