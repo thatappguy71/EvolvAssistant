@@ -2,15 +2,16 @@
   <!-- Rounded square background -->
   <rect x="32" y="32" width="448" height="448" rx="88" fill="#10b981" />
   
-  <!-- Leaf design matching original image (scaled 2.67x) -->
+  <!-- Zen Circle (Enso) - scaled 2.67x from 192px version -->
   <g transform="translate(256, 256)">
-    <!-- Main leaf body - large teardrop shape -->
-    <path d="M 53,-53 C 93,-40 107,13 93,67 C 80,93 40,107 0,93 C -53,75 -67,27 -40,0 C -27,-27 13,-59 53,-53 Z" fill="white" />
+    <!-- Main circle with subtle gap representing the journey continues -->
+    <circle cx="0" cy="0" r="112" fill="none" stroke="white" stroke-width="32" 
+            stroke-dasharray="667 37" stroke-linecap="round" 
+            transform="rotate(-5)" opacity="0.95" />
     
-    <!-- Curved stem -->
-    <path d="M -40,75 C -48,85 -59,101 -53,120 C -48,133 -40,128 -32,120" fill="none" stroke="white" stroke-width="21" stroke-linecap="round" />
-    
-    <!-- Leaf vein -->
-    <path d="M 13,-13 C 40,0 53,27 40,53" fill="none" stroke="#10b981" stroke-width="8" stroke-linecap="round" opacity="0.7" />
+    <!-- Inner subtle glow for depth -->
+    <circle cx="0" cy="0" r="112" fill="none" stroke="white" stroke-width="5" 
+            stroke-dasharray="667 37" stroke-linecap="round" 
+            transform="rotate(-5)" opacity="0.3" />
   </g>
 </svg>
