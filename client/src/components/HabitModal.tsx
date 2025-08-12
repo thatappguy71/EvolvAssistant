@@ -616,7 +616,7 @@ export default function HabitModal({ isOpen, onClose, habit }: HabitModalProps) 
                       // If no regional content, get from predefined habits and apply rotation
                       if (!links) {
                         const predefinedHabit = predefinedHabits.find(h => h.name === selectedHabit);
-                        links = predefinedHabit?.helpfulLinks ? getRotatedHabitLinks(selectedHabit, predefinedHabit.helpfulLinks) : null;
+                        links = predefinedHabit?.helpfulLinks ? getRotatedHabitLinks(selectedHabit, predefinedHabit.helpfulLinks) : undefined;
                       }
                       
                       if (!links) return null;

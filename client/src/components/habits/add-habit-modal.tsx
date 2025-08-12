@@ -303,7 +303,7 @@ export function AddHabitModal({ open, onOpenChange }: AddHabitModalProps) {
                   // If no regional content, get from predefined habits and apply rotation
                   if (!links) {
                     const predefinedHabit = predefinedHabits.find(h => h.name === selectedHabit);
-                    links = predefinedHabit?.helpfulLinks ? getDailyRotatedLinks(selectedHabit, predefinedHabit.helpfulLinks) : null;
+                    links = predefinedHabit?.helpfulLinks ? getDailyRotatedLinks(selectedHabit, predefinedHabit.helpfulLinks) : undefined;
                   }
                   
                   if (!links) return null;

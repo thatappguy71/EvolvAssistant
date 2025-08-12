@@ -36,6 +36,8 @@ The application follows a unidirectional data flow pattern, managing client-side
 - **Payment System:** Complete Stripe integration with Canadian pricing ($4.99 CAD monthly, $49.99 CAD yearly, $69.99 CAD family), secure checkout sessions, direct payment page bypassing authentication issues, and competitive family plan advantage.
 - **Scientific Color Psychology System:** Research-backed color scheme optimized for wellness attention capture - Blue (23% productivity increase), Green (23% higher satisfaction), Orange (32% more clicks), Purple (27% perceived value), with interactive demo at `/color-demo` showcasing neurological benefits and University studies.
 - **Custom Brand Icons:** User-designed SVG growth arrow with organic leaves on emerald green background, implemented across browser favicon, PWA manifest, landing page header, and sidebar logos. Complete brand consistency with cache-busting deployment strategy.
+- **Location-Based Content System:** Automatic user location detection with browser geolocation API and IP fallback, region-specific resource mapping for different countries (CA, US, UK, AU), database storage of user location data, and location indicator with flag emoji display.
+- **Daily Content Rotation System:** Smart algorithm that rotates habit resources daily based on habit name + date hash, providing fresh content every day while maintaining consistency. Users get different exercise videos, meditation guides, or apps each day they select the same habit, with 5-7 resources per habit type and visual "Fresh content every day!" indicators.
 
 ## External Dependencies
 
