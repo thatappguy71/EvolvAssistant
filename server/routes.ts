@@ -77,12 +77,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.sendFile(require('path').resolve(process.cwd(), 'test-payment.html'));
   });
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  // Auth routes - Modified for beta testing (no authentication required)
+  app.get('/api/auth/user', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
+      // Return mock beta user for testing
+      const mockBetaUser = {
+        id: "beta-tester",
+        email: "beta@evolv-app.com",
+        firstName: "Beta",
+        lastName: "Tester",
+        profileImageUrl: null,
+        subscriptionTier: "FREE",
+        subscriptionId: null,
+        subscriptionActive: false,
+        trialEndDate: null,
+        country: null,
+        region: null,
+        city: null,
+        timezone: null,
+        currency: null,
+        countryCode: null,
+        locationUpdatedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      res.json(mockBetaUser);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
@@ -183,10 +202,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Dashboard routes
-  app.get('/api/dashboard/stats', isAuthenticated, async (req: any, res) => {
+  // Dashboard routes - Modified for beta testing
+  app.get('/api/dashboard/stats', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
       const stats = await storage.getDashboardStats(userId);
       res.json(stats);
     } catch (error) {
@@ -195,10 +214,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Habit routes
-  app.get('/api/habits', isAuthenticated, async (req: any, res) => {
+  // Habit routes - Modified for beta testing
+  app.get('/api/habits', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
       const habits = await storage.getUserHabits(userId);
       res.json(habits);
     } catch (error) {
@@ -340,9 +359,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/habits/:id/completions', isAuthenticated, async (req: any, res) => {
+  // Get completions for all habits (beta testing)
+  app.get('/api/habits/completions', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
+      const habitId = req.query.habitId ? parseInt(req.query.habitId as string) : undefined;
+      const completions = await storage.getHabitCompletions(userId, habitId);
+      res.json(completions);
+    } catch (error) {
+      console.error("Error fetching habit completions:", error);
+      res.status(500).json({ message: "Failed to fetch habit completions" });
+    }
+  });
+
+  app.get('/api/habits/:id/completions', async (req: any, res) => {
+    try {
+      const userId = "beta-tester";
       const habitId = parseInt(req.params.id);
       const completions = await storage.getHabitCompletions(userId, habitId);
       res.json(completions);
@@ -364,10 +396,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Daily metrics routes
-  app.get('/api/metrics', isAuthenticated, async (req: any, res) => {
+  // Daily metrics routes - Modified for beta testing
+  app.get('/api/metrics', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
       const date = req.query.date as string;
       const metrics = await storage.getDailyMetrics(userId, date);
       res.json(metrics);
@@ -377,9 +409,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/metrics/recent', isAuthenticated, async (req: any, res) => {
+  app.get('/api/metrics/recent', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
       const days = parseInt(req.query.days as string) || 30;
       const metrics = await storage.getRecentMetrics(userId, days);
       res.json(metrics);
@@ -405,10 +437,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Biohack routes
-  app.get('/api/biohacks', isAuthenticated, async (req: any, res) => {
+  // Biohack routes - Modified for beta testing
+  app.get('/api/biohacks', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
       const category = req.query.category as string;
       const bookmarkedOnly = req.query.bookmarked === 'true';
       
@@ -730,13 +762,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Beta Feedback routes
-  app.post('/api/beta-feedback', isAuthenticated, async (req: any, res) => {
+  // Beta Feedback routes - Modified for beta testing (no authentication required)
+  app.post('/api/beta-feedback', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
       const feedbackData = {
-        ...req.body,
-        userId
+        type: req.body.type || 'general',
+        priority: req.body.priority || 'medium',
+        title: req.body.title,
+        description: req.body.description,
+        stepsToReproduce: req.body.stepsToReproduce || '',
+        expectedBehavior: req.body.expectedBehavior || '',
+        actualBehavior: req.body.actualBehavior || '',
+        browserInfo: req.body.browserInfo || '',
+        userEmail: req.body.userEmail || 'anonymous@beta-test.com',
+        status: 'new',
+        submittedAt: new Date()
       };
       
       const feedback = await storage.createBetaFeedback(feedbackData);

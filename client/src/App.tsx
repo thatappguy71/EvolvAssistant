@@ -25,45 +25,26 @@ import NotFound from "@/pages/not-found";
 import ColorDemo from "@/components/ColorDemo";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <Switch>
-      {!isAuthenticated ? (
-        <>
-          <Route path="/" component={Landing} />
-          <Route path="/direct-payment" component={DirectPayment} />
-          <Route path="/color-demo" component={ColorDemo} />
-        </>
-      ) : (
-        <>
-          <Route path="/" component={Dashboard} />
-          <Route path="/habits" component={Habits} />
-          <Route path="/analytics" component={Analytics} />
-          <Route path="/biohacks" component={Biohacks} />
-          <Route path="/ai-recommendations" component={AIRecommendations} />
-          <Route path="/wellness" component={Wellness} />
-          <Route path="/premium" component={Premium} />
-          <Route path="/pricing" component={Pricing} />
-          <Route path="/payment-test" component={PaymentTest} />
-          <Route path="/direct-payment" component={DirectPayment} />
-          <Route path="/color-demo" component={ColorDemo} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/settings" component={Settings} />
-          <Route path="/beta-feedback" component={BetaFeedback} />
-        </>
-      )}
+      {/* Landing page still available for first-time visitors */}
+      <Route path="/landing" component={Landing} />
+      
+      {/* All app features now accessible without authentication for beta testing */}
+      <Route path="/" component={Dashboard} />
+      <Route path="/habits" component={Habits} />
+      <Route path="/analytics" component={Analytics} />
+      <Route path="/biohacks" component={Biohacks} />
+      <Route path="/ai-recommendations" component={AIRecommendations} />
+      <Route path="/wellness" component={Wellness} />
+      <Route path="/premium" component={Premium} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/payment-test" component={PaymentTest} />
+      <Route path="/direct-payment" component={DirectPayment} />
+      <Route path="/color-demo" component={ColorDemo} />
+      <Route path="/profile" component={Profile} />
+      <Route path="/settings" component={Settings} />
+      <Route path="/beta-feedback" component={BetaFeedback} />
       <Route component={NotFound} />
     </Switch>
   );

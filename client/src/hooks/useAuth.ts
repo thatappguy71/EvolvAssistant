@@ -1,17 +1,32 @@
-import { useQuery } from "@tanstack/react-query";
 import type { User } from "@shared/schema";
-import { getQueryFn } from "@/lib/queryClient";
+
+// Mock user for beta testing - removes authentication requirements
+const mockBetaUser: User = {
+  id: "beta-tester",
+  email: "beta@evolv-app.com",
+  firstName: "Beta",
+  lastName: "Tester",
+  profileImageUrl: null,
+  subscriptionTier: "FREE",
+  subscriptionId: null,
+  subscriptionActive: false,
+  trialEndDate: null,
+  country: null,
+  region: null,
+  city: null,
+  timezone: null,
+  currency: null,
+  countryCode: null,
+  locationUpdatedAt: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
 
 export function useAuth() {
-  const { data: user, isLoading } = useQuery<User>({
-    queryKey: ["/api/auth/user"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
-    retry: false,
-  });
-
+  // For beta testing: return mock user immediately, no API calls needed
   return {
-    user,
-    isLoading,
-    isAuthenticated: !!user,
+    user: mockBetaUser,
+    isLoading: false,
+    isAuthenticated: true,
   };
 }
