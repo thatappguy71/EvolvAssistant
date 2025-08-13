@@ -21,6 +21,7 @@ import Pricing from "@/pages/pricing";
 import PaymentTest from "@/pages/payment-test";
 import DirectPayment from "@/pages/direct-payment";
 import BetaFeedback from "@/pages/BetaFeedback";
+import BetaSignup from "@/pages/BetaSignup";
 import FeedbackAdmin from "@/pages/FeedbackAdmin";
 import NotFound from "@/pages/not-found";
 import ColorDemo from "@/components/ColorDemo";
@@ -46,6 +47,7 @@ function Router() {
       <Route path="/profile" component={Profile} />
       <Route path="/settings" component={Settings} />
       <Route path="/beta-feedback" component={BetaFeedback} />
+      <Route path="/beta-signup" component={BetaSignup} />
       <Route path="/feedback-admin" component={FeedbackAdmin} />
       <Route component={NotFound} />
     </Switch>

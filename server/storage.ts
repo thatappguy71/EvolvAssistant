@@ -7,6 +7,7 @@ import {
   userBiohackBookmarks,
   aiRecommendations,
   betaFeedback,
+  betaSignups,
   type User,
   type UpsertUser,
   type InsertHabit,
@@ -22,6 +23,8 @@ import {
   type InsertAIRecommendation,
   type BetaFeedback,
   type InsertBetaFeedback,
+  type BetaSignup,
+  type InsertBetaSignup,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, sql, count } from "drizzle-orm";
@@ -96,6 +99,11 @@ export interface IStorage {
   getBetaFeedbackByUser(userId: string): Promise<BetaFeedback[]>;
   getAllBetaFeedback(): Promise<BetaFeedback[]>;
   updateBetaFeedbackStatus(id: number, status: string): Promise<void>;
+
+  // Beta Signup operations
+  createBetaSignup(signup: InsertBetaSignup): Promise<BetaSignup>;
+  getAllBetaSignups(): Promise<BetaSignup[]>;
+  updateBetaSignupStatus(id: number, status: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -770,6 +778,30 @@ export class DatabaseStorage implements IStorage {
     await db.update(betaFeedback)
       .set({ status: status as any, updatedAt: new Date() })
       .where(eq(betaFeedback.id, feedbackId));
+  }
+
+  // Beta Signup operations
+  async createBetaSignup(signup: InsertBetaSignup): Promise<BetaSignup> {
+    const [newSignup] = await db
+      .insert(betaSignups)
+      .values(signup)
+      .returning();
+    return newSignup;
+  }
+
+  async getAllBetaSignups(): Promise<BetaSignup[]> {
+    return await db
+      .select()
+      .from(betaSignups)
+      .orderBy(desc(betaSignups.createdAt));
+  }
+
+  async updateBetaSignupStatus(signupId: number, status: string): Promise<boolean> {
+    const result = await db
+      .update(betaSignups)
+      .set({ status: status as any, updatedAt: new Date() })
+      .where(eq(betaSignups.id, signupId));
+    return result.rowCount ? result.rowCount > 0 : false;
   }
 }
 

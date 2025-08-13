@@ -210,6 +210,22 @@ export const betaFeedback = pgTable("beta_feedback", {
 export type BetaFeedback = typeof betaFeedback.$inferSelect;
 export type InsertBetaFeedback = typeof betaFeedback.$inferInsert;
 
+// Beta signup table
+export const betaSignups = pgTable("beta_signups", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  motivation: text("motivation").notNull(),
+  experience: text("experience"),
+  referralSource: varchar("referral_source", { length: 255 }),
+  status: varchar("status", { enum: ["pending", "approved", "rejected"] }).default("pending"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type BetaSignup = typeof betaSignups.$inferSelect;
+export type InsertBetaSignup = typeof betaSignups.$inferInsert;
+
 // AI Recommendations table
 export const aiRecommendations = pgTable("ai_recommendations", {
   id: serial("id").primaryKey(),

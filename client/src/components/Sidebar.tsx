@@ -244,6 +244,19 @@ export default function Sidebar() {
               {!isCollapsed && <span className="font-medium">Beta Feedback</span>}
             </Link>
             <Link 
+              href="/beta-signup" 
+              className={`flex items-center ${isCollapsed ? 'justify-center px-3' : 'space-x-3 px-4'} rounded-lg py-3 transition-all ${
+                isActive("/beta-signup") 
+                  ? "text-blue-600 bg-blue-50 dark:bg-blue-900/50" 
+                  : "text-gray-600 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+              }`}
+              title={isCollapsed ? "Join Beta" : ""}
+              onClick={() => handleNavigation("/beta-signup")}
+            >
+              <i className="fas fa-user-plus text-lg"></i>
+              {!isCollapsed && <span className="font-medium">Join Beta</span>}
+            </Link>
+            <Link 
               href="/feedback-admin" 
               className={`flex items-center ${isCollapsed ? 'justify-center px-3' : 'space-x-3 px-4'} rounded-lg py-3 transition-all ${
                 isActive("/feedback-admin") 

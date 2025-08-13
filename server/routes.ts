@@ -825,5 +825,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Beta Signup routes
+  app.post('/api/beta-signup', async (req: any, res) => {
+    try {
+      console.log('Beta signup submission:', req.body);
+      
+      // Validate required fields
+      const { name, email, motivation } = req.body;
+      if (!name || !email || !motivation) {
+        return res.status(400).json({ 
+          message: "Name, email, and motivation are required" 
+        });
+      }
+      
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ 
+          message: "Please provide a valid email address" 
+        });
+      }
+      
+      const signupData = {
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        motivation: motivation.trim(),
+        experience: req.body.experience?.trim() || null,
+        referralSource: req.body.referralSource?.trim() || null,
+        status: 'pending' as const
+      };
+      
+      console.log('Beta signup data being saved:', signupData);
+      
+      const signup = await storage.createBetaSignup(signupData);
+      console.log('Beta signup saved successfully:', signup.id);
+      
+      res.status(201).json({ 
+        message: "Beta application submitted successfully!",
+        id: signup.id 
+      });
+    } catch (error) {
+      console.error("Error creating beta signup:", error);
+      console.error("Error details:", error instanceof Error ? error.message : error);
+      res.status(500).json({ 
+        message: "Failed to submit application", 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  });
+
+  // Get all beta signups (admin only)
+  app.get('/api/beta-signups', isAuthenticated, async (req: any, res) => {
+    try {
+      const signups = await storage.getAllBetaSignups();
+      res.json(signups);
+    } catch (error) {
+      console.error("Error fetching beta signups:", error);
+      res.status(500).json({ message: "Failed to fetch signups" });
+    }
+  });
+
+  // Update beta signup status (admin only)
+  app.patch('/api/beta-signups/:id/status', isAuthenticated, async (req: any, res) => {
+    try {
+      const signupId = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!status || !['pending', 'approved', 'rejected'].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      
+      const success = await storage.updateBetaSignupStatus(signupId, status);
+      if (success) {
+        res.json({ message: "Status updated successfully" });
+      } else {
+        res.status(404).json({ message: "Signup not found" });
+      }
+    } catch (error) {
+      console.error("Error updating signup status:", error);
+      res.status(500).json({ message: "Failed to update status" });
+    }
+  });
+
   return httpServer;
 }
