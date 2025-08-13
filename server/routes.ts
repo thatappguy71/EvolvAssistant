@@ -389,9 +389,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/metrics/recent', async (req: any, res) => {
+  app.get('/api/metrics/recent', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const days = parseInt(req.query.days as string) || 30;
       const metrics = await storage.getRecentMetrics(userId, days);
       res.json(metrics);
@@ -401,9 +401,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/metrics', async (req: any, res) => {
+  app.post('/api/metrics', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const metricsData = insertDailyMetricsSchema.parse(req.body);
       const metrics = await storage.upsertDailyMetrics(userId, metricsData);
       res.json(metrics);
