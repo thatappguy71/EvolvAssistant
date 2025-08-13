@@ -743,24 +743,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Beta Feedback routes - Modified for beta testing (no authentication required)
-  app.post('/api/beta-feedback', async (req: any, res) => {
+  app.post('/api/beta-feedback', isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
+      
       const feedbackData = {
+        userId,
         type: req.body.type || 'general',
         priority: req.body.priority || 'medium',
         title: req.body.title,
         description: req.body.description,
-        stepsToReproduce: req.body.stepsToReproduce || '',
-        expectedBehavior: req.body.expectedBehavior || '',
-        actualBehavior: req.body.actualBehavior || '',
-        browserInfo: req.body.browserInfo || '',
-        userEmail: req.body.userEmail || 'anonymous@beta-test.com',
-        status: 'new',
-        submittedAt: new Date()
+        stepsToReproduce: req.body.stepsToReproduce || null,
+        expectedBehavior: req.body.expectedBehavior || null,
+        actualBehavior: req.body.actualBehavior || null,
+        browserInfo: req.body.browserInfo || null,
+        status: 'open'
       };
       
       const feedback = await storage.createBetaFeedback(feedbackData);
-      res.json(feedback);
+      res.status(201).json(feedback);
     } catch (error) {
       console.error("Error creating beta feedback:", error);
       res.status(500).json({ message: "Failed to create feedback" });

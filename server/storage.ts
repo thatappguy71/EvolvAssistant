@@ -69,6 +69,12 @@ export interface IStorage {
   toggleBiohackBookmark(userId: string, biohackId: number): Promise<boolean>;
   initializeBiohacks(): Promise<void>;
   
+  // Beta Feedback operations
+  createBetaFeedback(feedback: InsertBetaFeedback): Promise<BetaFeedback>;
+  getBetaFeedbackByUser(userId: string): Promise<BetaFeedback[]>;
+  getAllBetaFeedback(): Promise<BetaFeedback[]>;
+  updateBetaFeedbackStatus(id: number, status: string): Promise<void>;
+
   // Analytics operations
   getDashboardStats(userId: string): Promise<{
     currentStreak: number;
