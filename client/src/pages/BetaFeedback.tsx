@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { MessageSquare, Bug, Lightbulb, Star, Send } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const feedbackSchema = z.object({
   type: z.enum(["bug", "feature", "general", "usability"]),
@@ -32,6 +33,7 @@ export default function BetaFeedback() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { isAuthenticated, isLoading } = useAuth();
 
   const form = useForm<FeedbackFormData>({
     resolver: zodResolver(feedbackSchema),
@@ -60,9 +62,24 @@ export default function BetaFeedback() {
       queryClient.invalidateQueries({ queryKey: ["/api/beta-feedback"] });
     },
     onError: (error) => {
+      console.error("Feedback submission error:", error);
+      
+      // Check if it's an authentication error
+      if (error.message?.includes("401") || error.message?.includes("Unauthorized")) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to submit feedback. Redirecting...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 2000);
+        return;
+      }
+      
       toast({
         title: "Submission Failed",
-        description: "Please try again or contact support.",
+        description: `Error: ${error.message || "Please try again or contact support."}`,
         variant: "destructive",
       });
     },
@@ -80,6 +97,23 @@ export default function BetaFeedback() {
     { value: "usability", label: "Usability Issue", icon: MessageSquare, color: "bg-orange-100 text-orange-800" },
     { value: "general", label: "General Feedback", icon: Star, color: "bg-green-100 text-green-800" },
   ];
+
+  // Show login requirement if not authenticated
+  if (!isLoading && !isAuthenticated) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Beta Testing Feedback</h1>
+          <p className="text-gray-600 mb-6">
+            Authentication required to submit feedback
+          </p>
+          <Button onClick={() => window.location.href = "/api/login"}>
+            Log in to Submit Feedback
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
