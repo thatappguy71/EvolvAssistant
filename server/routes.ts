@@ -249,26 +249,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/habits', isAuthenticated, async (req: any, res) => {
+  app.post('/api/habits', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      // Check subscription limits
-      const currentHabits = await storage.getUserHabits(userId);
-      if (!canCreateHabit(user, currentHabits.length)) {
-        const limits = getSubscriptionLimits(user);
-        return res.status(403).json({ 
-          message: `Habit limit reached (${limits.maxHabits}). Upgrade to Premium for unlimited habits.`,
-          upgradeRequired: true,
-          currentCount: currentHabits.length,
-          maxHabits: limits.maxHabits
-        });
-      }
-
+      const userId = "beta-tester";
+      
+      // For beta testing, allow unlimited habits
       const habitData = insertHabitSchema.parse(req.body);
       const habit = await storage.createHabit(userId, habitData);
       res.status(201).json(habit);
@@ -282,9 +267,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/habits/:id', isAuthenticated, async (req: any, res) => {
+  app.put('/api/habits/:id', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
       const habitId = parseInt(req.params.id);
       const habitData = insertHabitSchema.partial().parse(req.body);
       const habit = await storage.updateHabit(habitId, userId, habitData);
@@ -304,9 +289,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/habits/:id', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/habits/:id', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
       const habitId = parseInt(req.params.id);
       const success = await storage.deleteHabit(habitId, userId);
       
@@ -321,10 +306,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Habit completion routes
-  app.post('/api/habits/:id/complete', isAuthenticated, async (req: any, res) => {
+  // Habit completion routes - Modified for beta testing
+  app.post('/api/habits/:id/complete', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
       const habitId = parseInt(req.params.id);
       const completionData = {
         habitId,
@@ -340,9 +325,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/habits/:id/complete', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/habits/:id/complete', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
       const habitId = parseInt(req.params.id);
       const date = req.query.date as string || new Date().toISOString().split('T')[0];
       
@@ -384,9 +369,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/habits/:id/streak', isAuthenticated, async (req: any, res) => {
+  app.get('/api/habits/:id/streak', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
       const habitId = parseInt(req.params.id);
       const streak = await storage.getHabitStreak(habitId, userId);
       res.json({ streak });
@@ -421,9 +406,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/metrics', isAuthenticated, async (req: any, res) => {
+  app.post('/api/metrics', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = "beta-tester";
       const metricsData = insertDailyMetricsSchema.parse(req.body);
       const metrics = await storage.upsertDailyMetrics(userId, metricsData);
       res.json(metrics);
