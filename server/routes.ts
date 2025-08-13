@@ -77,31 +77,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.sendFile(require('path').resolve(process.cwd(), 'test-payment.html'));
   });
 
-  // Auth routes - Modified for beta testing (no authentication required)
-  app.get('/api/auth/user', async (req: any, res) => {
+  // Auth routes
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      // Return mock beta user for testing
-      const mockBetaUser = {
-        id: "beta-tester",
-        email: "beta@evolv-app.com",
-        firstName: "Beta",
-        lastName: "Tester",
-        profileImageUrl: null,
-        subscriptionTier: "FREE",
-        subscriptionId: null,
-        subscriptionActive: false,
-        trialEndDate: null,
-        country: null,
-        region: null,
-        city: null,
-        timezone: null,
-        currency: null,
-        countryCode: null,
-        locationUpdatedAt: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      res.json(mockBetaUser);
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
@@ -202,10 +183,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Dashboard routes - Modified for beta testing
-  app.get('/api/dashboard/stats', async (req: any, res) => {
+  // Dashboard routes
+  app.get('/api/dashboard/stats', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const stats = await storage.getDashboardStats(userId);
       res.json(stats);
     } catch (error) {
@@ -214,10 +195,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Habit routes - Modified for beta testing
-  app.get('/api/habits', async (req: any, res) => {
+  // Habit routes
+  app.get('/api/habits', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const habits = await storage.getUserHabits(userId);
       res.json(habits);
     } catch (error) {
@@ -249,11 +230,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/habits', async (req: any, res) => {
+  app.post('/api/habits', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
-      
-      // For beta testing, allow unlimited habits
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Check subscription limits
+      const currentHabits = await storage.getUserHabits(userId);
+      if (!canCreateHabit(user, currentHabits.length)) {
+        const limits = getSubscriptionLimits(user);
+        return res.status(403).json({ 
+          message: `Habit limit reached (${limits.maxHabits}). Upgrade to Premium for unlimited habits.`,
+          upgradeRequired: true,
+          currentCount: currentHabits.length,
+          maxHabits: limits.maxHabits
+        });
+      }
+
       const habitData = insertHabitSchema.parse(req.body);
       const habit = await storage.createHabit(userId, habitData);
       res.status(201).json(habit);
@@ -267,9 +263,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/habits/:id', async (req: any, res) => {
+  app.put('/api/habits/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const habitId = parseInt(req.params.id);
       const habitData = insertHabitSchema.partial().parse(req.body);
       const habit = await storage.updateHabit(habitId, userId, habitData);
@@ -289,9 +285,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/habits/:id', async (req: any, res) => {
+  app.delete('/api/habits/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const habitId = parseInt(req.params.id);
       const success = await storage.deleteHabit(habitId, userId);
       
@@ -306,10 +302,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Habit completion routes - Modified for beta testing
-  app.post('/api/habits/:id/complete', async (req: any, res) => {
+  // Habit completion routes
+  app.post('/api/habits/:id/complete', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const habitId = parseInt(req.params.id);
       const completionData = {
         habitId,
@@ -325,9 +321,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/habits/:id/complete', async (req: any, res) => {
+  app.delete('/api/habits/:id/complete', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const habitId = parseInt(req.params.id);
       const date = req.query.date as string || new Date().toISOString().split('T')[0];
       
@@ -344,10 +340,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get completions for all habits (beta testing)
-  app.get('/api/habits/completions', async (req: any, res) => {
+  app.get('/api/habits/completions', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const habitId = req.query.habitId ? parseInt(req.query.habitId as string) : undefined;
       const completions = await storage.getHabitCompletions(userId, habitId);
       res.json(completions);
@@ -357,9 +352,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/habits/:id/completions', async (req: any, res) => {
+  app.get('/api/habits/:id/completions', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const habitId = parseInt(req.params.id);
       const completions = await storage.getHabitCompletions(userId, habitId);
       res.json(completions);
@@ -369,9 +364,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/habits/:id/streak', async (req: any, res) => {
+  app.get('/api/habits/:id/streak', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const habitId = parseInt(req.params.id);
       const streak = await storage.getHabitStreak(habitId, userId);
       res.json({ streak });
@@ -381,10 +376,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Daily metrics routes - Modified for beta testing
-  app.get('/api/metrics', async (req: any, res) => {
+  // Daily metrics routes
+  app.get('/api/metrics', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = "beta-tester";
+      const userId = req.user.claims.sub;
       const date = req.query.date as string;
       const metrics = await storage.getDailyMetrics(userId, date);
       res.json(metrics);
