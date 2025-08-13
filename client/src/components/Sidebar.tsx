@@ -243,6 +243,19 @@ export default function Sidebar() {
               <i className="fas fa-comment-dots text-lg"></i>
               {!isCollapsed && <span className="font-medium">Beta Feedback</span>}
             </Link>
+            <Link 
+              href="/feedback-admin" 
+              className={`flex items-center ${isCollapsed ? 'justify-center px-3' : 'space-x-3 px-4'} rounded-lg py-3 transition-all ${
+                isActive("/feedback-admin") 
+                  ? "text-purple-600 bg-purple-50 dark:bg-purple-900/50" 
+                  : "text-gray-600 dark:text-gray-300 hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+              }`}
+              title={isCollapsed ? "Feedback Admin" : ""}
+              onClick={() => handleNavigation("/feedback-admin")}
+            >
+              <i className="fas fa-cog text-lg"></i>
+              {!isCollapsed && <span className="font-medium">Feedback Admin</span>}
+            </Link>
           </div>
         </div>
         

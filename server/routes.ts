@@ -742,6 +742,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all beta feedback (admin only)
+  app.get('/api/beta-feedback/all', isAuthenticated, async (req: any, res) => {
+    try {
+      const feedback = await storage.getAllBetaFeedback();
+      res.json(feedback);
+    } catch (error) {
+      console.error("Error fetching all feedback:", error);
+      res.status(500).json({ message: "Failed to fetch feedback" });
+    }
+  });
+
+  // Update feedback status
+  app.patch('/api/beta-feedback/:id/status', isAuthenticated, async (req: any, res) => {
+    try {
+      const feedbackId = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!status || !['open', 'in_progress', 'resolved', 'closed'].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      
+      await storage.updateBetaFeedbackStatus(feedbackId, status);
+      res.json({ message: "Status updated successfully" });
+    } catch (error) {
+      console.error("Error updating feedback status:", error);
+      res.status(500).json({ message: "Failed to update status" });
+    }
+  });
+
   // Beta Feedback routes - Modified for beta testing (no authentication required)
   app.post('/api/beta-feedback', isAuthenticated, async (req: any, res) => {
     try {

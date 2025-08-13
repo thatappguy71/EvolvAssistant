@@ -766,14 +766,10 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(betaFeedback.createdAt));
   }
 
-  async updateBetaFeedbackStatus(id: number, status: string): Promise<void> {
-    await db
-      .update(betaFeedback)
-      .set({ 
-        status: status as any,
-        updatedAt: new Date(),
-      })
-      .where(eq(betaFeedback.id, id));
+  async updateBetaFeedbackStatus(feedbackId: number, status: string): Promise<void> {
+    await db.update(betaFeedback)
+      .set({ status: status as any, updatedAt: new Date() })
+      .where(eq(betaFeedback.id, feedbackId));
   }
 }
 
