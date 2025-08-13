@@ -51,7 +51,8 @@ export default function BetaFeedback() {
 
   const submitFeedback = useMutation({
     mutationFn: async (data: FeedbackFormData) => {
-      return apiRequest("/api/beta-feedback", "POST", data);
+      const response = await apiRequest("POST", "/api/beta-feedback", data);
+      return response.json();
     },
     onSuccess: () => {
       toast({
