@@ -147,11 +147,13 @@ export default function BetaFeedback() {
                     onClick={() => form.setValue("type", type.value as any)}
                     className={`p-4 rounded-lg border-2 transition-colors ${
                       form.watch("type") === type.value
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200 hover:border-gray-300"
+                        ? "border-blue-500 bg-blue-50 text-blue-900"
+                        : "border-gray-200 hover:border-gray-300 text-gray-900"
                     }`}
                   >
-                    <type.icon className="h-6 w-6 mx-auto mb-2 text-gray-600" />
+                    <type.icon className={`h-6 w-6 mx-auto mb-2 ${
+                      form.watch("type") === type.value ? "text-blue-600" : "text-gray-600"
+                    }`} />
                     <div className="text-sm font-medium">{type.label}</div>
                   </button>
                 ))}
