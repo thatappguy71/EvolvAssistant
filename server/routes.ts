@@ -747,6 +747,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       
+      console.log('Beta feedback submission:', {
+        userId,
+        body: req.body
+      });
+      
+      // Validate required fields
+      if (!req.body.title || !req.body.description) {
+        return res.status(400).json({ 
+          message: "Title and description are required" 
+        });
+      }
+      
       const feedbackData = {
         userId,
         type: req.body.type || 'general',
@@ -757,14 +769,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         expectedBehavior: req.body.expectedBehavior || null,
         actualBehavior: req.body.actualBehavior || null,
         browserInfo: req.body.browserInfo || null,
-        status: 'open'
+        status: 'open' as const
       };
       
+      console.log('Feedback data being saved:', feedbackData);
+      
       const feedback = await storage.createBetaFeedback(feedbackData);
+      console.log('Feedback saved successfully:', feedback.id);
+      
       res.status(201).json(feedback);
     } catch (error) {
       console.error("Error creating beta feedback:", error);
-      res.status(500).json({ message: "Failed to create feedback" });
+      console.error("Error details:", error instanceof Error ? error.message : error);
+      res.status(500).json({ message: "Failed to create feedback", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
 
