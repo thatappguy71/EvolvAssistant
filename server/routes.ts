@@ -20,6 +20,7 @@ import {
   handleWebhook,
   STRIPE_CONFIG 
 } from "./stripeService";
+import { sendBetaSignupNotification, sendBetaWelcomeEmail } from "./emailService";
 
 // Configure multer for file uploads
 const uploadDir = 'uploads/profile-images';
@@ -860,6 +861,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const signup = await storage.createBetaSignup(signupData);
       console.log('Beta signup saved successfully:', signup.id);
       
+      // Send email notification to admin
+      console.log('Attempting to send beta signup notification email...');
+      try {
+        const emailResult = await sendBetaSignupNotification({
+          name: signupData.name,
+          email: signupData.email,
+          motivation: signupData.motivation,
+          experience: signupData.experience || undefined,
+          referralSource: signupData.referralSource || undefined
+        });
+        console.log('Beta signup notification email result:', emailResult);
+      } catch (emailError) {
+        console.error('Failed to send beta signup notification email:', emailError);
+        console.error('Email error stack:', emailError instanceof Error ? emailError.stack : emailError);
+        // Don't fail the signup if email fails
+      }
+      
       res.status(201).json({ 
         message: "Beta application submitted successfully!",
         id: signup.id 
@@ -897,6 +915,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const success = await storage.updateBetaSignupStatus(signupId, status);
       if (success) {
+        // Send welcome email if status changed to approved
+        if (status === 'approved') {
+          try {
+            const signups = await storage.getAllBetaSignups();
+            const signup = signups.find(s => s.id === signupId);
+            if (signup) {
+              await sendBetaWelcomeEmail({
+                name: signup.name,
+                email: signup.email
+              });
+              console.log('Beta welcome email sent successfully to:', signup.email);
+            }
+          } catch (emailError) {
+            console.error('Failed to send beta welcome email:', emailError);
+            // Don't fail the status update if email fails
+          }
+        }
+        
         res.json({ message: "Status updated successfully" });
       } else {
         res.status(404).json({ message: "Signup not found" });
