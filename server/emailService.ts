@@ -29,11 +29,18 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
       html: params.html || '',
     });
     console.log(`Email sent successfully to ${params.to}`);
+    console.log('SendGrid response status:', 'Success - Email accepted for delivery');
+    console.log('Next steps: Check spam folder, verify SendGrid sender verification is complete');
     return true;
   } catch (error: any) {
     console.error('SendGrid email error:', error);
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
     if (error.response?.body?.errors) {
       console.error('SendGrid error details:', JSON.stringify(error.response.body.errors, null, 2));
+    }
+    if (error.response?.headers) {
+      console.error('Response headers:', JSON.stringify(error.response.headers, null, 2));
     }
     return false;
   }
@@ -70,8 +77,8 @@ export async function sendBetaSignupNotification(signupData: {
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 24px;">🚀 New Beta Application</h1>
-        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Someone wants to join the Evolv beta!</p>
+        <h1 style="color: white; margin: 0; font-size: 24px;">New Beta Application for Evolv</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">A new user wants to join the beta program!</p>
       </div>
       
       <div style="background: #f8fafc; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e2e8f0;">
