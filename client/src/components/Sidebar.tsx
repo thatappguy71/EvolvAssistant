@@ -282,6 +282,19 @@ export default function Sidebar() {
               <i className="fas fa-cog text-lg"></i>
               {!isCollapsed && <span className="font-medium">Feedback Admin</span>}
             </Link>
+            <Link 
+              href="/marketing" 
+              className={`flex items-center ${isCollapsed ? 'justify-center px-3' : 'space-x-3 px-4'} rounded-lg py-3 transition-all ${
+                isActive("/marketing") 
+                  ? "text-green-600 bg-green-50 dark:bg-green-900/50" 
+                  : "text-gray-600 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30"
+              }`}
+              title={isCollapsed ? "Marketing" : ""}
+              onClick={() => handleNavigation("/marketing")}
+            >
+              <i className="fas fa-bullhorn text-lg"></i>
+              {!isCollapsed && <span className="font-medium">Marketing</span>}
+            </Link>
           </div>
         </div>
         

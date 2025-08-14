@@ -24,6 +24,8 @@ import BetaFeedback from "@/pages/BetaFeedback";
 import BetaSignup from "@/pages/BetaSignup";
 import BetaSignupAdmin from "@/pages/BetaSignupAdmin";
 import FeedbackAdmin from "@/pages/FeedbackAdmin";
+import Marketing from "@/pages/Marketing";
+import MarketingResources from "@/pages/MarketingResources";
 import NotFound from "@/pages/not-found";
 import ColorDemo from "@/components/ColorDemo";
 
@@ -51,6 +53,8 @@ function Router() {
       <Route path="/beta-signup" component={BetaSignup} />
       <Route path="/beta-admin" component={BetaSignupAdmin} />
       <Route path="/feedback-admin" component={FeedbackAdmin} />
+      <Route path="/marketing" component={Marketing} />
+      <Route path="/marketing-resources" component={MarketingResources} />
       <Route component={NotFound} />
     </Switch>
   );
