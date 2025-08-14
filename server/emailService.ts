@@ -30,8 +30,11 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
     });
     console.log(`Email sent successfully to ${params.to}`);
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.error('SendGrid email error:', error);
+    if (error.response?.body?.errors) {
+      console.error('SendGrid error details:', JSON.stringify(error.response.body.errors, null, 2));
+    }
     return false;
   }
 }
@@ -46,10 +49,23 @@ export async function sendBetaSignupNotification(signupData: {
 }): Promise<boolean> {
   // Use the user's email that they provided when setting up SendGrid account as both admin and from email
   // This ensures the email is verified in SendGrid
-  const adminEmail = process.env.ADMIN_EMAIL || process.env.VERIFIED_EMAIL || 'admin@evolv.app';
-  const fromEmail = process.env.FROM_EMAIL || process.env.VERIFIED_EMAIL || 'noreply@evolv.app';
+  console.log('Raw environment variables:');
+  console.log('ADMIN_EMAIL:', JSON.stringify(process.env.ADMIN_EMAIL));
+  console.log('VERIFIED_EMAIL:', JSON.stringify(process.env.VERIFIED_EMAIL));
   
-  console.log('Sending email from:', fromEmail, 'to:', adminEmail);
+  // Use ADMIN_EMAIL for receiving notifications, VERIFIED_EMAIL for sending
+  // Both should be the same verified email address in SendGrid
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.VERIFIED_EMAIL || 'admin@evolv.app';
+  const fromEmail = process.env.VERIFIED_EMAIL || 'noreply@evolv.app';
+  
+  console.log('Resolved emails - from:', fromEmail, 'to:', adminEmail);
+  
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(adminEmail) || !emailRegex.test(fromEmail)) {
+    console.error('Invalid email format detected:', { adminEmail, fromEmail });
+    return false;
+  }
   
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -123,6 +139,12 @@ ${signupData.motivation}
 Review the application in the admin panel: ${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}/beta-admin` : 'Admin Panel'}
   `;
 
+  console.log('Sending email with parameters:', {
+    to: adminEmail,
+    from: fromEmail,
+    subject: `🚀 New Beta Application: ${signupData.name}`
+  });
+  
   return await sendEmail({
     to: adminEmail,
     from: fromEmail,
