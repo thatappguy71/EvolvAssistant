@@ -29,8 +29,7 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
       html: params.html || '',
     });
     console.log(`Email sent successfully to ${params.to}`);
-    console.log('SendGrid response status:', 'Success - Email accepted for delivery');
-    console.log('Next steps: Check spam folder, verify SendGrid sender verification is complete');
+    console.log('Note: New automated emails may initially go to spam folder - this is normal and improves over time');
     return true;
   } catch (error: any) {
     console.error('SendGrid email error:', error);
