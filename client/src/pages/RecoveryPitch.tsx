@@ -302,28 +302,30 @@ export default function RecoveryPitch() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-white border rounded-lg">
+                  <div className="text-center p-4 bg-white border rounded-lg shadow-sm">
                     <div className="text-2xl font-bold text-green-600">{pilotProgram.duration}</div>
-                    <div className="text-sm font-medium">Duration</div>
+                    <div className="text-sm font-medium text-gray-700">Duration</div>
                   </div>
-                  <div className="text-center p-4 bg-white border rounded-lg">
+                  <div className="text-center p-4 bg-white border rounded-lg shadow-sm">
                     <div className="text-2xl font-bold text-green-600">$0</div>
-                    <div className="text-sm font-medium">Investment</div>
+                    <div className="text-sm font-medium text-gray-700">Investment</div>
                   </div>
                 </div>
-                <div className="text-center p-4 bg-white border rounded-lg">
+                <div className="text-center p-4 bg-white border rounded-lg shadow-sm">
                   <div className="text-xl font-bold text-green-600">{pilotProgram.participants}</div>
-                  <div className="text-sm font-medium">Clients per Organization</div>
+                  <div className="text-sm font-medium text-gray-700">Clients per Organization</div>
                 </div>
               </div>
-              <div className="space-y-3">
-                <h4 className="font-semibold">Pilot Benefits:</h4>
-                {pilotProgram.benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                    <span className="text-sm">{benefit}</span>
-                  </div>
-                ))}
+              <div className="space-y-4 bg-white/60 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-900 text-base">Pilot Benefits:</h4>
+                <div className="space-y-3">
+                  {pilotProgram.benefits.map((benefit, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0 mt-1" />
+                      <span className="text-sm text-gray-700 leading-relaxed">{benefit}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </CardContent>
