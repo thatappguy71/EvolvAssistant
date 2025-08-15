@@ -316,13 +316,13 @@ export default function RecoveryPitch() {
                   <div className="text-sm font-medium text-gray-700">Clients per Organization</div>
                 </div>
               </div>
-              <div className="space-y-4 bg-white/60 p-4 rounded-lg">
+              <div className="space-y-4 bg-white p-4 rounded-lg border shadow-sm">
                 <h4 className="font-semibold text-gray-900 text-base">Pilot Benefits:</h4>
                 <div className="space-y-3">
                   {pilotProgram.benefits.map((benefit, index) => (
                     <div key={index} className="flex items-start gap-3">
                       <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0 mt-1" />
-                      <span className="text-sm text-gray-700 leading-relaxed">{benefit}</span>
+                      <span className="text-sm text-gray-900 leading-relaxed font-medium">{benefit}</span>
                     </div>
                   ))}
                 </div>
