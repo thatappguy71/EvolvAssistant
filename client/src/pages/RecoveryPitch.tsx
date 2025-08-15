@@ -288,7 +288,7 @@ export default function RecoveryPitch() {
         </Card>
 
         {/* Pilot Program */}
-        <Card className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+        <Card className="border-green-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-green-600" />
@@ -302,27 +302,27 @@ export default function RecoveryPitch() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-white border rounded-lg shadow-sm">
-                    <div className="text-2xl font-bold text-green-600">{pilotProgram.duration}</div>
-                    <div className="text-sm font-medium text-gray-700">Duration</div>
+                  <div className="text-center p-4 border rounded-lg">
+                    <div className="text-lg font-bold text-green-600">{pilotProgram.duration}</div>
+                    <div className="text-sm font-medium">Duration</div>
                   </div>
-                  <div className="text-center p-4 bg-white border rounded-lg shadow-sm">
-                    <div className="text-2xl font-bold text-green-600">$0</div>
-                    <div className="text-sm font-medium text-gray-700">Investment</div>
+                  <div className="text-center p-4 border rounded-lg">
+                    <div className="text-lg font-bold text-green-600">$0</div>
+                    <div className="text-sm font-medium">Investment</div>
                   </div>
                 </div>
-                <div className="text-center p-4 bg-white border rounded-lg shadow-sm">
-                  <div className="text-xl font-bold text-green-600">{pilotProgram.participants}</div>
-                  <div className="text-sm font-medium text-gray-700">Clients per Organization</div>
+                <div className="text-center p-4 border rounded-lg">
+                  <div className="text-lg font-bold text-green-600">{pilotProgram.participants}</div>
+                  <div className="text-sm font-medium">Clients per Organization</div>
                 </div>
               </div>
-              <div className="space-y-4 bg-white p-4 rounded-lg border shadow-sm">
-                <h4 className="text-sm font-medium text-gray-700">Pilot Benefits:</h4>
-                <div className="space-y-3">
+              <div className="space-y-4">
+                <h4 className="text-base font-semibold text-gray-900 mb-3">Pilot Benefits:</h4>
+                <div className="space-y-2">
                   {pilotProgram.benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm font-medium text-gray-700">{benefit}</span>
+                    <div key={index} className="flex items-center gap-3 p-3 border rounded-lg">
+                      <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                      <span className="text-sm">{benefit}</span>
                     </div>
                   ))}
                 </div>
