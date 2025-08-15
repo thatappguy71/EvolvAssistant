@@ -58,6 +58,17 @@ export default function Dashboard() {
   const recommendedBiohacks = biohacks.slice(0, 3);
 
   const handleBiohackClick = (biohack: any) => {
+    // Stop any running audio/timers when switching biohacks
+    if (isPlayingAudio) {
+      stopBinauralBeats();
+    }
+    if (isTimerRunning) {
+      stopTimer();
+    }
+    if (breathingTimerRef.current) {
+      stopBreathingExercise();
+    }
+    
     setSelectedBiohack(biohack);
     setIsBiohackDetailOpen(true);
   };
@@ -447,7 +458,17 @@ export default function Dashboard() {
                 )}
 
                 {/* Interactive Tools Section */}
-                {selectedBiohack && (
+                {selectedBiohack && (selectedBiohack.name === "Binaural Beats" || 
+                                    selectedBiohack.name === "Wim Hof Breathing" || 
+                                    selectedBiohack.name === "Box Breathing" ||
+                                    selectedBiohack.name === "Meditation" || 
+                                    selectedBiohack.name === "Red Light Therapy" ||
+                                    selectedBiohack.name === "Sauna Therapy" || 
+                                    selectedBiohack.name === "Forest Bathing" ||
+                                    selectedBiohack.name === "Cold Exposure" || 
+                                    selectedBiohack.name === "Ice Bath" ||
+                                    selectedBiohack.name === "HIIT Training" ||
+                                    selectedBiohack.name === "Blue Light Blocking") && (
                   <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700">
                     <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-3 flex items-center">
                       <Play className="h-4 w-4 mr-2" />
@@ -696,6 +717,63 @@ export default function Dashboard() {
                           )}
                         </div>
                         <p className="text-xs text-gray-500">Follow along with the timer for optimal high-intensity intervals.</p>
+                      </div>
+                    )}
+
+                    {/* Blue Light Blocking Tools */}
+                    {selectedBiohack.name === "Blue Light Blocking" && (
+                      <div className="space-y-4">
+                        <div className="bg-amber-100 dark:bg-amber-900/50 p-3 rounded-lg text-sm">
+                          <h5 className="font-medium mb-2">🌅 Blue Light Management Schedule</h5>
+                          <div className="space-y-1 text-xs">
+                            <p><strong>Morning (6-10 AM):</strong> Get bright natural light exposure</p>
+                            <p><strong>Daytime:</strong> Normal screen use with breaks every hour</p>
+                            <p><strong>Evening (6 PM):</strong> Reduce screen brightness by 50%</p>
+                            <p><strong>Night (8 PM):</strong> Use blue light filters or glasses</p>
+                            <p><strong>Bedtime (10 PM):</strong> No screens 1-2 hours before sleep</p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button
+                            onClick={() => startTimer(60)}
+                            variant="outline"
+                            size="sm"
+                            disabled={isTimerRunning}
+                            data-testid="button-timer-screen-break"
+                          >
+                            <Timer className="h-4 w-4 mr-2" />
+                            60 min Screen Break
+                          </Button>
+                          <Button
+                            onClick={() => startTimer(20)}
+                            variant="outline"
+                            size="sm"
+                            disabled={isTimerRunning}
+                            data-testid="button-timer-eye-rest"
+                          >
+                            <Timer className="h-4 w-4 mr-2" />
+                            20 min Eye Rest
+                          </Button>
+                          {isTimerRunning && (
+                            <Button
+                              onClick={stopTimer}
+                              variant="destructive"
+                              size="sm"
+                              className="col-span-2"
+                            >
+                              Stop Timer
+                            </Button>
+                          )}
+                        </div>
+                        <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg text-sm">
+                          <h6 className="font-medium mb-1">💡 Quick Tips:</h6>
+                          <ul className="text-xs space-y-1">
+                            <li>• Use f.lux or Night Light on your devices</li>
+                            <li>• Position screens 20+ inches from your eyes</li>
+                            <li>• Follow the 20-20-20 rule: Every 20 minutes, look at something 20 feet away for 20 seconds</li>
+                            <li>• Consider blue light blocking glasses after sunset</li>
+                          </ul>
+                        </div>
                       </div>
                     )}
                   </div>
