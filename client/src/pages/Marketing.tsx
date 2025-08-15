@@ -101,7 +101,7 @@ export default function Marketing() {
     {
       advantage: "$4.99 CAD Pricing",
       competitor: "US apps: $6.99+ USD",
-      impact: "25% more affordable for Canadians"
+      impact: "25% cheaper for Canadians"
     },
     {
       advantage: "Family Plan ($69.99)",
@@ -179,7 +179,7 @@ export default function Marketing() {
                   <div className="text-xs sm:text-sm text-muted-foreground">{item.competitor}</div>
                 </div>
                 <div className="flex-shrink-0">
-                  <Badge variant="secondary" className="text-xs whitespace-nowrap">
+                  <Badge variant="secondary" className="text-xs px-2 py-1 max-w-[140px] text-center leading-tight">
                     {item.impact}
                   </Badge>
                 </div>
