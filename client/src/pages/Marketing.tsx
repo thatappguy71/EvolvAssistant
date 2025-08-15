@@ -173,12 +173,16 @@ export default function Marketing() {
         <CardContent>
           <div className="space-y-4">
             {competitiveAdvantages.map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="space-y-1">
-                  <div className="font-semibold text-green-600">{item.advantage}</div>
-                  <div className="text-sm text-muted-foreground">{item.competitor}</div>
+              <div key={index} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border rounded-lg">
+                <div className="flex-1 space-y-1">
+                  <div className="font-semibold text-green-600 text-sm sm:text-base">{item.advantage}</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">{item.competitor}</div>
                 </div>
-                <Badge variant="secondary">{item.impact}</Badge>
+                <div className="flex-shrink-0">
+                  <Badge variant="secondary" className="text-xs whitespace-nowrap">
+                    {item.impact}
+                  </Badge>
+                </div>
               </div>
             ))}
           </div>
