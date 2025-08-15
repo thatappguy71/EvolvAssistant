@@ -504,6 +504,16 @@ export default function Dashboard() {
                             {isPlayingAudio ? 'Stop Audio' : 'Play Frequency'}
                           </Button>
                         </div>
+                        {isPlayingAudio && (
+                          <div className="mt-2 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                            <p className="text-sm text-blue-800 dark:text-blue-200 font-medium">
+                              🎧 Binaural beats are playing - you should hear audio in both ears
+                            </p>
+                            <p className="text-xs text-blue-600 dark:text-blue-300 mt-1">
+                              Stereo audio active: {frequencies[currentFrequency].name}
+                            </p>
+                          </div>
+                        )}
                         <p className="text-xs text-gray-500">Use headphones for best effect. Volume is set to safe levels.</p>
                       </div>
                     )}
@@ -512,7 +522,7 @@ export default function Dashboard() {
                     {(selectedBiohack.name === "Wim Hof Breathing" || selectedBiohack.name === "Box Breathing") && (
                       <div className="space-y-4">
                         <div className="text-center">
-                          <div className="text-2xl font-bold mb-2">
+                          <div className="text-2xl font-bold mb-2 animate-pulse">
                             {breathingPhase === 'inhale' && '🫁 Breathe In'}
                             {breathingPhase === 'hold' && '⏸️ Hold'}
                             {breathingPhase === 'exhale' && '💨 Breathe Out'}
@@ -521,6 +531,16 @@ export default function Dashboard() {
                           <p className="text-sm text-gray-600 dark:text-gray-400">
                             Cycle: {breathingCount} | Phase: {breathingPhase}
                           </p>
+                          {breathingTimerRef.current && (
+                            <div className="mt-2 p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                              <p className="text-sm text-green-800 dark:text-green-200 font-medium">
+                                ✨ Breathing exercise is active - follow the visual guide above
+                              </p>
+                              <p className="text-xs text-green-600 dark:text-green-300 mt-1">
+                                Each phase lasts 4 seconds. Continue for as long as comfortable.
+                              </p>
+                            </div>
+                          )}
                         </div>
                         <div className="flex gap-2">
                           <Button
@@ -543,13 +563,21 @@ export default function Dashboard() {
                         <div className="text-center">
                           {isTimerRunning && (
                             <div className="mb-4">
-                              <div className="text-3xl font-bold">
+                              <div className="text-3xl font-bold animate-pulse text-green-600 dark:text-green-400">
                                 {Math.floor(timerSeconds / 60)}:{(timerSeconds % 60).toString().padStart(2, '0')}
                               </div>
                               <Progress 
                                 value={timerSeconds > 0 ? ((parseInt(selectedBiohack.timeRequired) * 60 - timerSeconds) / (parseInt(selectedBiohack.timeRequired) * 60)) * 100 : 0} 
                                 className="mt-2"
                               />
+                              <div className="mt-2 p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                                <p className="text-sm text-green-800 dark:text-green-200 font-medium">
+                                  ⏰ Timer is active - session in progress
+                                </p>
+                                <p className="text-xs text-green-600 dark:text-green-300 mt-1">
+                                  Focus on your practice. The timer will notify you when complete.
+                                </p>
+                              </div>
                             </div>
                           )}
                         </div>

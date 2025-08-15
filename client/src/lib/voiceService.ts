@@ -42,8 +42,21 @@ export class VoiceService {
   private useWebSpeechAPI(text: string, options: VoiceOptions): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!('speechSynthesis' in window)) {
-        console.log('Speech synthesis not supported');
-        reject(new Error('Speech synthesis not supported'));
+        console.log('Speech synthesis not supported - running in silent mode');
+        resolve(); // Resolve instead of reject to continue without voice
+        return;
+      }
+
+      // Additional check for Android WebView and other compatibility issues
+      try {
+        if (!window.speechSynthesis || typeof window.speechSynthesis.speak !== 'function') {
+          console.log('Speech synthesis API not fully available - running in silent mode');
+          resolve();
+          return;
+        }
+      } catch (e) {
+        console.log('Speech synthesis check failed - running in silent mode');
+        resolve();
         return;
       }
 
