@@ -130,6 +130,9 @@ export default function Biohacks() {
     let currentPhaseIndex = 0;
 
     const runPhase = () => {
+      // Check if the exercise is still active
+      if (!breathingTimerRef.current && currentPhaseIndex > 0) return;
+      
       const currentPhase = phases[currentPhaseIndex];
       setBreathingPhase(currentPhase.phase);
       
@@ -152,7 +155,11 @@ export default function Biohacks() {
             return newCount;
           });
         }
-        runPhase();
+        
+        // Continue the cycle only if timer is still active
+        if (breathingTimerRef.current) {
+          runPhase();
+        }
       }, currentPhase.duration);
     };
 
@@ -167,6 +174,10 @@ export default function Biohacks() {
     setBreathingPhase('inhale');
     setBreathingCount(0);
     stopVoiceGuidance();
+    toast({
+      title: "Breathing Exercise Stopped",
+      description: "Your breathing session has ended",
+    });
   };
 
   // Binaural beats functionality
@@ -177,69 +188,87 @@ export default function Biohacks() {
   };
 
   const startBinauralBeats = () => {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new AudioContext();
-      gainNodeRef.current = audioContextRef.current.createGain();
-      gainNodeRef.current.connect(audioContextRef.current.destination);
-      gainNodeRef.current.gain.value = 0.1; // Low volume
+    try {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContext();
+        gainNodeRef.current = audioContextRef.current.createGain();
+        gainNodeRef.current.connect(audioContextRef.current.destination);
+        gainNodeRef.current.gain.value = 0.1; // Low volume
+      }
+
+      const { left, right } = frequencies[currentFrequency];
+      
+      // Voice guidance for starting binaural beats with soothing cadence
+      const frequencyName = frequencies[currentFrequency].name;
+      const purpose = currentFrequency === 'focus' ? 'enhanced concentration and alertness' : 
+                     currentFrequency === 'relaxation' ? 'deep relaxation and stress relief' :
+                     'restful sleep and recovery';
+      
+      voiceService.speak(`Starting ${frequencyName}... for ${purpose}... Put on your headphones... close your eyes... and allow the frequencies to guide your mind... into the desired state... Let yourself relax... completely.`);
+      
+      // Create stereo oscillators
+      const leftOscillator = audioContextRef.current.createOscillator();
+      const rightOscillator = audioContextRef.current.createOscillator();
+      const leftGain = audioContextRef.current.createGain();
+      const rightGain = audioContextRef.current.createGain();
+      const merger = audioContextRef.current.createChannelMerger(2);
+
+      leftOscillator.frequency.value = left;
+      rightOscillator.frequency.value = right;
+      leftGain.gain.value = 0.1;
+      rightGain.gain.value = 0.1;
+
+      leftOscillator.connect(leftGain);
+      rightOscillator.connect(rightGain);
+      leftGain.connect(merger, 0, 0);
+      rightGain.connect(merger, 0, 1);
+      merger.connect(audioContextRef.current.destination);
+
+      leftOscillator.start();
+      rightOscillator.start();
+
+      leftOscillatorRef.current = leftOscillator; // Store both oscillators for cleanup
+      rightOscillatorRef.current = rightOscillator;
+      setIsPlayingAudio(true);
+
+      toast({
+        title: "Binaural Beats Started",
+        description: `Playing ${frequencies[currentFrequency].name}`,
+      });
+    } catch (error) {
+      console.error('Error starting binaural beats:', error);
+      toast({
+        title: "Audio Error",
+        description: "Failed to start binaural beats. Please check your audio settings.",
+        variant: "destructive",
+      });
     }
-
-    const { left, right } = frequencies[currentFrequency];
-    
-    // Voice guidance for starting binaural beats with soothing cadence
-    const frequencyName = frequencies[currentFrequency].name;
-    const purpose = currentFrequency === 'focus' ? 'enhanced concentration and alertness' : 
-                   currentFrequency === 'relaxation' ? 'deep relaxation and stress relief' :
-                   'restful sleep and recovery';
-    
-    voiceService.speak(`Starting ${frequencyName}... for ${purpose}... Put on your headphones... close your eyes... and allow the frequencies to guide your mind... into the desired state... Let yourself relax... completely.`);
-    
-    // Create stereo oscillators
-    const leftOscillator = audioContextRef.current.createOscillator();
-    const rightOscillator = audioContextRef.current.createOscillator();
-    const leftGain = audioContextRef.current.createGain();
-    const rightGain = audioContextRef.current.createGain();
-    const merger = audioContextRef.current.createChannelMerger(2);
-
-    leftOscillator.frequency.value = left;
-    rightOscillator.frequency.value = right;
-    leftGain.gain.value = 0.1;
-    rightGain.gain.value = 0.1;
-
-    leftOscillator.connect(leftGain);
-    rightOscillator.connect(rightGain);
-    leftGain.connect(merger, 0, 0);
-    rightGain.connect(merger, 0, 1);
-    merger.connect(audioContextRef.current.destination);
-
-    leftOscillator.start();
-    rightOscillator.start();
-
-    leftOscillatorRef.current = leftOscillator; // Store both oscillators for cleanup
-    rightOscillatorRef.current = rightOscillator;
-    setIsPlayingAudio(true);
-
-    toast({
-      title: "Binaural Beats Started",
-      description: `Playing ${frequencies[currentFrequency].name}`,
-    });
   };
 
   const stopBinauralBeats = () => {
-    if (leftOscillatorRef.current) {
-      leftOscillatorRef.current.stop();
-      leftOscillatorRef.current = null;
+    try {
+      if (leftOscillatorRef.current) {
+        leftOscillatorRef.current.stop();
+        leftOscillatorRef.current = null;
+      }
+      if (rightOscillatorRef.current) {
+        rightOscillatorRef.current.stop();
+        rightOscillatorRef.current = null;
+      }
+      setIsPlayingAudio(false);
+      
+      toast({
+        title: "Binaural Beats Stopped",
+        description: "Audio playback has been stopped",
+      });
+    } catch (error) {
+      console.error('Error stopping binaural beats:', error);
+      setIsPlayingAudio(false); // Force UI update even on error
+      toast({
+        title: "Audio Stopped",
+        description: "Binaural beats stopped (with minor audio cleanup)",
+      });
     }
-    if (rightOscillatorRef.current) {
-      rightOscillatorRef.current.stop();
-      rightOscillatorRef.current = null;
-    }
-    setIsPlayingAudio(false);
-    
-    toast({
-      title: "Binaural Beats Stopped",
-      description: "Audio playback has been stopped",
-    });
   };
 
   // Cleanup on unmount
@@ -540,6 +569,7 @@ export default function Biohacks() {
                             onClick={isPlayingAudio ? stopBinauralBeats : startBinauralBeats}
                             variant={isPlayingAudio ? "destructive" : "default"}
                             size="sm"
+                            data-testid={isPlayingAudio ? "button-stop-binaural-beats" : "button-start-binaural-beats"}
                           >
                             {isPlayingAudio ? <Pause className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
                             {isPlayingAudio ? 'Stop Audio' : 'Play Frequency'}
@@ -568,6 +598,7 @@ export default function Biohacks() {
                             onClick={breathingTimerRef.current ? stopBreathingExercise : startBreathingExercise}
                             variant={breathingTimerRef.current ? "destructive" : "default"}
                             size="sm"
+                            data-testid={breathingTimerRef.current ? "button-stop-breathing" : "button-start-breathing"}
                           >
                             <Waves className="h-4 w-4 mr-2" />
                             {breathingTimerRef.current ? 'Stop Exercise' : 'Start Breathing'}
@@ -599,6 +630,7 @@ export default function Biohacks() {
                             variant="outline"
                             size="sm"
                             disabled={isTimerRunning}
+                            data-testid="button-timer-5min"
                           >
                             <Timer className="h-4 w-4 mr-2" />
                             5 min
@@ -608,6 +640,7 @@ export default function Biohacks() {
                             variant="outline"
                             size="sm"
                             disabled={isTimerRunning}
+                            data-testid="button-timer-10min"
                           >
                             <Timer className="h-4 w-4 mr-2" />
                             10 min
@@ -617,6 +650,7 @@ export default function Biohacks() {
                             variant="outline"
                             size="sm"
                             disabled={isTimerRunning}
+                            data-testid="button-timer-20min"
                           >
                             <Timer className="h-4 w-4 mr-2" />
                             20 min
@@ -626,6 +660,7 @@ export default function Biohacks() {
                               onClick={stopTimer}
                               variant="destructive"
                               size="sm"
+                              data-testid="button-stop-timer"
                             >
                               Stop Timer
                             </Button>
