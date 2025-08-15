@@ -317,7 +317,7 @@ export default function RecoveryPitch() {
                 </div>
               </div>
               <div className="space-y-4">
-                <h4 className="text-base font-bold text-black mb-3">Pilot Benefits:</h4>
+                <h4 className="text-base font-bold text-green-600 mb-3">Pilot Benefits:</h4>
                 <div className="space-y-2">
                   {pilotProgram.benefits.map((benefit, index) => (
                     <div key={index} className="flex items-center gap-3 p-3 border rounded-lg">
