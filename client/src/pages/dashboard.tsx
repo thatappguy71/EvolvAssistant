@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import Sidebar, { useSidebar } from "@/components/Sidebar";
@@ -11,7 +11,11 @@ import HabitModal from "@/components/HabitModal";
 import AnalyticsCharts from "@/components/AnalyticsCharts";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Clock, Bookmark, ArrowLeft } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Clock, Bookmark, ArrowLeft, Play, Pause, Timer, Waves } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { voiceService } from "@/lib/voiceService";
 
 export default function Dashboard() {
   const [isHabitModalOpen, setIsHabitModalOpen] = useState(false);
@@ -19,6 +23,23 @@ export default function Dashboard() {
   const [isBiohackDetailOpen, setIsBiohackDetailOpen] = useState(false);
   const [, setLocation] = useLocation();
   const { isCollapsed } = useSidebar();
+  const { toast } = useToast();
+
+  // Interactive tool states
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [breathingPhase, setBreathingPhase] = useState<'inhale' | 'hold' | 'exhale' | 'pause'>('inhale');
+  const [breathingCount, setBreathingCount] = useState(0);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [currentFrequency, setCurrentFrequency] = useState<'focus' | 'relaxation' | 'sleep'>('focus');
+
+  // Refs for cleanup
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const breathingTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const leftOscillatorRef = useRef<OscillatorNode | null>(null);
+  const rightOscillatorRef = useRef<OscillatorNode | null>(null);
 
   const { data: stats } = useQuery<{
     currentStreak: number;
@@ -44,6 +65,11 @@ export default function Dashboard() {
   const handleCloseBiohackDetail = () => {
     setIsBiohackDetailOpen(false);
     setSelectedBiohack(null);
+    // Clean up any running timers or audio
+    stopTimer();
+    stopBreathingExercise();
+    stopBinauralBeats();
+    stopVoiceGuidance();
   };
 
   const handleExploreAll = () => {
@@ -62,6 +88,230 @@ export default function Dashboard() {
         return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200';
     }
   };
+
+  // Voice guidance functions
+  const stopVoiceGuidance = () => {
+    voiceService.stop();
+  };
+
+  // Timer functions
+  const startTimer = (minutes: number) => {
+    const totalSeconds = minutes * 60;
+    setTimerSeconds(totalSeconds);
+    setIsTimerRunning(true);
+    
+    voiceService.speak(`Starting your ${minutes} minute ${selectedBiohack?.name || 'session'}... Find a comfortable position... close your eyes... and allow yourself to fully relax... into this healing experience.`);
+    
+    timerRef.current = setInterval(() => {
+      setTimerSeconds(prev => {
+        if (prev <= 1) {
+          setIsTimerRunning(false);
+          voiceService.speak(`Your session is complete... Take a moment to notice... how you feel... You've just taken an important step... in your wellness journey... Well done.`);
+          toast({
+            title: "Session Complete",
+            description: `Your ${minutes} minute session is finished!`,
+          });
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
+    toast({
+      title: "Session Started",
+      description: `${minutes} minute timer activated`,
+    });
+  };
+
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setIsTimerRunning(false);
+    setTimerSeconds(0);
+    stopVoiceGuidance();
+    toast({
+      title: "Session Stopped",
+      description: "Your session has ended",
+    });
+  };
+
+  // Breathing exercise functions
+  const startBreathingExercise = () => {
+    setBreathingCount(0);
+    setBreathingPhase('inhale');
+    
+    const exerciseType = selectedBiohack?.name === "Wim Hof Breathing" ? "Wim Hof" : "Box Breathing";
+    voiceService.speak(`Beginning ${exerciseType}... Let's prepare your body and mind... Find a comfortable seated position... with your spine straight... Close your eyes... and follow my guidance... We'll start in a moment...`);
+    
+    // Start after initial guidance
+    breathingTimerRef.current = setTimeout(() => {
+      breathingCycle();
+    }, 4000);
+  };
+
+  const breathingCycle = () => {
+    const phases = [
+      { phase: 'inhale' as const, duration: 4000, message: 'Breathe In', voiceText: 'Breathe in... slowly... and deeply' },
+      { phase: 'hold' as const, duration: 4000, message: 'Hold', voiceText: 'Hold... your breath... gently' },
+      { phase: 'exhale' as const, duration: 4000, message: 'Breathe Out', voiceText: 'Exhale... slowly... and completely' },
+      { phase: 'pause' as const, duration: 4000, message: 'Pause', voiceText: 'Rest... and pause... naturally' }
+    ];
+
+    let currentPhaseIndex = 0;
+
+    const runPhase = () => {
+      // Check if the exercise is still active
+      if (!breathingTimerRef.current && currentPhaseIndex > 0) return;
+      
+      const currentPhase = phases[currentPhaseIndex];
+      setBreathingPhase(currentPhase.phase);
+      
+      // Provide voice guidance for each phase
+      voiceService.speak(currentPhase.voiceText, { rate: 0.7, pitch: 1.1 });
+      
+      breathingTimerRef.current = setTimeout(() => {
+        currentPhaseIndex = (currentPhaseIndex + 1) % phases.length;
+        if (currentPhaseIndex === 0) {
+          setBreathingCount(prev => {
+            const newCount = prev + 1;
+            // Encouragement every few cycles with gentle pauses
+            if (newCount === 3) {
+              voiceService.speak("Excellent... You're finding your rhythm... Continue breathing with awareness.");
+            } else if (newCount === 6) {
+              voiceService.speak("Beautiful breathing... Feel your body relaxing... with each cycle.");
+            } else if (newCount === 10) {
+              voiceService.speak("You're doing wonderfully... Notice the calm settling... into your body and mind.");
+            }
+            return newCount;
+          });
+        }
+        
+        // Continue the cycle only if timer is still active
+        if (breathingTimerRef.current) {
+          runPhase();
+        }
+      }, currentPhase.duration);
+    };
+
+    runPhase();
+  };
+
+  const stopBreathingExercise = () => {
+    if (breathingTimerRef.current) {
+      clearTimeout(breathingTimerRef.current);
+      breathingTimerRef.current = null;
+    }
+    setBreathingPhase('inhale');
+    setBreathingCount(0);
+    stopVoiceGuidance();
+    toast({
+      title: "Breathing Exercise Stopped",
+      description: "Your breathing session has ended",
+    });
+  };
+
+  // Binaural beats functionality
+  const frequencies = {
+    focus: { left: 220, right: 230, name: 'Alpha Waves (10Hz) - Focus' },
+    relaxation: { left: 200, right: 206, name: 'Theta Waves (6Hz) - Relaxation' },
+    sleep: { left: 180, right: 184, name: 'Delta Waves (4Hz) - Sleep' }
+  };
+
+  const startBinauralBeats = () => {
+    try {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContext();
+        gainNodeRef.current = audioContextRef.current.createGain();
+        gainNodeRef.current.connect(audioContextRef.current.destination);
+        gainNodeRef.current.gain.value = 0.1; // Low volume
+      }
+
+      const { left, right } = frequencies[currentFrequency];
+      
+      // Voice guidance for starting binaural beats with soothing cadence
+      const frequencyName = frequencies[currentFrequency].name;
+      const purpose = currentFrequency === 'focus' ? 'enhanced concentration and alertness' : 
+                     currentFrequency === 'relaxation' ? 'deep relaxation and stress relief' :
+                     'restful sleep and recovery';
+      
+      voiceService.speak(`Starting ${frequencyName}... for ${purpose}... Put on your headphones... close your eyes... and allow the frequencies to guide your mind... into the desired state... Let yourself relax... completely.`);
+      
+      // Create stereo oscillators
+      const leftOscillator = audioContextRef.current.createOscillator();
+      const rightOscillator = audioContextRef.current.createOscillator();
+      const leftGain = audioContextRef.current.createGain();
+      const rightGain = audioContextRef.current.createGain();
+      const merger = audioContextRef.current.createChannelMerger(2);
+
+      leftOscillator.frequency.value = left;
+      rightOscillator.frequency.value = right;
+      leftGain.gain.value = 0.1;
+      rightGain.gain.value = 0.1;
+
+      leftOscillator.connect(leftGain);
+      rightOscillator.connect(rightGain);
+      leftGain.connect(merger, 0, 0);
+      rightGain.connect(merger, 0, 1);
+      merger.connect(audioContextRef.current.destination);
+
+      leftOscillator.start();
+      rightOscillator.start();
+
+      leftOscillatorRef.current = leftOscillator; // Store both oscillators for cleanup
+      rightOscillatorRef.current = rightOscillator;
+      setIsPlayingAudio(true);
+
+      toast({
+        title: "Binaural Beats Started",
+        description: `Playing ${frequencies[currentFrequency].name}`,
+      });
+    } catch (error) {
+      console.error('Error starting binaural beats:', error);
+      toast({
+        title: "Audio Error",
+        description: "Failed to start binaural beats. Please check your audio settings.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const stopBinauralBeats = () => {
+    try {
+      if (leftOscillatorRef.current) {
+        leftOscillatorRef.current.stop();
+        leftOscillatorRef.current = null;
+      }
+      if (rightOscillatorRef.current) {
+        rightOscillatorRef.current.stop();
+        rightOscillatorRef.current = null;
+      }
+      setIsPlayingAudio(false);
+      
+      toast({
+        title: "Binaural Beats Stopped",
+        description: "Audio playback has been stopped",
+      });
+    } catch (error) {
+      console.error('Error stopping binaural beats:', error);
+      setIsPlayingAudio(false); // Force UI update even on error
+      toast({
+        title: "Audio Stopped",
+        description: "Binaural beats stopped (with minor audio cleanup)",
+      });
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      stopTimer();
+      stopBreathingExercise();
+      stopBinauralBeats();
+      stopVoiceGuidance();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 font-sans">
@@ -193,6 +443,233 @@ export default function Dashboard() {
                         <p key={index} className="mb-2">{instruction}</p>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {/* Interactive Tools Section */}
+                {selectedBiohack && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700">
+                    <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-3 flex items-center">
+                      <Play className="h-4 w-4 mr-2" />
+                      Interactive Tools
+                    </h4>
+
+                    {/* Binaural Beats for specific biohacks */}
+                    {selectedBiohack.name === "Binaural Beats" && (
+                      <div className="space-y-4">
+                        <div className="flex items-center space-x-2">
+                          <label className="text-sm font-medium">Frequency:</label>
+                          <Select value={currentFrequency} onValueChange={(value: 'focus' | 'relaxation' | 'sleep') => setCurrentFrequency(value)}>
+                            <SelectTrigger className="w-48">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="focus">Focus (Alpha - 10Hz)</SelectItem>
+                              <SelectItem value="relaxation">Relaxation (Theta - 6Hz)</SelectItem>
+                              <SelectItem value="sleep">Sleep (Delta - 4Hz)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        {/* Frequency Explanations */}
+                        <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg text-sm">
+                          {currentFrequency === 'focus' && (
+                            <div>
+                              <h5 className="font-medium mb-1">Alpha Waves (8-14Hz)</h5>
+                              <p className="text-gray-600 dark:text-gray-300">Associated with relaxed focus, creativity, and calm alertness. Ideal for work, study, or meditation.</p>
+                            </div>
+                          )}
+                          {currentFrequency === 'relaxation' && (
+                            <div>
+                              <h5 className="font-medium mb-1">Theta Waves (4-8Hz)</h5>
+                              <p className="text-gray-600 dark:text-gray-300">Linked to deep relaxation, meditation, and creative insight. Often experienced during REM sleep and deep meditation.</p>
+                            </div>
+                          )}
+                          {currentFrequency === 'sleep' && (
+                            <div>
+                              <h5 className="font-medium mb-1">Delta Waves (0.5-4Hz)</h5>
+                              <p className="text-gray-600 dark:text-gray-300">The slowest brainwaves associated with deep, restorative sleep and healing. Delta waves promote physical recovery, immune system strengthening, and memory consolidation.</p>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={isPlayingAudio ? stopBinauralBeats : startBinauralBeats}
+                            variant={isPlayingAudio ? "destructive" : "default"}
+                            size="sm"
+                            data-testid={isPlayingAudio ? "button-stop-binaural-beats" : "button-start-binaural-beats"}
+                          >
+                            {isPlayingAudio ? <Pause className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
+                            {isPlayingAudio ? 'Stop Audio' : 'Play Frequency'}
+                          </Button>
+                        </div>
+                        <p className="text-xs text-gray-500">Use headphones for best effect. Volume is set to safe levels.</p>
+                      </div>
+                    )}
+
+                    {/* Breathing Timer for Wim Hof and Box Breathing */}
+                    {(selectedBiohack.name === "Wim Hof Breathing" || selectedBiohack.name === "Box Breathing") && (
+                      <div className="space-y-4">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold mb-2">
+                            {breathingPhase === 'inhale' && '🫁 Breathe In'}
+                            {breathingPhase === 'hold' && '⏸️ Hold'}
+                            {breathingPhase === 'exhale' && '💨 Breathe Out'}
+                            {breathingPhase === 'pause' && '⏳ Pause'}
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Cycle: {breathingCount} | Phase: {breathingPhase}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={breathingTimerRef.current ? stopBreathingExercise : startBreathingExercise}
+                            variant={breathingTimerRef.current ? "destructive" : "default"}
+                            size="sm"
+                            data-testid={breathingTimerRef.current ? "button-stop-breathing" : "button-start-breathing"}
+                          >
+                            <Waves className="h-4 w-4 mr-2" />
+                            {breathingTimerRef.current ? 'Stop Exercise' : 'Start Breathing'}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Session Timer */}
+                    {(selectedBiohack.name === "Meditation" || selectedBiohack.name === "Red Light Therapy" || 
+                      selectedBiohack.name === "Sauna Therapy" || selectedBiohack.name === "Forest Bathing") && (
+                      <div className="space-y-4">
+                        <div className="text-center">
+                          {isTimerRunning && (
+                            <div className="mb-4">
+                              <div className="text-3xl font-bold">
+                                {Math.floor(timerSeconds / 60)}:{(timerSeconds % 60).toString().padStart(2, '0')}
+                              </div>
+                              <Progress 
+                                value={timerSeconds > 0 ? ((parseInt(selectedBiohack.timeRequired) * 60 - timerSeconds) / (parseInt(selectedBiohack.timeRequired) * 60)) * 100 : 0} 
+                                className="mt-2"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex gap-2 flex-wrap">
+                          <Button
+                            onClick={() => startTimer(5)}
+                            variant="outline"
+                            size="sm"
+                            disabled={isTimerRunning}
+                            data-testid="button-timer-5min"
+                          >
+                            <Timer className="h-4 w-4 mr-2" />
+                            5 min
+                          </Button>
+                          <Button
+                            onClick={() => startTimer(10)}
+                            variant="outline"
+                            size="sm"
+                            disabled={isTimerRunning}
+                            data-testid="button-timer-10min"
+                          >
+                            <Timer className="h-4 w-4 mr-2" />
+                            10 min
+                          </Button>
+                          <Button
+                            onClick={() => startTimer(20)}
+                            variant="outline"
+                            size="sm"
+                            disabled={isTimerRunning}
+                            data-testid="button-timer-20min"
+                          >
+                            <Timer className="h-4 w-4 mr-2" />
+                            20 min
+                          </Button>
+                          {isTimerRunning && (
+                            <Button
+                              onClick={stopTimer}
+                              variant="destructive"
+                              size="sm"
+                              data-testid="button-stop-timer"
+                            >
+                              Stop Timer
+                            </Button>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500">Select a duration to begin your guided session with voice guidance.</p>
+                      </div>
+                    )}
+
+                    {/* Cold Exposure Timer */}
+                    {(selectedBiohack.name === "Cold Exposure" || selectedBiohack.name === "Ice Bath") && (
+                      <div className="space-y-4">
+                        <div className="bg-blue-100 dark:bg-blue-900/50 p-3 rounded-lg text-sm">
+                          <h5 className="font-medium mb-2">❄️ Cold Exposure Guidelines</h5>
+                          <div className="space-y-1 text-xs">
+                            <p><strong>Beginners:</strong> Start with 30 seconds at 15°C (59°F)</p>
+                            <p><strong>Intermediate:</strong> Work up to 2 minutes at 10°C (50°F)</p>
+                            <p><strong>Advanced:</strong> 3+ minutes at 4°C (39°F) or below</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => startTimer(2)}
+                            variant="outline"
+                            size="sm"
+                            disabled={isTimerRunning}
+                          >
+                            <Timer className="h-4 w-4 mr-2" />
+                            2 min Cold Timer
+                          </Button>
+                          {isTimerRunning && (
+                            <Button
+                              onClick={stopTimer}
+                              variant="destructive"
+                              size="sm"
+                            >
+                              Stop Timer
+                            </Button>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500">Always have supervision and exit strategy. Never exceed your limits.</p>
+                      </div>
+                    )}
+
+                    {/* HIIT Timer */}
+                    {selectedBiohack.name === "HIIT Training" && (
+                      <div className="space-y-4">
+                        <div className="bg-orange-100 dark:bg-orange-900/50 p-3 rounded-lg text-sm">
+                          <h5 className="font-medium mb-2">🏃‍♀️ HIIT Session Structure</h5>
+                          <div className="space-y-1 text-xs">
+                            <p><strong>Warm-up:</strong> 2 minutes light activity</p>
+                            <p><strong>Work:</strong> 20 seconds high intensity</p>
+                            <p><strong>Rest:</strong> 10 seconds recovery</p>
+                            <p><strong>Cycles:</strong> 8 rounds (4 minutes)</p>
+                            <p><strong>Cool-down:</strong> 2 minutes stretching</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => startTimer(8)}
+                            variant="outline"
+                            size="sm"
+                            disabled={isTimerRunning}
+                          >
+                            <Timer className="h-4 w-4 mr-2" />
+                            8 min HIIT
+                          </Button>
+                          {isTimerRunning && (
+                            <Button
+                              onClick={stopTimer}
+                              variant="destructive"
+                              size="sm"
+                            >
+                              Stop Timer
+                            </Button>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500">Follow along with the timer for optimal high-intensity intervals.</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
