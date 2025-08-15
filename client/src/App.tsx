@@ -26,6 +26,7 @@ import BetaSignupAdmin from "@/pages/BetaSignupAdmin";
 import FeedbackAdmin from "@/pages/FeedbackAdmin";
 import Marketing from "@/pages/Marketing";
 import MarketingResources from "@/pages/MarketingResources";
+import RecoveryPitch from "@/pages/RecoveryPitch";
 import NotFound from "@/pages/not-found";
 import ColorDemo from "@/components/ColorDemo";
 
@@ -55,6 +56,7 @@ function Router() {
       <Route path="/feedback-admin" component={FeedbackAdmin} />
       <Route path="/marketing" component={Marketing} />
       <Route path="/marketing-resources" component={MarketingResources} />
+      <Route path="/recovery-pitch" component={RecoveryPitch} />
       <Route component={NotFound} />
     </Switch>
   );

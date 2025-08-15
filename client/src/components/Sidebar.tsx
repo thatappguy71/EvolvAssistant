@@ -295,6 +295,32 @@ export default function Sidebar() {
               <i className="fas fa-bullhorn text-lg"></i>
               {!isCollapsed && <span className="font-medium">Marketing</span>}
             </Link>
+            <Link 
+              href="/marketing-resources" 
+              className={`flex items-center ${isCollapsed ? 'justify-center px-3' : 'space-x-3 px-4'} rounded-lg py-3 transition-all ${
+                isActive("/marketing-resources") 
+                  ? "text-green-600 bg-green-50 dark:bg-green-900/50" 
+                  : "text-gray-600 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30"
+              }`}
+              title={isCollapsed ? "Marketing Resources" : ""}
+              onClick={() => handleNavigation("/marketing-resources")}
+            >
+              <i className="fas fa-folder text-lg"></i>
+              {!isCollapsed && <span className="font-medium">Marketing Resources</span>}
+            </Link>
+            <Link 
+              href="/recovery-pitch" 
+              className={`flex items-center ${isCollapsed ? 'justify-center px-3' : 'space-x-3 px-4'} rounded-lg py-3 transition-all ${
+                isActive("/recovery-pitch") 
+                  ? "text-green-600 bg-green-50 dark:bg-green-900/50" 
+                  : "text-gray-600 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30"
+              }`}
+              title={isCollapsed ? "Recovery Partnership" : ""}
+              onClick={() => handleNavigation("/recovery-pitch")}
+            >
+              <i className="fas fa-handshake text-lg"></i>
+              {!isCollapsed && <span className="font-medium">Recovery Partnership</span>}
+            </Link>
           </div>
         </div>
         
