@@ -29,7 +29,8 @@ export default function Biohacks() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const breathingTimerRef = useRef<NodeJS.Timeout | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const oscillatorRef = useRef<OscillatorNode | null>(null);
+  const leftOscillatorRef = useRef<OscillatorNode | null>(null);
+  const rightOscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   
@@ -214,7 +215,8 @@ export default function Biohacks() {
     leftOscillator.start();
     rightOscillator.start();
 
-    oscillatorRef.current = leftOscillator; // Store for cleanup
+    leftOscillatorRef.current = leftOscillator; // Store both oscillators for cleanup
+    rightOscillatorRef.current = rightOscillator;
     setIsPlayingAudio(true);
 
     toast({
@@ -224,11 +226,20 @@ export default function Biohacks() {
   };
 
   const stopBinauralBeats = () => {
-    if (oscillatorRef.current) {
-      oscillatorRef.current.stop();
-      oscillatorRef.current = null;
+    if (leftOscillatorRef.current) {
+      leftOscillatorRef.current.stop();
+      leftOscillatorRef.current = null;
+    }
+    if (rightOscillatorRef.current) {
+      rightOscillatorRef.current.stop();
+      rightOscillatorRef.current = null;
     }
     setIsPlayingAudio(false);
+    
+    toast({
+      title: "Binaural Beats Stopped",
+      description: "Audio playback has been stopped",
+    });
   };
 
   // Cleanup on unmount
