@@ -58,9 +58,9 @@ export default function Dashboard() {
   const recommendedBiohacks = biohacks.slice(0, 3);
 
   const handleBiohackClick = (biohack: any) => {
-    // Stop any running audio/timers when switching biohacks
+    // Stop any running audio/timers when switching biohacks (without toast notifications)
     if (isPlayingAudio) {
-      stopBinauralBeats();
+      stopBinauralBeats(false);
     }
     if (isTimerRunning) {
       stopTimer();
@@ -288,7 +288,7 @@ export default function Dashboard() {
     }
   };
 
-  const stopBinauralBeats = () => {
+  const stopBinauralBeats = (showToast = true) => {
     try {
       if (leftOscillatorRef.current) {
         leftOscillatorRef.current.stop();
@@ -300,17 +300,21 @@ export default function Dashboard() {
       }
       setIsPlayingAudio(false);
       
-      toast({
-        title: "Binaural Beats Stopped",
-        description: "Audio playback has been stopped",
-      });
+      if (showToast) {
+        toast({
+          title: "Binaural Beats Stopped",
+          description: "Audio playback has been stopped",
+        });
+      }
     } catch (error) {
       console.error('Error stopping binaural beats:', error);
       setIsPlayingAudio(false); // Force UI update even on error
-      toast({
-        title: "Audio Stopped",
-        description: "Binaural beats stopped (with minor audio cleanup)",
-      });
+      if (showToast) {
+        toast({
+          title: "Audio Stopped",
+          description: "Binaural beats stopped (with minor audio cleanup)",
+        });
+      }
     }
   };
 
@@ -319,7 +323,7 @@ export default function Dashboard() {
     return () => {
       stopTimer();
       stopBreathingExercise();
-      stopBinauralBeats();
+      stopBinauralBeats(false); // Don't show toast on cleanup
       stopVoiceGuidance();
     };
   }, []);
