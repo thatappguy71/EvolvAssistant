@@ -63,10 +63,10 @@ export default function Dashboard() {
       stopBinauralBeats(false);
     }
     if (isTimerRunning) {
-      stopTimer();
+      stopTimer(false);
     }
     if (breathingTimerRef.current) {
-      stopBreathingExercise();
+      stopBreathingExercise(false);
     }
     
     setSelectedBiohack(biohack);
@@ -76,10 +76,10 @@ export default function Dashboard() {
   const handleCloseBiohackDetail = () => {
     setIsBiohackDetailOpen(false);
     setSelectedBiohack(null);
-    // Clean up any running timers or audio
-    stopTimer();
-    stopBreathingExercise();
-    stopBinauralBeats();
+    // Clean up any running timers or audio (without toast notifications)
+    stopTimer(false);
+    stopBreathingExercise(false);
+    stopBinauralBeats(false);
     stopVoiceGuidance();
   };
 
@@ -134,7 +134,7 @@ export default function Dashboard() {
     });
   };
 
-  const stopTimer = () => {
+  const stopTimer = (showToast = true) => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
@@ -142,10 +142,12 @@ export default function Dashboard() {
     setIsTimerRunning(false);
     setTimerSeconds(0);
     stopVoiceGuidance();
-    toast({
-      title: "Session Stopped",
-      description: "Your session has ended",
-    });
+    if (showToast) {
+      toast({
+        title: "Session Stopped",
+        description: "Your session has ended",
+      });
+    }
   };
 
   // Breathing exercise functions
@@ -209,7 +211,7 @@ export default function Dashboard() {
     runPhase();
   };
 
-  const stopBreathingExercise = () => {
+  const stopBreathingExercise = (showToast = true) => {
     if (breathingTimerRef.current) {
       clearTimeout(breathingTimerRef.current);
       breathingTimerRef.current = null;
@@ -217,10 +219,12 @@ export default function Dashboard() {
     setBreathingPhase('inhale');
     setBreathingCount(0);
     stopVoiceGuidance();
-    toast({
-      title: "Breathing Exercise Stopped",
-      description: "Your breathing session has ended",
-    });
+    if (showToast) {
+      toast({
+        title: "Breathing Exercise Stopped",
+        description: "Your breathing session has ended",
+      });
+    }
   };
 
   // Binaural beats functionality
@@ -321,8 +325,8 @@ export default function Dashboard() {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      stopTimer();
-      stopBreathingExercise();
+      stopTimer(false); // Don't show toast on cleanup
+      stopBreathingExercise(false); // Don't show toast on cleanup
       stopBinauralBeats(false); // Don't show toast on cleanup
       stopVoiceGuidance();
     };
@@ -639,7 +643,7 @@ export default function Dashboard() {
                           </Button>
                           {isTimerRunning && (
                             <Button
-                              onClick={stopTimer}
+                              onClick={() => stopTimer()}
                               variant="destructive"
                               size="sm"
                               data-testid="button-stop-timer"
@@ -675,7 +679,7 @@ export default function Dashboard() {
                           </Button>
                           {isTimerRunning && (
                             <Button
-                              onClick={stopTimer}
+                              onClick={() => stopTimer()}
                               variant="destructive"
                               size="sm"
                             >
@@ -712,7 +716,7 @@ export default function Dashboard() {
                           </Button>
                           {isTimerRunning && (
                             <Button
-                              onClick={stopTimer}
+                              onClick={() => stopTimer()}
                               variant="destructive"
                               size="sm"
                             >
@@ -760,7 +764,7 @@ export default function Dashboard() {
                           </Button>
                           {isTimerRunning && (
                             <Button
-                              onClick={stopTimer}
+                              onClick={() => stopTimer()}
                               variant="destructive"
                               size="sm"
                               className="col-span-2"
