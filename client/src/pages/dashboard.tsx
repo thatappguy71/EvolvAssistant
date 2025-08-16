@@ -293,6 +293,7 @@ export default function Dashboard() {
   };
 
   const stopBinauralBeats = (showToast = true) => {
+    console.log('stopBinauralBeats called with showToast:', showToast);
     try {
       if (leftOscillatorRef.current) {
         leftOscillatorRef.current.stop();
@@ -305,10 +306,13 @@ export default function Dashboard() {
       setIsPlayingAudio(false);
       
       if (showToast) {
+        console.log('Showing binaural beats stopped toast');
         toast({
           title: "Binaural Beats Stopped",
           description: "Audio playback has been stopped",
         });
+      } else {
+        console.log('Skipping binaural beats toast (silent mode)');
       }
     } catch (error) {
       console.error('Error stopping binaural beats:', error);
@@ -524,7 +528,7 @@ export default function Dashboard() {
                         
                         <div className="flex gap-2">
                           <Button
-                            onClick={isPlayingAudio ? stopBinauralBeats : startBinauralBeats}
+                            onClick={isPlayingAudio ? () => stopBinauralBeats() : startBinauralBeats}
                             variant={isPlayingAudio ? "destructive" : "default"}
                             size="sm"
                             data-testid={isPlayingAudio ? "button-stop-binaural-beats" : "button-start-binaural-beats"}
@@ -573,7 +577,7 @@ export default function Dashboard() {
                         </div>
                         <div className="flex gap-2">
                           <Button
-                            onClick={breathingTimerRef.current ? stopBreathingExercise : startBreathingExercise}
+                            onClick={breathingTimerRef.current ? () => stopBreathingExercise() : startBreathingExercise}
                             variant={breathingTimerRef.current ? "destructive" : "default"}
                             size="sm"
                             data-testid={breathingTimerRef.current ? "button-stop-breathing" : "button-start-breathing"}
