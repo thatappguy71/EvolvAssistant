@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Check, Clock, Edit, Trash2, ArrowRight } from "lucide-react";
 import HabitModal from "@/components/HabitModal";
+import { useLocation } from "wouter";
 
 interface Habit {
   id: number;
@@ -29,6 +30,7 @@ export default function TodaysHabits() {
   const [editingHabit, setEditingHabit] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
   
   const { data: habits = [], isLoading } = useQuery<Habit[]>({
     queryKey: ['/api/habits'],
@@ -55,6 +57,7 @@ export default function TodaysHabits() {
       }
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/habits'] });
       queryClient.invalidateQueries({ queryKey: ['/api/habits/completions'] });
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard/stats'] });
     },
@@ -167,7 +170,11 @@ export default function TodaysHabits() {
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Today's Habits</h2>
-        <Button variant="ghost" className="text-primary hover:text-blue-700 text-sm font-medium">
+        <Button 
+          variant="ghost" 
+          className="text-primary hover:text-blue-700 text-sm font-medium"
+          onClick={() => setLocation('/habits')}
+        >
           View All
         </Button>
       </div>

@@ -30,7 +30,11 @@ export default function Habits() {
     queryKey: ['/api/habits/completions'],
   });
 
-  const { data: userLimits } = useQuery({
+  const { data: userLimits } = useQuery<{
+    maxHabits: number;
+    currentHabitCount: number;
+    canCreateHabit: boolean;
+  }>({
     queryKey: ['/api/user/limits'],
   });
 
@@ -43,6 +47,7 @@ export default function Habits() {
       }
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/habits'] });
       queryClient.invalidateQueries({ queryKey: ['/api/habits/completions'] });
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard/stats'] });
     },
