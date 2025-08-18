@@ -428,10 +428,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async initializeBiohacks(): Promise<void> {
-    const existing = await db.select({ count: count() }).from(biohacks);
-    if (existing[0].count > 0) return;
+    try {
+      console.log('Checking existing biohacks...');
+      const existing = await db.select({ count: count() }).from(biohacks);
+      console.log('Existing biohacks count:', existing[0].count);
+      
+      if (existing[0].count > 0) {
+        console.log('Biohacks already initialized, skipping...');
+        return;
+      }
 
-    const initialBiohacks: InsertBiohack[] = [
+      console.log('Initializing biohacks...');
+      const initialBiohacks: InsertBiohack[] = [
       {
         name: "Wim Hof Breathing",
         category: "Breathwork",
@@ -626,7 +634,14 @@ export class DatabaseStorage implements IStorage {
       }
     ];
 
-    await db.insert(biohacks).values(initialBiohacks);
+      console.log('Inserting', initialBiohacks.length, 'biohacks...');
+      await db.insert(biohacks).values(initialBiohacks);
+      console.log('Biohacks initialized successfully');
+    } catch (error) {
+      console.error('Error initializing biohacks:', error);
+      // Don't throw the error to prevent app startup failure
+      console.log('Continuing app startup despite biohacks initialization error');
+    }
   }
 
   // Analytics operations
