@@ -51,7 +51,14 @@ app.use((req, res, next) => {
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
-    await setupVite(app, server);
+    log("Setting up Vite...");
+    try {
+      await setupVite(app, server);
+      log("Vite setup completed");
+    } catch (error) {
+      console.error("Vite setup failed:", error);
+      throw error;
+    }
   } else {
     serveStatic(app);
   }
@@ -61,11 +68,13 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+  
+  server.listen(port, '0.0.0.0', () => {
+    log(`Server successfully bound to port ${port}`);
+  });
+  
+  server.on('error', (error: any) => {
+    console.error('Server error:', error);
+    process.exit(1);
   });
 })();
