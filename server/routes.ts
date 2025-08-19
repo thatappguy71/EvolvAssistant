@@ -456,7 +456,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const httpServer = createServer(app);
   // AI Recommendations endpoints
   app.get("/api/recommendations", isAuthenticated, async (req: any, res) => {
     try {
@@ -943,5 +942,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create HTTP server after all routes are registered
+  const httpServer = createServer(app);
   return httpServer;
 }

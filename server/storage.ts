@@ -430,7 +430,15 @@ export class DatabaseStorage implements IStorage {
   async initializeBiohacks(): Promise<void> {
     try {
       console.log('Checking existing biohacks...');
-      const existing = await db.select({ count: count() }).from(biohacks);
+      
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Database query timeout')), 10000);
+      });
+      
+      const queryPromise = db.select({ count: count() }).from(biohacks);
+      const existing = await Promise.race([queryPromise, timeoutPromise]) as { count: number }[];
+      
       console.log('Existing biohacks count:', existing[0].count);
       
       if (existing[0].count > 0) {
@@ -635,7 +643,15 @@ export class DatabaseStorage implements IStorage {
     ];
 
       console.log('Inserting', initialBiohacks.length, 'biohacks...');
-      await db.insert(biohacks).values(initialBiohacks);
+      
+      // Add timeout for insert operation to prevent hanging
+      const insertTimeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Biohacks insert timeout')), 15000);
+      });
+      
+      const insertPromise = db.insert(biohacks).values(initialBiohacks);
+      await Promise.race([insertPromise, insertTimeoutPromise]);
+      
       console.log('Biohacks initialized successfully');
     } catch (error) {
       console.error('Error initializing biohacks:', error);
