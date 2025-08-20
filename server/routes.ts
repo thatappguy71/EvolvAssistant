@@ -942,7 +942,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create HTTP server after all routes are registered
+  // Create and return HTTP server
   const httpServer = createServer(app);
   return httpServer;
 }
