@@ -6,6 +6,14 @@ Evolv is a comprehensive personal wellness and habit tracking application design
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (August 21, 2025)
+- Fixed TypeScript compilation errors preventing app startup
+- Created FrontendUser type interface for proper user data typing  
+- Added public user endpoint (/api/auth/user-public) for beta testing mode
+- Fixed server error handling to prevent crashes
+- Properly typed all React component queries with BookmarkedBiohack interface
+- Server now binds to all interfaces (0.0.0.0) for better compatibility
+
 ## System Architecture
 
 ### Frontend Architecture
