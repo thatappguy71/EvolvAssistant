@@ -16,6 +16,13 @@ interface Biohack {
   imageUrl?: string;
 }
 
+interface BookmarkedBiohack {
+  biohackId: number;
+  biohack?: {
+    id: number;
+  };
+}
+
 export function BiohacksSection() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -24,7 +31,7 @@ export function BiohacksSection() {
     queryKey: ["/api/biohacks"],
   });
 
-  const { data: bookmarkedBiohacks = [] } = useQuery({
+  const { data: bookmarkedBiohacks = [] } = useQuery<BookmarkedBiohack[]>({
     queryKey: ["/api/biohacks/bookmarked"],
   });
 
@@ -56,7 +63,7 @@ export function BiohacksSection() {
     },
   });
 
-  const bookmarkedIds = new Set(bookmarkedBiohacks.map((b: any) => b.biohackId || b.biohack?.id));
+  const bookmarkedIds = new Set(bookmarkedBiohacks.map((b) => b.biohackId || b.biohack?.id));
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {

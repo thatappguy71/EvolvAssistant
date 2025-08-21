@@ -190,6 +190,18 @@ export const insertBiohackSchema = createInsertSchema(biohacks).omit({
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 
+// Frontend User type for components
+export type FrontendUser = {
+  id: string;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  profileImageUrl: string | null;
+  subscriptionTier: string | null;
+  subscriptionActive: boolean | null;
+  createdAt: Date | null;
+};
+
 // Beta feedback table
 export const betaFeedback = pgTable("beta_feedback", {
   id: serial("id").primaryKey(),

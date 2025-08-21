@@ -44,8 +44,9 @@ app.use((req, res, next) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
 
+      console.error('Error handling middleware:', err);
       res.status(status).json({ message });
-      throw err;
+      // Don't throw the error again as it will crash the server
     });
 
     // importantly only setup vite in development and after
@@ -71,8 +72,9 @@ app.use((req, res, next) => {
     const port = parseInt(process.env.PORT || '5000', 10);
     
     // Use standard listen method for Replit compatibility
-    server.listen(port, () => {
-      log(`Server is running on port ${port}`);
+    server.listen(port, '0.0.0.0', () => {
+      log(`Server is running on port ${port} and listening on all interfaces`);
+      console.log('Listen callback completed successfully');
     });
     
     server.on('error', (error: any) => {
@@ -82,6 +84,19 @@ app.use((req, res, next) => {
       }
       process.exit(1);
     });
+    
+    // Add process event handlers to catch any unexpected exits
+    process.on('uncaughtException', (err) => {
+      console.error('Uncaught Exception:', err);
+      process.exit(1);
+    });
+    
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+      process.exit(1);
+    });
+    
+    console.log('Main function completed, server should be running');
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);

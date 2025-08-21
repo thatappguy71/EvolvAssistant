@@ -83,9 +83,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
-      res.json(user);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Return user data in the format expected by frontend
+      const frontendUser = {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        profileImageUrl: user.profileImageUrl,
+        subscriptionTier: user.subscriptionTier,
+        subscriptionActive: user.subscriptionActive,
+        createdAt: user.createdAt
+      };
+      
+      res.json(frontendUser);
     } catch (error) {
       console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Non-authenticated user route for beta testing
+  app.get('/api/auth/user-public', async (req: any, res) => {
+    // For beta testing, return a mock user when not authenticated
+    try {
+      if (req.isAuthenticated() && req.user?.claims?.sub) {
+        // If authenticated, get real user data
+        const userId = req.user.claims.sub;
+        const user = await storage.getUser(userId);
+        
+        if (user) {
+          const frontendUser = {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            profileImageUrl: user.profileImageUrl,
+            subscriptionTier: user.subscriptionTier,
+            subscriptionActive: user.subscriptionActive,
+            createdAt: user.createdAt
+          };
+          return res.json(frontendUser);
+        }
+      }
+      
+      // Return minimal user data for non-authenticated users (beta testing)
+      const mockUser = {
+        id: 'beta-user',
+        email: 'beta@evolv.com',
+        firstName: 'Beta',
+        lastName: 'Tester',
+        profileImageUrl: null,
+        subscriptionTier: 'FREE',
+        subscriptionActive: false,
+        createdAt: new Date()
+      };
+      
+      res.json(mockUser);
+    } catch (error) {
+      console.error("Error in user-public route:", error);
       res.status(500).json({ message: "Failed to fetch user" });
     }
   });
