@@ -45,7 +45,10 @@ const upload = multer({
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-    if (allowedTypes.includes(file.mimetype) || file.mimetype.startsWith('image/')) {
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    
+    if (allowedTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
       cb(null, true);
     } else {
       cb(new Error('Only standard image files are allowed (JPEG, PNG, GIF, WebP)'));
@@ -73,10 +76,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ status: 'OK', timestamp: new Date().toISOString(), service: 'Evolv API' });
   });
 
-  // Serve payment test page
-  app.get('/test-payment', (req, res) => {
-    res.sendFile(require('path').resolve(process.cwd(), 'test-payment.html'));
-  });
+  // Serve payment test page (development only)
+  if (process.env.NODE_ENV === 'development') {
+    app.get('/test-payment', (req, res) => {
+      res.sendFile(require('path').resolve(process.cwd(), 'test-payment.html'));
+    });
+  }
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
@@ -661,42 +666,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Temporary demo route for testing payment (remove in production)
-  app.post('/api/subscription/demo-checkout', async (req: any, res) => {
-    try {
-      console.log('Demo checkout route hit with body:', req.body);
-      const { planType } = req.body;
-      
-      if (!planType || !['monthly', 'yearly', 'family'].includes(planType)) {
-        return res.status(400).json({ message: 'Invalid plan type' });
+  // Demo checkout route (development only)
+  if (process.env.NODE_ENV === 'development') {
+    app.post('/api/subscription/demo-checkout', async (req: any, res) => {
+      try {
+        console.log('Demo checkout route hit with body:', req.body);
+        const { planType } = req.body;
+        
+        if (!planType || !['monthly', 'yearly', 'family'].includes(planType)) {
+          return res.status(400).json({ message: 'Invalid plan type' });
+        }
+
+        let priceId;
+        if (planType === 'yearly') {
+          priceId = STRIPE_CONFIG.prices.yearly;
+        } else if (planType === 'family') {
+          priceId = STRIPE_CONFIG.prices.family;
+        } else {
+          priceId = STRIPE_CONFIG.prices.monthly;
+        }
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+        console.log('Creating Stripe session with price ID:', priceId);
+        
+        const session = await createCheckoutSession({
+          userId: 'demo-user',
+          userEmail: 'demo@evolv.app',
+          priceId,
+          successUrl: `${baseUrl}/premium?success=true&session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: `${baseUrl}/premium?canceled=true`,
+        });
+
+        console.log('Demo checkout session created:', session.id);
+        return res.json({ checkoutUrl: session.url });
+      } catch (error) {
+        console.error('Error creating demo checkout session:', error);
+        return res.status(500).json({ message: 'Failed to create checkout session', error: error instanceof Error ? error.message : 'Unknown error' });
       }
-
-      let priceId;
-      if (planType === 'yearly') {
-        priceId = STRIPE_CONFIG.prices.yearly;
-      } else if (planType === 'family') {
-        priceId = STRIPE_CONFIG.prices.family;
-      } else {
-        priceId = STRIPE_CONFIG.prices.monthly;
-      }
-      const baseUrl = `${req.protocol}://${req.get('host')}`;
-
-      console.log('Creating Stripe session with price ID:', priceId);
-      
-      const session = await createCheckoutSession({
-        userId: 'demo-user',
-        userEmail: 'demo@evolv.app',
-        priceId,
-        successUrl: `${baseUrl}/premium?success=true&session_id={CHECKOUT_SESSION_ID}`,
-        cancelUrl: `${baseUrl}/premium?canceled=true`,
-      });
-
-      console.log('Demo checkout session created:', session.id);
-      return res.json({ checkoutUrl: session.url });
-    } catch (error) {
-      console.error('Error creating demo checkout session:', error);
-      return res.status(500).json({ message: 'Failed to create checkout session', error: error instanceof Error ? error.message : 'Unknown error' });
-    }
-  });
+    });
+  }
 
   app.post('/api/subscription/portal', isAuthenticated, async (req: any, res) => {
     try {

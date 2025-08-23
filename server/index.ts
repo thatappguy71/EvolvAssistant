@@ -21,8 +21,19 @@ app.use((req, res, next) => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      // Only log response data in development for debugging
+      if (process.env.NODE_ENV === 'development' && capturedJsonResponse) {
+        // Sanitize sensitive data before logging
+        const sanitized = JSON.stringify(capturedJsonResponse, (key, value) => {
+          if (key.toLowerCase().includes('password') || 
+              key.toLowerCase().includes('secret') || 
+              key.toLowerCase().includes('token') ||
+              key.toLowerCase().includes('api_key')) {
+            return '[REDACTED]';
+          }
+          return value;
+        });
+        logLine += ` :: ${sanitized}`;
       }
 
       if (logLine.length > 80) {
@@ -44,8 +55,17 @@ app.use((req, res, next) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
 
-      console.error('Error handling middleware:', err);
-      res.status(status).json({ message });
+      // Log error details only in development
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error handling middleware:', err);
+      } else {
+        // In production, log minimal error info without stack traces
+        console.error(`Error ${status}: ${message}`);
+      }
+      
+      // Never expose internal error details to clients in production
+      const responseMessage = process.env.NODE_ENV === 'development' ? message : 'An error occurred';
+      res.status(status).json({ message: responseMessage });
       // Don't throw the error again as it will crash the server
     });
 
