@@ -94,12 +94,6 @@ export interface IStorage {
   markRecommendationAsRead(recommendationId: number, userId: string): Promise<void>;
   toggleRecommendationBookmark(recommendationId: number, userId: string): Promise<boolean>;
 
-  // Beta Feedback operations
-  createBetaFeedback(feedback: InsertBetaFeedback): Promise<BetaFeedback>;
-  getBetaFeedbackByUser(userId: string): Promise<BetaFeedback[]>;
-  getAllBetaFeedback(): Promise<BetaFeedback[]>;
-  updateBetaFeedbackStatus(id: number, status: string): Promise<void>;
-
   // Beta Signup operations
   createBetaSignup(signup: InsertBetaSignup): Promise<BetaSignup>;
   getAllBetaSignups(): Promise<BetaSignup[]>;
