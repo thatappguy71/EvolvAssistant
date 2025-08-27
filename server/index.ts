@@ -107,16 +107,42 @@ app.use((req, res, next) => {
     
     // Add process event handlers to catch any unexpected exits
     process.on('uncaughtException', (err) => {
-      console.error('Uncaught Exception:', err);
-      process.exit(1);
+      console.error('Uncaught Exception - Full Stack:', err);
+      console.error('Stack trace:', err.stack);
+      // Don't exit immediately - log and try to continue
+      console.error('Server continuing despite uncaught exception');
     });
     
     process.on('unhandledRejection', (reason, promise) => {
       console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-      process.exit(1);
+      // Don't exit immediately - log and try to continue
+      console.error('Server continuing despite unhandled rejection');
     });
     
     console.log('Main function completed, server should be running');
+    
+    // Keep the process alive
+    process.on('SIGINT', () => {
+      console.log('Received SIGINT, shutting down gracefully...');
+      server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+      });
+    });
+    
+    process.on('SIGTERM', () => {
+      console.log('Received SIGTERM, shutting down gracefully...');
+      server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+      });
+    });
+    
+    // Keep the event loop active
+    setInterval(() => {
+      // This keeps the process alive
+    }, 1000 * 60 * 60); // Check every hour
+    
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);
