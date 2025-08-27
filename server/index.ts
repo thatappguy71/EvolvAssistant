@@ -95,6 +95,12 @@ app.use((req, res, next) => {
     server.listen(port, '0.0.0.0', () => {
       log(`Server is running on port ${port} and listening on all interfaces`);
       console.log('Listen callback completed successfully');
+      
+      // Verify the server is actually listening
+      const address = server.address();
+      if (address && typeof address === 'object') {
+        console.log(`Server confirmed listening on ${address.address}:${address.port}`);
+      }
     });
     
     server.on('error', (error: any) => {
