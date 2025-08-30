@@ -1,15 +1,15 @@
 {
-  "name": "Evolv - Recovery-Focused Wellness & Habit Tracker",
+  "name": "Evolv Recovery - Addiction Recovery & Wellness Tracker",
   "short_name": "Evolv",
-  "description": "Support your recovery journey with intelligent habit tracking, wellness monitoring, and evidence-based recovery tools.",
+  "description": "Support your addiction recovery journey with sobriety tracking, crisis resources, and evidence-based wellness tools for lasting recovery.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#22c55e",
+  "theme_color": "#10b981",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",
-  "categories": ["health", "lifestyle", "productivity", "wellness", "recovery", "mental-health"],
+  "categories": ["health", "medical", "lifestyle", "recovery", "mental-health", "addiction-recovery", "sobriety"],
   "icons": [
     {
       "src": "/evolv-icon.svg",
@@ -26,17 +26,24 @@
   ],
   "shortcuts": [
     {
-      "name": "Add Habit",
-      "short_name": "Add Habit",
-      "description": "Quickly add a new habit",
-      "url": "/habits?action=add",
+      "name": "Recovery Check-in",
+      "short_name": "Check-in",
+      "description": "Daily recovery progress check-in",
+      "url": "/recovery?action=checkin",
       "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
     },
     {
-      "name": "Log Wellness",
-      "short_name": "Log Wellness", 
-      "description": "Log daily wellness metrics",
-      "url": "/wellness?action=log",
+      "name": "Crisis Support",
+      "short_name": "Crisis Help",
+      "description": "Access crisis support resources",
+      "url": "/recovery?action=crisis",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Find Meeting",
+      "short_name": "Find Meeting",
+      "description": "Locate nearby support group meetings",
+      "url": "/recovery?action=meetings",
       "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
     }
   ]
