@@ -10,10 +10,12 @@ import BiohackCard from "@/components/BiohackCard";
 import HabitModal from "@/components/HabitModal";
 import AnalyticsCharts from "@/components/AnalyticsCharts";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Clock, Bookmark, ArrowLeft, Play, Pause, Timer, Waves } from "lucide-react";
+import { Clock, Bookmark, ArrowLeft, Play, Pause, Timer, Waves, Shield, Heart, Users, Phone, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { voiceService } from "@/lib/voiceService";
 
@@ -344,6 +346,37 @@ export default function Dashboard() {
         <DashboardHeader />
         
         <div className="p-4 md:p-8 space-y-6 md:space-y-8 pt-20 md:pt-8">
+          {/* Recovery Support Banner */}
+          <Card className="border-l-4 border-l-green-500 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                    <Shield className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">
+                      Your Recovery Journey Matters
+                    </h3>
+                    <p className="text-green-700 dark:text-green-300 text-sm">
+                      Every day sober is a victory. Track your progress, build healthy habits, and celebrate your strength.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Badge className="bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
+                    <Heart className="h-3 w-3 mr-1" />
+                    Recovery Focused
+                  </Badge>
+                  <Button variant="outline" size="sm" className="border-green-300 text-green-700 hover:bg-green-100">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Crisis Support
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <QuickStats stats={stats} />
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -352,24 +385,59 @@ export default function Dashboard() {
             </div>
             <div className="space-y-6">
               <WellnessMetrics />
+              
+              {/* Recovery Resources Card */}
+              <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-purple-800 dark:text-purple-200">
+                    <Users className="h-5 w-5 mr-2" />
+                    Recovery Resources
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <Button variant="outline" size="sm" className="w-full justify-start border-purple-200 text-purple-700 hover:bg-purple-100">
+                      <Phone className="h-4 w-4 mr-2" />
+                      Crisis Helpline: 1-833-456-4566
+                    </Button>
+                    <Button variant="outline" size="sm" className="w-full justify-start border-purple-200 text-purple-700 hover:bg-purple-100">
+                      <Users className="h-4 w-4 mr-2" />
+                      Find Local Support Groups
+                    </Button>
+                    <Button variant="outline" size="sm" className="w-full justify-start border-purple-200 text-purple-700 hover:bg-purple-100">
+                      <Heart className="h-4 w-4 mr-2" />
+                      Recovery Community
+                    </Button>
+                  </div>
+                  <div className="text-xs text-purple-600 dark:text-purple-300 text-center pt-2 border-t border-purple-200">
+                    You're not alone in this journey
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
-          {/* Biohacks Discovery Section */}
+          {/* Recovery-Focused Wellness Tools Section */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recommended Biohacks</h2>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Recovery Wellness Tools</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Science-backed techniques to support your recovery journey</p>
+              </div>
               <Button 
                 variant="ghost" 
                 className="text-primary hover:text-blue-700 text-sm font-medium"
                 onClick={handleExploreAll}
               >
-                Explore All
+                View All Tools
               </Button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recommendedBiohacks.map((biohack: any) => (
+              {recommendedBiohacks.filter((biohack: any) => 
+                // Prioritize recovery-relevant biohacks
+                ['Meditation', 'Box Breathing', 'Wim Hof Breathing', 'Cold Exposure Therapy', 'Gratitude Journaling', 'Forest Bathing'].includes(biohack.name)
+              ).slice(0, 3).map((biohack: any) => (
                 <BiohackCard 
                   key={biohack.id} 
                   biohack={biohack} 
@@ -385,7 +453,7 @@ export default function Dashboard() {
 
       {/* Floating Action Button */}
       <button
-        className="fixed bottom-8 right-8 w-16 h-16 bg-primary hover:bg-blue-700 text-white rounded-full flex items-center justify-center transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+        className="fixed bottom-8 right-8 w-16 h-16 bg-green-600 hover:bg-green-700 text-white rounded-full flex items-center justify-center transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
         onClick={() => setIsHabitModalOpen(true)}
       >
         <i className="fas fa-plus text-xl"></i>

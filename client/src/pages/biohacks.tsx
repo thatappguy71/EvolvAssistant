@@ -418,8 +418,25 @@ export default function Biohacks() {
         
         <div className="p-4 md:p-8 pt-20 md:pt-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Biohacks</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Discover scientifically-backed techniques to optimize your health</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Recovery Wellness Tools</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">Evidence-based techniques to support your recovery and overall wellness</p>
+            
+            {/* Recovery-specific filter */}
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                <Shield className="h-3 w-3 mr-1" />
+                Recovery-Safe Techniques
+              </Badge>
+              <Badge variant="outline">
+                Stress Management
+              </Badge>
+              <Badge variant="outline">
+                Mindfulness
+              </Badge>
+              <Badge variant="outline">
+                Physical Wellness
+              </Badge>
+            </div>
           </div>
 
           {isLoading ? (

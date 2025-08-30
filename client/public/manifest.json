@@ -1,7 +1,7 @@
 {
-  "name": "Evolv - Personal Wellness & Habit Tracker",
+  "name": "Evolv - Recovery-Focused Wellness & Habit Tracker",
   "short_name": "Evolv",
-  "description": "Transform your life with intelligent habit tracking, wellness monitoring, and personalized biohacking insights.",
+  "description": "Support your recovery journey with intelligent habit tracking, wellness monitoring, and evidence-based recovery tools.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -9,7 +9,7 @@
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",
-  "categories": ["health", "lifestyle", "productivity", "wellness"],
+  "categories": ["health", "lifestyle", "productivity", "wellness", "recovery", "mental-health"],
   "icons": [
     {
       "src": "/evolv-icon.svg",

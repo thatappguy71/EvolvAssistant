@@ -1,8 +1,8 @@
 # Evolv Recovery Partnership Strategy
-## Comprehensive Approach to Recovery-Focused Organizations
+## Enhanced Recovery-Focused Platform for Treatment Organizations
 
 ### Executive Summary
-The Canadian addiction treatment industry is embracing digital health solutions, with Health Canada establishing new digital therapeutics frameworks and $500M in federal mental health funding announced for 2024. With 6 million Canadians affected by addiction (21% lifetime prevalence) and substance use costing $46 billion annually, Evolv's PIPEDA-compliant habit tracking platform positions us perfectly for partnerships with Canadian treatment centers, provincial health authorities, and healthcare systems.
+Evolv has been redesigned as a recovery-first wellness platform, specifically tailored for addiction treatment organizations. With enhanced recovery-focused features, crisis support integration, and evidence-based tools for sobriety maintenance, Evolv now directly addresses the $46 billion annual cost of substance use in Canada while supporting the 6 million Canadians affected by addiction.
 
 ---
 

@@ -91,13 +91,16 @@ export class AIWellnessService {
             content: `You are an expert wellness coach and data analyst. Analyze user wellness data and provide personalized recommendations. 
             
             Focus on:
-            - Identifying patterns in wellness metrics and habits
-            - Suggesting specific, actionable improvements
-            - Recommending relevant biohacks from the available options
-            - Providing insights about areas needing attention
-            - Setting realistic goals based on current performance
+            - Identifying patterns in wellness metrics and recovery habits
+            - Suggesting recovery-safe, evidence-based improvements
+            - Recommending wellness tools that support addiction recovery
+            - Providing insights about stress, triggers, and emotional patterns
+            - Setting realistic recovery-focused goals based on current progress
+            - Prioritizing mental health, stress management, and healthy coping mechanisms
             
-            Respond with JSON containing an array of recommendations. Each recommendation should be specific, actionable, and tailored to the user's data patterns.`
+            IMPORTANT: All recommendations must be recovery-safe and avoid any substances or activities that could trigger relapse. Focus on natural wellness, mindfulness, exercise, nutrition, sleep, and healthy social connections.
+            
+            Respond with JSON containing an array of recommendations. Each recommendation should be specific, actionable, recovery-focused, and tailored to the user's data patterns.`
           },
           {
             role: "user",
@@ -137,10 +140,10 @@ export class AIWellnessService {
     const completionRate = this.calculateHabitCompletionRate(habitCompletions, activeHabits);
     
     const availableBiohacks = [
-      "Binaural Beats", "Blue Light Blocking", "Box Breathing", "Cold Exposure Therapy",
+      "Recovery Breathing Technique", "Blue Light Blocking", "Box Breathing", "Recovery Cold Therapy",
       "Contrast Showers", "Dry Brushing", "Forest Bathing", "Gratitude Journaling",
-      "Grounding (Earthing)", "High-Intensity Interval Training", "Intermittent Fasting",
-      "Meditation", "Morning Sunlight Exposure", "Red Light Therapy", "Sauna Therapy", "Wim Hof Breathing"
+      "Grounding (Earthing)", "Gentle Exercise", "Mindful Eating",
+      "Meditation", "Morning Sunlight Exposure", "Red Light Therapy", "Sauna Therapy"
     ];
 
     return `
@@ -158,13 +161,21 @@ HABIT PERFORMANCE:
 - Overall Completion Rate: ${(completionRate * 100).toFixed(1)}%
 - Recent Activity: ${habitCompletions.length} completions in last 30 days
 
+RECOVERY CONTEXT:
+This user is in addiction recovery. All recommendations must be:
+- Substance-free and recovery-safe
+- Focused on building healthy coping mechanisms
+- Supportive of mental health and emotional regulation
+- Encouraging of social connection and support systems
+- Mindful of potential triggers or high-risk situations
+
 INTERESTS (Bookmarked Biohacks):
 ${bookmarkedBiohacks.map(b => `- ${b.name}: ${b.description.substring(0, 100)}...`).join('\n')}
 
 AVAILABLE BIOHACKS TO RECOMMEND:
 ${availableBiohacks.join(', ')}
 
-Please provide recommendations in this JSON format:
+Please provide RECOVERY-SAFE recommendations in this JSON format:
 {
   "recommendations": [
     {
@@ -234,24 +245,24 @@ Focus on the lowest-performing metrics and suggest specific, actionable improvem
     return [
       {
         type: 'habit',
-        title: 'Start Daily Morning Routine',
-        description: 'Begin each day with a consistent morning routine including hydration, light movement, and intention setting.',
-        reasoning: 'Establishing morning routines improves energy and focus throughout the day.',
+        title: 'Build Recovery Morning Routine',
+        description: 'Begin each day with a recovery-focused routine including meditation, gratitude, and intention setting for sobriety.',
+        reasoning: 'Morning routines provide structure and purpose, which are crucial for maintaining recovery and preventing relapse.',
         priority: 'high',
         actionable: true,
-        estimatedBenefit: 'Increased energy and productivity',
+        estimatedBenefit: 'Stronger recovery foundation and reduced relapse risk',
         timeCommitment: '15-30 minutes',
         difficulty: 'beginner'
       },
       {
-        type: 'biohack',
-        title: 'Try Box Breathing',
-        description: 'Practice 4-4-4-4 breathing technique for stress reduction and mental clarity.',
-        reasoning: 'Breathing exercises are proven to reduce stress and improve focus.',
+        type: 'habit',
+        title: 'Daily Recovery Check-in',
+        description: 'End each day by reflecting on recovery progress, challenges faced, and gratitude for another day sober.',
+        reasoning: 'Daily reflection helps process emotions, identify triggers, and reinforce recovery commitment.',
         priority: 'medium',
         actionable: true,
-        estimatedBenefit: 'Reduced stress and better focus',
-        timeCommitment: '5-10 minutes',
+        estimatedBenefit: 'Better emotional processing and stronger recovery mindset',
+        timeCommitment: '10-15 minutes',
         difficulty: 'beginner'
       }
     ];

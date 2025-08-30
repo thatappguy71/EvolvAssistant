@@ -21,11 +21,11 @@ export default function Landing() {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Evolv</h1>
-              <p className="text-gray-600 dark:text-gray-300">Personal Wellness & Habit Tracker</p>
+              <p className="text-gray-600 dark:text-gray-300">Recovery-Focused Wellness & Habit Tracker</p>
             </div>
           </div>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Transform your life with intelligent habit tracking, wellness monitoring, and personalized biohacking insights.
+            Support your recovery journey with intelligent habit tracking, wellness monitoring, and evidence-based recovery tools designed for lasting sobriety.
           </p>
         </header>
 

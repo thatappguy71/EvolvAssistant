@@ -443,27 +443,27 @@ export class DatabaseStorage implements IStorage {
       console.log('Initializing biohacks...');
       const initialBiohacks: InsertBiohack[] = [
       {
-        name: "Wim Hof Breathing",
+        name: "Recovery Breathing Technique",
         category: "Breathwork",
-        description: "Powerful breathing technique for stress reduction and energy boost",
-        instructions: "1. Take 30 deep breaths. 2. Hold breath after exhale for as long as comfortable. 3. Take a deep breath and hold for 15 seconds. 4. Repeat 3-4 rounds.",
+        description: "Gentle breathing technique specifically designed for managing cravings and anxiety in recovery",
+        instructions: "1. Sit comfortably and close your eyes. 2. Breathe in slowly for 4 counts. 3. Hold for 4 counts. 4. Exhale slowly for 6 counts. 5. Repeat for 5-10 cycles when experiencing cravings or stress.",
         timeRequired: "10 minutes",
         difficulty: "Beginner",
-        benefits: "Reduces stress, increases energy, improves immune function, enhances focus",
+        benefits: "Reduces cravings, manages anxiety, improves emotional regulation, enhances recovery focus",
         equipmentNeeded: "None",
-        scientificBacking: "Studies show improved immune response and stress resilience",
+        scientificBacking: "Proven effective for addiction recovery - activates parasympathetic nervous system",
         imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {
-        name: "Cold Exposure Therapy",
+        name: "Recovery Cold Therapy",
         category: "Recovery",
-        description: "Boost metabolism and mental resilience through controlled cold exposure",
-        instructions: "Start with 30-second cold showers, gradually increase duration. Focus on controlled breathing throughout.",
+        description: "Build mental resilience and reduce stress through gentle cold exposure - excellent for recovery",
+        instructions: "Start with 30-second cold showers at the end of your regular shower. Focus on deep breathing. Gradually increase to 2 minutes as comfort allows.",
         timeRequired: "5 minutes",
         difficulty: "Intermediate",
-        benefits: "Improved circulation, enhanced mood, increased metabolism, stress resilience",
+        benefits: "Builds mental toughness, reduces stress, improves mood naturally, strengthens recovery mindset",
         equipmentNeeded: "Cold shower or ice bath",
-        scientificBacking: "Research shows activation of brown fat and norepinephrine release",
+        scientificBacking: "Studies show cold therapy reduces stress hormones and builds resilience - beneficial for recovery",
         imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300"
       },
       {

@@ -27,6 +27,7 @@ import FeedbackAdmin from "@/pages/FeedbackAdmin";
 import Marketing from "@/pages/Marketing";
 import MarketingResources from "@/pages/MarketingResources";
 import RecoveryPitch from "@/pages/RecoveryPitch";
+import Recovery from "@/pages/Recovery";
 import NotFound from "@/pages/not-found";
 import ColorDemo from "@/components/ColorDemo";
 
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/biohacks" component={Biohacks} />
       <Route path="/ai-recommendations" component={AIRecommendations} />
       <Route path="/wellness" component={Wellness} />
+      <Route path="/recovery" component={Recovery} />
       <Route path="/premium" component={Premium} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/payment-test" component={PaymentTest} />

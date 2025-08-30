@@ -45,11 +45,11 @@ const categories = [
 const predefinedHabits = [
   // Mindfulness
   { 
-    name: "Morning Meditation", 
+    name: "Daily Meditation", 
     category: "Mindfulness", 
     timeRequired: "10 minutes", 
     difficulty: "Easy", 
-    description: "Start your day with 10 minutes of mindfulness meditation",
+    description: "Practice mindfulness meditation to reduce cravings and increase self-awareness",
     helpfulLinks: [
       { title: "10-Minute Morning Meditation", url: "https://www.youtube.com/watch?v=ZToicYcHIOU", type: "video" },
       { title: "Headspace Morning Meditation", url: "https://www.headspace.com/meditation/morning-meditation", type: "guide" },
@@ -57,11 +57,11 @@ const predefinedHabits = [
     ]
   },
   { 
-    name: "Gratitude Journaling", 
+    name: "Recovery Gratitude Journal", 
     category: "Mindfulness", 
     timeRequired: "5 minutes", 
     difficulty: "Easy", 
-    description: "Write down 3 things you're grateful for each day",
+    description: "Daily gratitude practice to shift focus from what's missing to what's present in recovery",
     helpfulLinks: [
       { title: "5-Minute Journal Method", url: "https://www.intelligentchange.com/blogs/read/the-five-minute-journal-method", type: "guide" },
       { title: "Gratitude Journal Prompts", url: "https://positivepsychology.com/gratitude-journal/", type: "resource" },
@@ -69,11 +69,11 @@ const predefinedHabits = [
     ]
   },
   { 
-    name: "Deep Breathing Exercise", 
+    name: "Craving Management Breathing", 
     category: "Mindfulness", 
     timeRequired: "5 minutes", 
     difficulty: "Easy", 
-    description: "Practice deep breathing to reduce stress and increase focus",
+    description: "Use breathing techniques to manage cravings and reduce anxiety in recovery",
     helpfulLinks: [
       { title: "4-7-8 Breathing Technique", url: "https://www.youtube.com/watch?v=YRPh_GaiL8s", type: "video" },
       { title: "Box Breathing Guide", url: "https://www.healthline.com/health/box-breathing", type: "guide" },
@@ -81,11 +81,11 @@ const predefinedHabits = [
     ]
   },
   { 
-    name: "Evening Reflection", 
+    name: "Daily Recovery Check-in", 
     category: "Mindfulness", 
     timeRequired: "10 minutes", 
     difficulty: "Easy", 
-    description: "Reflect on the day's events and lessons learned",
+    description: "End each day by reflecting on recovery progress, challenges overcome, and lessons learned",
     helpfulLinks: [
       { title: "Evening Reflection Questions", url: "https://www.lifehack.org/articles/lifestyle/21-questions-for-daily-self-reflection.html", type: "guide" },
       { title: "Guided Evening Meditation", url: "https://www.youtube.com/watch?v=WPPPFqsECz0", type: "video" },
@@ -93,13 +93,75 @@ const predefinedHabits = [
     ]
   },
   
+  // Recovery-Specific Habits
+  { 
+    name: "Attend Support Meeting", 
+    category: "Recovery", 
+    timeRequired: "60 minutes", 
+    difficulty: "Easy", 
+    description: "Participate in AA, NA, SMART Recovery, or other support group meetings",
+    helpfulLinks: [
+      { title: "Find AA Meetings", url: "https://www.aa.org/find-aa", type: "resource" },
+      { title: "NA Meeting Locator", url: "https://www.na.org/meetingsearch/", type: "resource" },
+      { title: "SMART Recovery Meetings", url: "https://www.smartrecovery.org/meetings/", type: "resource" }
+    ]
+  },
+  { 
+    name: "Call Sponsor/Accountability Partner", 
+    category: "Recovery", 
+    timeRequired: "15 minutes", 
+    difficulty: "Easy", 
+    description: "Daily check-in with your sponsor or accountability partner for support and guidance",
+    helpfulLinks: [
+      { title: "How to Work with a Sponsor", url: "https://www.aa.org/sponsorship-what-its-all-about", type: "guide" },
+      { title: "Building Accountability", url: "https://www.smartrecovery.org/smart-recovery-toolbox/", type: "resource" },
+      { title: "Recovery Support Apps", url: "https://www.samhsa.gov/find-help/recovery", type: "app" }
+    ]
+  },
+  { 
+    name: "Recovery Reading", 
+    category: "Recovery", 
+    timeRequired: "20 minutes", 
+    difficulty: "Easy", 
+    description: "Read recovery literature, daily meditations, or inspirational content",
+    helpfulLinks: [
+      { title: "Daily Reflections AA", url: "https://www.aa.org/daily-reflections", type: "resource" },
+      { title: "Just for Today NA", url: "https://www.na.org/admin/include/spaw2/uploads/pdf/litfiles/us_english/booklet/Just%20for%20Today.pdf", type: "resource" },
+      { title: "Recovery Dharma", url: "https://recoverydharma.community/", type: "resource" }
+    ]
+  },
+  { 
+    name: "Trigger Identification", 
+    category: "Recovery", 
+    timeRequired: "10 minutes", 
+    difficulty: "Medium", 
+    description: "Identify and document potential triggers, emotions, or situations that challenge sobriety",
+    helpfulLinks: [
+      { title: "Trigger Identification Worksheet", url: "https://www.smartrecovery.org/smart-recovery-toolbox/", type: "resource" },
+      { title: "HALT Check (Hungry, Angry, Lonely, Tired)", url: "https://www.hazeldenbettyford.org/articles/halt-hunger-anger-loneliness-tiredness", type: "guide" },
+      { title: "Mindfulness for Triggers", url: "https://www.youtube.com/watch?v=ZToicYcHIOU", type: "video" }
+    ]
+  },
+  { 
+    name: "Service to Others", 
+    category: "Recovery", 
+    timeRequired: "30 minutes", 
+    difficulty: "Medium", 
+    description: "Help others in recovery or volunteer in your community to build purpose and connection",
+    helpfulLinks: [
+      { title: "Volunteer Opportunities", url: "https://www.volunteermatch.org/", type: "resource" },
+      { title: "12th Step Work Guide", url: "https://www.aa.org/the-twelve-steps", type: "guide" },
+      { title: "Recovery Mentoring", url: "https://www.samhsa.gov/recovery/peer-support", type: "resource" }
+    ]
+  },
+  
   // Exercise
   { 
-    name: "Daily Walk", 
+    name: "Recovery Walk", 
     category: "Exercise", 
     timeRequired: "30 minutes", 
     difficulty: "Easy", 
-    description: "Take a brisk 30-minute walk outdoors",
+    description: "Take a mindful walk to clear your head, reduce stress, and boost endorphins naturally",
     helpfulLinks: [
       { title: "Walking for Health Benefits", url: "https://www.mayoclinic.org/healthy-lifestyle/fitness/in-depth/walking/art-20046261", type: "guide" },
       { title: "MapMyWalk App", url: "https://www.mapmywalk.com", type: "app" },

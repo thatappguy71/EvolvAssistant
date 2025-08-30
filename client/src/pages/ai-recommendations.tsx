@@ -261,7 +261,7 @@ export default function AIRecommendations() {
           <Sparkles className="h-8 w-8 text-blue-500" />
           <div>
             <h1 className="text-3xl font-bold">AI Wellness Recommendations</h1>
-            <p className="text-muted-foreground">Personalized suggestions based on your wellness data</p>
+            <p className="text-muted-foreground">Personalized recovery and wellness suggestions based on your progress data</p>
           </div>
         </div>
         
@@ -282,11 +282,11 @@ export default function AIRecommendations() {
             <Sparkles className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">No recommendations yet</h3>
             <p className="text-muted-foreground mb-4">
-              Generate your first AI-powered wellness recommendations by clicking the button above.
+              Generate your first AI-powered recovery and wellness recommendations by clicking the button above.
             </p>
             <Button onClick={() => generateFreshMutation.mutate()} disabled={generateFreshMutation.isPending}>
               <Sparkles className="h-4 w-4 mr-2" />
-              Generate Recommendations
+              Generate Recovery Recommendations
             </Button>
           </CardContent>
         </Card>

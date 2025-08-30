@@ -223,6 +223,20 @@ export default function Sidebar() {
             {!isCollapsed && <span className="font-medium">Wellness</span>}
           </Link>
           
+          <Link 
+            href="/recovery" 
+            className={`flex items-center ${isCollapsed ? 'justify-center px-3' : 'space-x-3 px-4'} rounded-lg py-3 transition-all ${
+              isActive("/recovery") 
+                ? "text-green-600 bg-green-50 dark:bg-green-900/50" 
+                : "text-gray-600 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30"
+            }`}
+            title={isCollapsed ? "Recovery" : ""}
+            onClick={() => handleNavigation("/recovery")}
+          >
+            <i className="fas fa-shield-alt text-lg"></i>
+            {!isCollapsed && <span className="font-medium">Recovery</span>}
+          </Link>
+          
           {/* Beta Testing Section */}
           <div className={`${isCollapsed ? 'px-2' : 'px-4'} pt-6 border-t border-gray-200 dark:border-gray-700 mt-6`}>
             {!isCollapsed && (

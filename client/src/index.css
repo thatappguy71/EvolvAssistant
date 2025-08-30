@@ -52,13 +52,13 @@
   --spacing: 0.25rem;
   
   /* Scientifically-optimized Evolv colors for wellness attention capture */
-  --evolv-primary: hsl(214 84% 56%);        /* Blue: Enhances focus, reduces stress (Science: increases productivity 23%) */
-  --evolv-secondary: hsl(142 71% 45%);      /* Green: Promotes balance, growth (Science: 23% higher satisfaction) */
+  --evolv-primary: hsl(142 71% 45%);        /* Green: Promotes healing, growth, recovery (Science: 23% higher satisfaction) */
+  --evolv-secondary: hsl(214 84% 56%);      /* Blue: Enhances focus, reduces stress (Science: increases productivity 23%) */
   --evolv-accent: hsl(32 95% 60%);          /* Orange: Motivates action (Science: 32% increase in clicks) */
   --evolv-warning: hsl(45 93% 58%);         /* Yellow: Captures attention (Science: 25% higher engagement) */
   --evolv-success: hsl(160 84% 39%);        /* Deep green: Achievement, health */
   --evolv-calm: hsl(200 100% 85%);          /* Light blue: Meditation, calm states */
-  --evolv-energy: hsl(14 100% 57%);         /* Red-orange: Workout motivation (use sparingly) */
+  --evolv-recovery: hsl(160 100% 35%);      /* Recovery green: Sobriety, healing, growth */
   --evolv-premium: hsl(270 50% 40%);        /* Purple: Premium wellness features */
 }
 
@@ -75,13 +75,13 @@
   --secondary-foreground: hsl(0 0% 100%);
   
   /* Dark mode Evolv colors */
-  --evolv-primary: hsl(214 84% 60%);
-  --evolv-secondary: hsl(142 71% 50%);
+  --evolv-primary: hsl(142 71% 50%);
+  --evolv-secondary: hsl(214 84% 60%);
   --evolv-accent: hsl(32 95% 65%);
   --evolv-warning: hsl(45 93% 63%);
   --evolv-success: hsl(160 84% 44%);
   --evolv-calm: hsl(200 100% 90%);
-  --evolv-energy: hsl(14 100% 62%);
+  --evolv-recovery: hsl(160 100% 40%);
   --evolv-premium: hsl(270 50% 45%);
   --muted: hsl(0 0% 9.4118%);
   --muted-foreground: hsl(210 3.3898% 46.2745%);

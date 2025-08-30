@@ -73,10 +73,10 @@ export default function DashboardHeader() {
         <div className="flex items-center justify-between">
           <div className="ml-16 md:ml-0">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {greeting()}, {userName}!
+              {greeting()}, {userName}! 💪
             </h1>
             <div className="flex items-center gap-3 mt-1">
-              <p className="text-gray-600 dark:text-gray-400">Ready to continue your wellness journey?</p>
+              <p className="text-gray-600 dark:text-gray-400">Every day in recovery is a victory. Keep going strong!</p>
               <LocationIndicator />
             </div>
           </div>
