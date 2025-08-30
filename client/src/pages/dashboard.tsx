@@ -9,6 +9,9 @@ import WellnessMetrics from "@/components/WellnessMetrics";
 import BiohackCard from "@/components/BiohackCard";
 import HabitModal from "@/components/HabitModal";
 import AnalyticsCharts from "@/components/AnalyticsCharts";
+import OnboardingFlow from "@/components/dashboard/OnboardingFlow";
+import QuickActions from "@/components/dashboard/QuickActions";
+import StreakRewards from "@/components/gamification/StreakRewards";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +26,7 @@ export default function Dashboard() {
   const [isHabitModalOpen, setIsHabitModalOpen] = useState(false);
   const [selectedBiohack, setSelectedBiohack] = useState<any>(null);
   const [isBiohackDetailOpen, setIsBiohackDetailOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [, setLocation] = useLocation();
   const { isCollapsed } = useSidebar();
   const { toast } = useToast();
@@ -58,6 +62,29 @@ export default function Dashboard() {
   });
 
   const recommendedBiohacks = biohacks.slice(0, 3);
+
+  // Check if user needs onboarding
+  useEffect(() => {
+    const hasCompletedOnboarding = localStorage.getItem('evolv-onboarding-completed');
+    if (!hasCompletedOnboarding && stats?.totalHabitsToday === 0) {
+      setShowOnboarding(true);
+    }
+  }, [stats]);
+
+  const handleOnboardingComplete = (data: any) => {
+    localStorage.setItem('evolv-onboarding-completed', 'true');
+    localStorage.setItem('evolv-onboarding-data', JSON.stringify(data));
+    setShowOnboarding(false);
+    toast({
+      title: "Welcome to Evolv!",
+      description: "Your recovery journey starts now. Let's build some healthy habits!",
+    });
+  };
+
+  const handleOnboardingSkip = () => {
+    localStorage.setItem('evolv-onboarding-completed', 'true');
+    setShowOnboarding(false);
+  };
 
   const handleBiohackClick = (biohack: any) => {
     // Stop any running audio/timers when switching biohacks (without toast notifications)
@@ -384,36 +411,16 @@ export default function Dashboard() {
               <TodaysHabits />
             </div>
             <div className="space-y-6">
+              <QuickActions 
+                onAddHabit={() => setIsHabitModalOpen(true)}
+                recoveryDays={stats?.currentStreak || 0}
+              />
               <WellnessMetrics />
-              
-              {/* Recovery Resources Card */}
-              <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-purple-800 dark:text-purple-200">
-                    <Users className="h-5 w-5 mr-2" />
-                    Recovery Resources
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="space-y-2">
-                    <Button variant="outline" size="sm" className="w-full justify-start border-purple-200 text-purple-700 hover:bg-purple-100">
-                      <Phone className="h-4 w-4 mr-2" />
-                      Crisis Helpline: 1-833-456-4566
-                    </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start border-purple-200 text-purple-700 hover:bg-purple-100">
-                      <Users className="h-4 w-4 mr-2" />
-                      Find Local Support Groups
-                    </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start border-purple-200 text-purple-700 hover:bg-purple-100">
-                      <Heart className="h-4 w-4 mr-2" />
-                      Recovery Community
-                    </Button>
-                  </div>
-                  <div className="text-xs text-purple-600 dark:text-purple-300 text-center pt-2 border-t border-purple-200">
-                    You're not alone in this journey
-                  </div>
-                </CardContent>
-              </Card>
+              <StreakRewards 
+                currentStreak={stats?.currentStreak || 0}
+                longestStreak={stats?.currentStreak || 0}
+                totalHabitsCompleted={stats?.habitsCompletedToday || 0}
+              />
             </div>
           </div>
 
@@ -884,6 +891,14 @@ export default function Dashboard() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Onboarding Flow */}
+      {showOnboarding && (
+        <OnboardingFlow 
+          onComplete={handleOnboardingComplete}
+          onSkip={handleOnboardingSkip}
+        />
+      )}
     </div>
   );
 }

@@ -10,6 +10,8 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Bell, Moon, Globe, Shield, Database, Trash2, Sun } from "lucide-react";
+import PrivacyControls from "@/components/privacy/PrivacyControls";
+import AccessibilityFeatures from "@/components/accessibility/AccessibilityFeatures";
 
 export default function Settings() {
   const { toast } = useToast();
@@ -255,6 +257,12 @@ export default function Settings() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Privacy Controls */}
+            <PrivacyControls />
+
+            {/* Accessibility Features */}
+            <AccessibilityFeatures />
 
             {/* Data Management */}
             <Card>

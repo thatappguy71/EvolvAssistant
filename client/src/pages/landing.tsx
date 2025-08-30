@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import SocialProof from "@/components/marketing/SocialProof";
 
 export default function Landing() {
   return (
@@ -44,30 +45,30 @@ export default function Landing() {
           <Card className="border-2 hover:border-evolv-primary/30 transition-colors hover-lift">
             <CardContent className="p-6 text-center">
               <div className="w-12 h-12 bg-evolv-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-check-circle text-evolv-primary text-xl"></i>
+                <i className="fas fa-shield-alt text-evolv-primary text-xl"></i>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Smart Habit Tracking</h3>
-              <p className="text-gray-600">Build lasting habits with intelligent tracking, streaks, and personalized insights.</p>
+              <h3 className="text-lg font-semibold mb-2">Recovery-Safe Tracking</h3>
+              <p className="text-gray-600">Build recovery habits with intelligent tracking designed specifically for addiction recovery and sobriety maintenance.</p>
             </CardContent>
           </Card>
 
           <Card className="border-2 hover:border-evolv-secondary/30 transition-colors hover-lift">
             <CardContent className="p-6 text-center">
               <div className="w-12 h-12 bg-evolv-secondary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-heart text-evolv-secondary text-xl"></i>
+                <i className="fas fa-phone text-evolv-secondary text-xl"></i>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Wellness Metrics</h3>
-              <p className="text-gray-600">Monitor energy, focus, mood, and sleep quality with comprehensive analytics.</p>
+              <h3 className="text-lg font-semibold mb-2">24/7 Crisis Support</h3>
+              <p className="text-gray-600">Immediate access to crisis helplines, sponsor contacts, and emergency resources when you need them most.</p>
             </CardContent>
           </Card>
 
           <Card className="border-2 hover:border-evolv-accent/30 transition-colors hover-lift">
             <CardContent className="p-6 text-center">
               <div className="w-12 h-12 bg-evolv-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-lightbulb text-evolv-accent text-xl"></i>
+                <i className="fas fa-users text-evolv-accent text-xl"></i>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Biohack Discovery</h3>
-              <p className="text-gray-600">Explore scientifically-backed biohacks to optimize your health and performance.</p>
+              <h3 className="text-lg font-semibold mb-2">Recovery Community</h3>
+              <p className="text-gray-600">Connect with support groups, find meetings, and access recovery resources tailored to your location.</p>
             </CardContent>
           </Card>
 
@@ -76,56 +77,66 @@ export default function Landing() {
               <div className="w-12 h-12 bg-evolv-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <i className="fas fa-chart-line text-evolv-accent text-xl"></i>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Advanced Analytics</h3>
-              <p className="text-gray-600">Visualize your progress with detailed charts and trend analysis.</p>
+              <h3 className="text-lg font-semibold mb-2">Recovery Analytics</h3>
+              <p className="text-gray-600">Track your sobriety progress, wellness improvements, and recovery milestones with detailed insights.</p>
             </CardContent>
           </Card>
 
           <Card className="border-2 hover:border-evolv-secondary/30 transition-colors hover-lift">
             <CardContent className="p-6 text-center">
               <div className="w-12 h-12 bg-evolv-secondary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-sync text-evolv-secondary text-xl"></i>
+                <i className="fas fa-brain text-evolv-secondary text-xl"></i>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Cloud Sync</h3>
-              <p className="text-gray-600">Access your data anywhere with secure cloud synchronization.</p>
+              <h3 className="text-lg font-semibold mb-2">AI Recovery Insights</h3>
+              <p className="text-gray-600">Get personalized recovery recommendations based on your progress, triggers, and wellness patterns.</p>
             </CardContent>
           </Card>
 
           <Card className="border-2 hover:border-evolv-premium/30 transition-colors hover-lift">
             <CardContent className="p-6 text-center">
               <div className="w-12 h-12 bg-evolv-premium/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-crown text-evolv-premium text-xl"></i>
+                <i className="fas fa-lock text-evolv-premium text-xl"></i>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Premium Features</h3>
-              <p className="text-gray-600">Unlock advanced insights, unlimited habits, and priority support.</p>
+              <h3 className="text-lg font-semibold mb-2">Privacy & Security</h3>
+              <p className="text-gray-600">Your recovery data is completely private and secure, with full control over what you share.</p>
             </CardContent>
           </Card>
         </div>
 
         {/* CTA Section */}
+        <SocialProof />
+        
         <div className="text-center">
           <Card className="max-w-md mx-auto">
             <CardContent className="p-8">
-              <h2 className="text-2xl font-bold mb-4">Ready to evolve?</h2>
+              <h2 className="text-2xl font-bold mb-4">Ready to Transform Your Recovery?</h2>
               <p className="text-gray-600 mb-6">
-                Join thousands of users who are transforming their lives with Evolv.
+                Join thousands of people in recovery who are building stronger, healthier lives with Evolv.
               </p>
               <Button 
                 size="lg" 
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 px-6 py-3"
                 onClick={() => window.location.href = '/api/login'}
               >
-                <i className="fas fa-rocket mr-2"></i>
-                Start Your Journey
+                <i className="fas fa-shield-alt mr-2"></i>
+                Start Your Recovery Journey
               </Button>
               <p className="text-xs text-gray-500 mt-3">
-                <i className="fas fa-shield-alt mr-1 text-evolv-primary"></i>
-                Secure authentication • Join thousands improving their health
+                <i className="fas fa-lock mr-1 text-evolv-primary"></i>
+                100% Private & Secure • Trusted by Recovery Professionals
               </p>
             </CardContent>
           </Card>
         </div>
       </div>
+      
+      {/* Onboarding Flow */}
+      {showOnboarding && (
+        <OnboardingFlow 
+          onComplete={handleOnboardingComplete}
+          onSkip={handleOnboardingSkip}
+        />
+      )}
     </div>
   );
 }

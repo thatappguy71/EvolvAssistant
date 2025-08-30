@@ -1,6 +1,8 @@
 import Sidebar, { useSidebar } from "@/components/Sidebar";
 import DashboardHeader from "@/components/DashboardHeader";
 import AnalyticsCharts from "@/components/AnalyticsCharts";
+import RecoveryAnalytics from "@/components/analytics/RecoveryAnalytics";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Analytics() {
   const { isCollapsed } = useSidebar();
@@ -18,7 +20,20 @@ export default function Analytics() {
             <p className="text-gray-600 mt-1">Detailed insights into your wellness journey</p>
           </div>
 
-          <AnalyticsCharts />
+          <Tabs defaultValue="recovery" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="recovery">Recovery Analytics</TabsTrigger>
+              <TabsTrigger value="wellness">Wellness Metrics</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="recovery" className="space-y-6">
+              <RecoveryAnalytics />
+            </TabsContent>
+            
+            <TabsContent value="wellness" className="space-y-6">
+              <AnalyticsCharts />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
     </div>
