@@ -17,7 +17,6 @@ localPort = 5000
 PORT = "5000"
 DATABASE_URL = "postgresql://user:password@localhost:5432/evolv_db"
 REPLIT_DB_URL = "postgresql://user:password@localhost:5432/evolv_db"
-REPLIT_DOMAINS = "localhost:5000"
 
 [workflows]
 runButton = "Project"
